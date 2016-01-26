@@ -1,0 +1,188 @@
+## Final Project Proposal
+
+_Deadline: Jan 29, 2016 11:59pm_
+
+### Details
+You have two choices: propose a topic or do a suggested topic.
+
+If you propose a topic, write a description (usually a page or two
+max) of what your package would do.  The proposal will not be graded
+immediately, but will be used in checking consistency with the final
+project submission.
+
+Due to the size of the class, brief feedback will be provided on the
+project proposal by February 8 if something really stands out,
+otherwise, you should proceed to work on the project. Please note that
+feedback will be provided once and once only. Therefore you should
+make sure to address the aspects below.
+
+If you plan to implement a package on one of the suggested topics,
+state which one, and in a few sentences say what you plan to implement
+on the topic.
+
+Email the markdown to `stats290-win1516-staff@lists.stanford.edu`
+(which will be active in a day or two).
+
+### Proposal
+
+Submit this markdown file by filling in the __Answer__ parts.
+
+*0. Who are the authors of this package? (sunet ids please)*
+
+* Niraj Juneja (SUNet ID: niraj9) – niraj9@stanford.edu  
+* Charles de Lassence (SUNet ID: lassence) – lassence@stanford.edu  
+
+*1. What is your package trying to achieve?  Who is it aimed at?*
+
+The goal of this project is to create an R package that can serve as a __personalized__ coach for fitbit. 
+
+The project will aim to accomplish the following:  
+
+1. Connect to R fitbit API and expose an individual’s fitbit data as a Dataframe for further analysis.  
+2. Provide the following features :  
+    a) Ability to set goals and find the most significant variables that are enabling meeting the goals Eg: if my goal is to burn calories, then the package will create a predictive model with Calorie burn as the target variable and all other variables as dependent variables.  There is no point of recommending 10,000 steps a day if walking is not what a user likes to do. The goal is to give __personalized recommendations__ to the user based on his/her behavior.  
+    b) Ability to call a function and provide recommendations for the rest of the day.  This feature can enable alerting the user at right points of time. This intervention will enable building the “Coach” type functionality by front end users. Note: Refer Fitbit API usage section below on some details on project scope.   
+3. Provide advanced charts in ggplot2 that are more informative than the default provided by fitbit. Examples below  
+    a) Include notion of moving averages.  
+    b) Show the most important charts that are truly moving the needle on goal performance for the individual. Eg movement of BPM correlated to exercise.  
+    c) Integrate predictive performance into the charts. 
+
+
+*2. Who are you working with? (See below for further information on project partner.) We need full name of your partner with sunet id. Submit one proposal per team.*
+
+* Niraj Juneja (SUNet ID: niraj9) – niraj9@stanford.edu  
+* Charles de Lassence (SUNet ID: lassence) – lassence@stanford.edu  
+
+*3. Briefly describe the background if that's not obvious.  What field
+   or area of interest is it related to?  (Just briefly, in a paragraph
+   or two, maximum.) References, including web references, are welcome
+   where available.*
+
+The default analytics provided by Fitbit is archaic. The visualizations are very elementary and there is no predictive information that can be utilized for timely interventions to meet a user’s goals. The goal of this package is to provide useful visualizations and predictive analytics for fitbit data.
+
+*4. Provide a few use cases; that is, in a sentence or so say how
+   you see someone using the package.*
+
+We do not intend to build an end-to-end “Fitbit Coach” application with R. It is expected that this package will be used as the brains behind such an application. As a result, the focus will be to build a developer friendly API. Mobile and front end applications can hopefully integrate this R package into their workflow using other languages.  
+The target audience for this package is 
+a) Front end and Mobile developers who want to build Fitbit Coach kind of applications.  
+b) Product Managers or DIY enthusiasts who want better visualizations and insights on fitbit data.
+
+*5. If you can, list the main functions or other software you plan on
+   including.  No need to implement anything now, but you should have
+   an idea.*
+
+We plan to use R. 
+
+__Fitbit API usage__  
+We have a developer account with Fitbit that currently gives daily snapshot data. We have requested for intra-day hourly access. If Fitbit approves our request we will be able to recommend at an hourly basis.  If fitbit does not approve our request our recommendations will be for the day.
+Although recommendations for the day are less useful than timely recommendations at a point in the day, the package developed will be able to serve both the needs as the JSON types returned by fitbit are same in both the scenarios. So even if we do not get access to intra-day data, the package will still be useful to people who have access to intra-day data.  
+
+__HTTR package (Wickham)__  
+We intend to extend the httr package to support oauth2.0 for fitbit. The default oauth2.0 implementation by Wickham did not work well with fitbit in our tests done so far.
+
+*6. For languages C/C++, Java, Python, Ruby, please specify your
+   proficiency: Proficient, basic knowledge, no knowledge.  (This
+   helps us evaluate the proposal sometimes and offer suggestions.)*
+
+* Niraj Juneja: __ANSWER__
+* Charles de Lassence: basic knowledge in Python
+
+
+--------   
+This proposal should serve as a guide for your implementation.
+
+### Project Partner
+
+You are expected to work in teams of no more than two. If your project
+is very large, we might consider a team of three. Find a project
+partner who is doing the course for the same letter credit, _not
+CR/NC_. If you want to work solo for reasons you will justify in the
+proposal, you'll have to make a convincing case. Each student must
+submit a separate package to allow us to grade the work. (Oh, if you
+are the odd one out, please contact the instructor and we will suggest
+some alternatives.)
+
+You and your partner need to divide the topic into subtasks with each
+person taking on separate tasks. Submit one package per team. Be sure
+to outline in your proposals how the topic will be divided. Please
+note that I personally will spend time looking at details and
+implementation.
+
+- In your code you will have specific comment sections, for
+  example for sunet id `smith`:
+```
+##
+## Begin smith code
+##
+...
+##
+## End smith code
+##
+```
+to mark code `smith` wrote.
+- Each student must write R code; this precludes one student doing
+  the coding and another doing just the documentation.
+
+### Choosing a topic
+
+Here are some guidelines in choosing a topic:
+
+- Check whether there is already a package to do this; for example,
+search in `CRAN`, `metacran` or google for "R thing". `CRAN` and
+[Bioconductor](http://bioconductor.org) task views can be invaluable
+in this regard.  Don't give up if you do find a related package: An
+extension of an existing package can be a good topic, if you can show
+why it is a non-trivial extension.
+- Big topics can be OK.  You don't need to finish everything for the
+project, but you should have a clear idea of what gets done first, so
+you end up with something specific implemented.
+- Projects with large or online datasets call for some care as regards
+testing and reproducibility. We highly recommend that test be
+conducted against a static snapshot that is also included in the
+package.
+- For those of you who plan a package for private use in your
+organization, we must still be able to check the package
+thoroughly. It is your responsibility to ensure that this is possible.
+- If your package requires software other than standard R packages, be
+very sure that it can be installed and tested by us from standard
+repositories. In other words, these should be on `CRAN` or
+bioconductor. They cannot be on some private repository.
+
+__No credit (or zero points)__ will be given for packages that can
+not be installed and checked by the standard \texttt{R CMD} tools.
+
+### Project Requirements
+
+The final package will be submitted as a package archive file,
+produced by `R CMD build`.
+
+- Your package must pass `R CMD check --as-cran` without
+  errors.  It should not produce any warnings or notes either! This means that
+  documentation must be provided for all functions and other objects
+  in the package.
+- Your package must have test scripts in the tests directory to
+  demonstrate that the main computations in the package do work.  We
+  will discuss testing in later classes via `testhat`.
+- The package should include a summary (4 pages max) of what you have
+  accomplished as a markdown.  This _must_ be part of the package; for
+  example, as a vignette named `summary.Rmd`.
+- Any code used must also be placed in the `examples` package folder
+  for checking. 
+- Your package name must adhere to the R conventions. Package
+  names in R can contain only letters, numbers and period.
+- Your code must adhere to R coding style. See Wickham's Advanced R
+  book and
+  [Google Style](http://google-styleguide.googlecode.com/svn/trunk/google-r-style.html)
+  for some suggestions. I use camelCase for naming, except for
+  well-known conventions like `is.x`. Transplanting loops from other
+  languages is sure to earn demerits.
+- Note that slapping on a shiny user interface on some trivial or
+  ill-designed package functions will result in poor grades. Shiny
+  interfaces are fine, but only if they do something meaningful.
+- Your code will also be scrutinized for direct copying from other
+  packages. _Please note that we take issues of plagiarism very
+  seriously!_  If you do have a need to use someone else's code, that
+  code _must_ be credited and the full original web link or
+  source must specified in the code itself in comments.
+
