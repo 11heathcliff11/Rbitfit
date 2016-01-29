@@ -81,12 +81,16 @@ Although recommendations for the day are less useful than timely recommendations
 __HTTR package (Wickham)__  
 We intend to extend the httr package to support oauth2.0 for fitbit. The default oauth2.0 implementation by Wickham did not work well with fitbit in our tests done so far.
 
+__Other functions/packages that will be used__  
+* For graphs: graphs, ggplot2  
+* For predictive modeling: lm, glm, knn, etc.
+
 *6. For languages C/C++, Java, Python, Ruby, please specify your
    proficiency: Proficient, basic knowledge, no knowledge.  (This
    helps us evaluate the proposal sometimes and offer suggestions.)*
 
 * Niraj Juneja: Good knowledge of Java and R. 
-* Charles de Lassence: basic knowledge in Python, intermediate konwledge of R.
+* Charles de Lassence: intermediate konwledge of R, basic knowledge of Python.
 
 
 --------   
