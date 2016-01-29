@@ -85,11 +85,12 @@ We intend to extend the httr package to support oauth2.0 for fitbit. The default
    proficiency: Proficient, basic knowledge, no knowledge.  (This
    helps us evaluate the proposal sometimes and offer suggestions.)*
 
-* Niraj Juneja: __ANSWER__
-* Charles de Lassence: basic knowledge in Python
+* Niraj Juneja: Good knowledge of Java and R. 
+* Charles de Lassence: basic knowledge in Python, intermediate konwledge of R.
 
 
 --------   
+
 This proposal should serve as a guide for your implementation.
 
 ### Project Partner
