@@ -1,0 +1,15 @@
+---
+title: "Api Access"
+author: "Charles"
+date: "4 Feb 2016"
+output: html_document
+---
+
+
+
+```{r}
+load(file = "resp.RData")
+str(resp)
+resp$content
+```
+
