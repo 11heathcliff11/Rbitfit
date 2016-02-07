@@ -28,7 +28,7 @@ resp <- GET(url = geturl, config(token = fitbit_token))
 
 # 4. Write content to file
 respContent <- content(resp, as = "text")
-writeBin(bin, "myfile.json")
+writeBin(respContent, "charles-apicontent.json")
 
 ###
 ### End Charles code
