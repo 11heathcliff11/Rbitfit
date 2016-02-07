@@ -43,7 +43,7 @@ writeBin(resp_content, json_file)
 library('rjson')
 library('jsonlite')
 
-json_df <- rjson::fromJSON(file = json_file)
+json_list <- unlist(rjson::fromJSON(file = json_file))
 
 ###
 ### End Charles
