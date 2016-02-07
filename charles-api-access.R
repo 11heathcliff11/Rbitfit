@@ -23,7 +23,10 @@ fitbit_token <- oauth2.0_token(fitbit_endpoint, myapp,
 
 # 3. Make API requests
 date <- "2016-02-03"
-geturl <- paste("https://api.fitbit.com/1/user/-/activities/date/", date, ".json", sep = "")
+geturl <- paste("https://api.fitbit.com/1/user/-/activities/date/", 
+                date, 
+                ".json", 
+                sep = "")
 resp <- GET(url = geturl, config(token = fitbit_token))
 
 # 4. Write content to file
