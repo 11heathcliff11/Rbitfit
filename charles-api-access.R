@@ -28,7 +28,7 @@ apiConnection <- function(appname = "cdlr", key = "227FWR", secret = "3089e3d1ac
 
 
 
-# Makes API request and writes JSON files (1 per day of data)
+# Makes API request and writes JSON file
 getApiContent <- function(date, json_file = "daily-summary.json") {
     
     # Build URL with date for request (daily activity summary)
