@@ -1,8 +1,4 @@
 
-###
-### Begin Charles code
-###
-
 library(httr)
 
 # 1. Set up credentials
@@ -31,8 +27,4 @@ resp <- GET(url = geturl, config(token = fitbit_token))
 
 # 4. Write content to file
 respContent <- content(resp, as = "text")
-writeBin(respContent, "charles-apicontent.json")
-
-###
-### End Charles code
-###
+writeBin(respContent, "apicontent.json")
