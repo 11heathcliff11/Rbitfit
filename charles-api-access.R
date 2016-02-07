@@ -32,15 +32,17 @@ response <- GET(url = get_url, config(token = fitbit_token))
 
 # 4. Write content to file
 resp_content <- content(response, as = "text")
-writeBin(resp_content, "apicontent.json")
+json_file <- "apicontent.json"
+writeBin(resp_content, json_file)
 
 ###
 ### Convert JSON to Data Frame
 ### Begin Charles
 ### 
 
-library(c('rjson', 'jsonlite'))
-json_file <- "apicontent.json"
+library('rjson')
+library('jsonlite')
+
 json_df <- rjson::fromJSON(file = json_file)
 
 ###
