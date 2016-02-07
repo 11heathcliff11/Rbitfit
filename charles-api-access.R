@@ -42,8 +42,16 @@ writeBin(resp_content, json_file)
 
 library('rjson')
 library('jsonlite')
+# library('data.table')
 
-json_list <- unlist(rjson::fromJSON(file = json_file))
+json_raw <- rjson::fromJSON(file = json_file)
+
+# Conversion to simple vector
+json_vector <- unlist(json_raw)
+
+# Conversion to data frame with data.table package: does not work 
+# json_df <- data.table::rbindlist(json_raw, fill = TRUE)
+
 
 ###
 ### End Charles
