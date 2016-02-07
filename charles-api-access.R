@@ -29,7 +29,7 @@ apiConnection <- function(appname = "cdlr", key = "227FWR", secret = "3089e3d1ac
 
 
 # Makes API request and writes JSON files (1 per day of data)
-getApiContent <- function(date = "2016-02-03", json_file = "daily-summary.json") {
+getApiContent <- function(date, json_file = "daily-summary.json") {
     
     # Build URL with date for request (daily activity summary)
     # Cf. https://dev.fitbit.com/docs/activity/#get-daily-activity-summary
@@ -49,7 +49,7 @@ getApiContent <- function(date = "2016-02-03", json_file = "daily-summary.json")
 
 # Function calls
 apiConnection()
-getApiContent()
+getApiContent(date = "2016-02-03")
 
 ###
 ### Convert JSON to Data Frame
@@ -59,8 +59,7 @@ library('rjson')
 library('jsonlite')
 # library('data.table')
 
-json_file <- "daily-summary.json"
-json_raw <- rjson::fromJSON(file = json_file)
+json_raw <- rjson::fromJSON(file = "daily-summary.json")
 
 # Conversion to simple vector
 json_vector <- unlist(json_raw)
