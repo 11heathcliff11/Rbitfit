@@ -2,7 +2,6 @@
 .Rhistory
 .RData
 .httr-oauth
-
 *.Rproj
-
 *.json
+fitcoach.Rcheck/
