@@ -28,7 +28,40 @@ t <- GET(oauthString)
 ## Take the oauthString. Type in Browser and get the token from the redirected URL. Put the token String into the token field below
 
 
-token <- 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0NTUxOTM0NzAsInNjb3BlcyI6Indwcm8gd2xvYyB3bnV0IHdzbGUgd3NldCB3aHIgd3dlaSB3YWN0IHdzb2MiLCJzdWIiOiIzTUc0Q1kiLCJhdWQiOiIyMjlXUlkiLCJpc3MiOiJGaXRiaXQiLCJ0eXAiOiJhY2Nlc3NfdG9rZW4iLCJpYXQiOjE0NTQ1ODg2NzB9.S9bksE8wmqXW2tfb3rckIyMvprFICUZj4vEE5pjg1xA'
+token <- 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0NTUxOTM0NjksInNjb3BlcyI6Indwcm8gd2xvYyB3bnV0IHdzbGUgd3NldCB3aHIgd3dlaSB3YWN0IHdzb2MiLCJzdWIiOiIzTUc0Q1kiLCJhdWQiOiIyMjlXUlkiLCJpc3MiOiJGaXRiaXQiLCJ0eXAiOiJhY2Nlc3NfdG9rZW4iLCJpYXQiOjE0NTUwNzQ4NTh9.M_QpMTbsGQp779qtsO4iZa9obNsESFcP3iUwUuvJd7Y'
+
+
+#Get Data for December days
+days <- 1:31
+
+#timeseries
+timeseriesURL <- '/1/user/[user-id]/[resource-path]/date/[date]/max.json'
+request_url <-'https://api.fitbit.com/1/user/-/activities/tracker/calories/date/today/max.json'
+
+request <- GET(request_url,
+               add_headers("Authorization"= token))
+
+bin <- content(request , as = "text")
+fileName <- paste('max-time' , d , '.json' , sep = "")
+writeBin(bin, fileName)
+
+
+
+
+for( d in days){
+  request_url <- paste('https://api.fitbit.com/1/user/-/activities/date/2015-12-' ,
+                       d , '.json' , sep = "")
+  request <- GET(request_url,
+                 add_headers("Authorization"= token))
+
+  bin <- content(request , as = "text")
+  fileName <- paste('2015-12-' , d , '.json' , sep = "")
+  writeBin(bin, fileName)
+
+}
+
+
+
 
 request <- GET(request_url,
                add_headers("Authorization"= token))
