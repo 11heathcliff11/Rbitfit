@@ -1,4 +1,5 @@
 library(httr)
+library(jsonlite)
 
 #-----------------------------------------------------------------------------------
 # Utility for Fitbit coach package
@@ -41,6 +42,13 @@ getResourcePathList <- function(){
   return (resourcePath)
 }
 
+#' A function to create the Master Data Frame from Timeseries JSON files.
+#'
+#' @param tsFileFolder Folder containing all time-series files. Naming convention for files is max-[resource].json
+#' @param resourcePath the resource paths to look. Default will get getResourcePathList()
+#' @return The Master Data Frame
+#' @import jsonlite
+#' @export
 
 createTsMasterFrame <- function(tsFileFolder, resourcePath = getResourcePathList()){
   dflist <- lapply(resourcePath, function(x){
@@ -55,4 +63,16 @@ createTsMasterFrame <- function(tsFileFolder, resourcePath = getResourcePathList
   }
   return(masterdf)
 }
+
+#' A function that incorporates rules for marking if the data entry in MasterTSFrame are valid or not
+#'
+#' @param masterTsDataFrame The Master Time Series data Frame
+#' @return The marked Master Data Frame. i.e column valid is added at the end of the data.frame
+#' @export
+
+markValidRows <- function(masterTsDataFrame){
+  masterTsDataFrame$valid <- (as.numeric(masterTsDataFrame$distance) != 0)
+  return(masterTsDataFrame)
+}
+
 
