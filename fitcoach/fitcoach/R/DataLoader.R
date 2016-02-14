@@ -102,12 +102,11 @@ DataLoader <- R6Class("DataLoader",
               # Send the request
               self$connect()
               response <- GET(url = get_url, config(token = private$api_token))
-              # response <- GET(url = "https://api.fitbit.com/1/user/-/activities/calories/date/2016-02-01/2016-02-01.json", config(token = private$api_token))
               warn_for_status(response)
               
               # Writes the response content into a JSON file
               json_file <- paste(type, activity, start_date, end_date, detail_level, sep = "_")
-              json_file <- paste(json_file, ".json", sep = "")
+              json_file <- paste("./inst/extdata/tests/", json_file, ".json", sep = "")
               resp_content <- content(response, as = "text")
               write(resp_content, json_file)
               
@@ -123,7 +122,6 @@ TestRequest$get(type = 'intraday',
                 activity = 'steps', 
                 start_date = '2016-02-03', 
                 detail_level = '1min')
-
 
 
 ######## TYPES OF DATA
