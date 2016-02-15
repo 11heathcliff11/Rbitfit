@@ -6,123 +6,182 @@ library('httr')
 
 DataLoader <- R6Class("DataLoader",
                       
-      private = list(
-          # API URLs for authentication
-          api_url_request = "https://api.fitbit.com/oauth2/token",
-          api_url_authorize = "https://www.fitbit.com/oauth2/authorize",
-          api_url_access = "https://api.fitbit.com/oauth2/token",
-          
-          # Oauth token
-          api_token = NA
-          
-      ),
+  private = list(
       
-      public = list (
-          # Scope of activities to be retrieved
-          # See http://dev.fitbit.com/docs/oauth2/#scope
-          scope = NA,
+      # API URLs for authentication
+      api_url_request = "https://api.fitbit.com/oauth2/token",
+      api_url_authorize = "https://www.fitbit.com/oauth2/authorize",
+      api_url_access = "https://api.fitbit.com/oauth2/token",
+      
+      # Authentication settings
+      api_token = NA,
+      api_appname = NA,
+      api_key = NA,
+      api_secret = NA,
+      
+      # Scope of activities to be retrieved
+      # See http://dev.fitbit.com/docs/oauth2/#scope
+      scope = NA,
+      
+      # Request paramaters
+      req_type = NA,
+      req_activity = NA,
+      req_start_date = NA,
+      req_end_date = NA,
+      req_detail_level = NA,
+      req_url = NA,
+      
+      ### FUNCTION Connect
+      ### 
+      ### API Connection
+      connect = function() {
           
-          # Authentication settings
-          api_appname = NA,
-          api_key = NA,
-          api_secret = NA,
+          fitbit_endpoint <- httr::oauth_endpoint(
+              request = private$api_url_request,
+              authorize = private$api_url_authorize,
+              access = private$api_url_request
+          )
           
-          # FUNCTION
-          # Initialization
-          initialize = function(
-              appname = "cdlr",
-              key = "227FWR",
-              secret = "3089e3d1ac5dde1aa00b54a0c8661f42",
-              scope = c("activity", "heartrate", "location","nutrition", 
-                        "profile", "settings","sleep", "social", "weight")
-          ) {
-              self$api_appname <- appname
-              self$api_key <- key
-              self$api_secret <- secret
-              self$scope <- scope
-          },
-          
-          # FUNCTION
-          # API Connection
-          connect = function() {
-              fitbit_endpoint <- httr::oauth_endpoint(
-                  request = private$api_url_request,
-                  authorize = private$api_url_authorize,
-                  access = private$api_url_request
+          # Get OAuth token
+          private$api_token <-
+              httr::oauth2.0_token(
+                  fitbit_endpoint,
+                  httr::oauth_app(private$api_appname, private$api_key, private$api_secret),
+                  scope = private$scope,
+                  use_basic_auth = TRUE
               )
-              
-              # Get OAuth token
-              private$api_token <-
-                  httr::oauth2.0_token(
-                      fitbit_endpoint,
-                      httr::oauth_app(self$api_appname, self$api_key, self$api_secret),
-                      scope = self$scope,
-                      use_basic_auth = TRUE
-                  )
-              
-          },
           
-          # FUNCTION
-          # Build URL, send request and write response to JSON file
-          get = function(type = "summary", activity = "steps", start_date = Sys.Date(), end_date = "1d", detail_level) {
+      },
+      
+      ### FUNCTION Request
+      ### 
+      ### Build URL, send request and write response to JSON file
+      request = function(debug = FALSE) {
+          
+          # Check 'type' argument
+          if(!(private$req_type %in% c("summary", "time", "intraday"))) {
+              stop("Invalid type of data. Must be 'summary', 'time' or 'intraday'")
+          }
+          
+          ## /!\ TO-DO: check all arguments formats
+          ## 
+          ## 
+          ## 
+          
+          # Build URL for request 
+          if (private$req_type == "summary") {
+              private$req_url <- paste("activities/date", 
+                                       private$req_start_date,
+                                       sep = "/")
               
-              # Check 'type' argument
-              if(!(type %in% c("summary", "time", "intraday"))) {
-                  stop("Invalid type of data. Must be 'summary', 'time' or 'intraday'")
-              }
-              
-              ## /!\ TO-DO: check all arguments formats
-              
-              
-              
-              # Build URL for request 
-              if (type == "summary") {
-                  get_url <- paste("activities", 
-                                   start_date,
-                                   sep = "/")
-              } else if (type %in% c("time", "intraday")) {
-                  get_url <- paste("activities", 
-                                   activity, 
-                                   "date",
-                                   start_date,
-                                   end_date,
-                                   sep = "/")
-              }
-              if (type == "intraday") {
-                  get_url <- paste(get_url,
-                                   detail_level,
-                                   sep = "/")
-              }
-              
-              get_url <- paste("https://api.fitbit.com/1/user/-/",
-                               get_url,
-                               ".json",
-                               sep = "")    
-              
-              # Send the request
-              self$connect()
-              response <- GET(url = get_url, config(token = private$api_token))
-              warn_for_status(response)
-              
-              # Writes the response content into a JSON file
-              json_file <- paste(type, activity, start_date, end_date, detail_level, sep = "_")
-              json_file <- paste("./inst/extdata/tests/", json_file, ".json", sep = "")
-              resp_content <- content(response, as = "text")
-              write(resp_content, json_file)
-              
-        }
-              
-      )
-                      
+          } else if (private$req_type %in% c("time", "intraday")) {
+              private$req_url <- paste("activities", 
+                                       private$req_activity, 
+                                       "date",
+                                       private$req_start_date,
+                                       private$req_end_date,
+                                       sep = "/")
+          }
+          
+          if (private$req_type == "intraday") {
+              private$req_url <- paste(private$req_url,
+                                       private$req_detail_level,
+                                       sep = "/")
+          }
+          
+          private$req_url <- paste("https://api.fitbit.com/1/user/-/",
+                                   private$req_url,
+                                   ".json",
+                                   sep = "")    
+          
+          # Send the request
+          self$response <- GET(url = private$req_url, config(token = private$api_token))
+          warn_for_status(self$response)
+          if(debug == TRUE) print(private$req_url)
+          
+      },
+      
+      ### FUNCTION Write
+      ### 
+      ### Writes the result to a JSON file
+       
+      write = function(debug = FALSE) {
+          
+          # Writes the response content into a JSON file
+          json_file <- paste(private$req_type, 
+                             private$req_activity, 
+                             private$req_start_date, 
+                             private$req_end_date, 
+                             private$req_detail_level, 
+                             sep = "_")
+          json_file <- paste("./inst/extdata/tests/", json_file, ".json", sep = "")
+          resp_content <- content(self$response, as = "text")
+          write(resp_content, json_file)
+          if(debug == TRUE) print(json_file)
+          
+      }
+      
+      
+  ),
+  
+  public = list (
+      
+      # Request response
+      response = NA,
+      
+      ### FUNCTION Initialize
+      
+      initialize = function(
+          appname = "cdlr",
+          key = "227FWR",
+          secret = "3089e3d1ac5dde1aa00b54a0c8661f42",
+          scope = c("activity", "heartrate", "location","nutrition", 
+                    "profile", "settings","sleep", "social", "weight")
+      ) {
+          private$api_appname <- appname
+          private$api_key <- key
+          private$api_secret <- secret
+          private$scope <- scope
+      },
+      
+      
+      ### FUNCTION Get
+      # Public function that stocks variables and calls other functions for the request
+      
+      get = function(type = "summary", 
+                     activity = "", 
+                     start_date = Sys.Date(), 
+                     end_date = "", 
+                     detail_level = "") {
+          
+          # Stock variables
+          private$req_type <- type
+          private$req_activity <- activity
+          private$req_start_date <- start_date
+          private$req_end_date <- end_date
+          private$req_detail_level <- detail_level
+          
+          # Call functions for authentication, request, and JSON writing
+          private$connect()
+          private$request(debug = TRUE)
+          private$write(debug = TRUE)
+          
+      }
+      
+  )
+                  
 )
 
+### Bulk requests using our DataLoader object
 
-TestRequest <- DataLoader$new()
-TestRequest$get(type = 'intraday', 
-                activity = 'steps', 
-                start_date = '2016-02-03', 
-                detail_level = '1min')
+BulkRequest <- DataLoader$new()
 
+for(i in paste("2016-02-", c("01", "02", "03", "04", "05"), sep = "")) {
+    BulkRequest$get(type = 'summary', start_date = i)
+    BulkRequest$get(type = 'time', end_date = "7d", start_date = i)
+    BulkRequest$get(type = 'intraday', start_date = i, end_date = "1d", detail_level = "15min")
+    BulkRequest$get(type = 'intraday', start_date = i, end_date = "1d", detail_level = "1min")
+}
 
 ######## TYPES OF DATA
 ######## https://dev.fitbit.com/docs/activity/
