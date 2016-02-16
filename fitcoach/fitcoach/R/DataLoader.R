@@ -178,9 +178,9 @@ BulkRequest <- DataLoader$new()
 
 for(i in paste("2016-02-", c("01", "02", "03", "04", "05"), sep = "")) {
     BulkRequest$get(type = 'summary', start_date = i)
-    BulkRequest$get(type = 'time', end_date = "7d", start_date = i)
-    BulkRequest$get(type = 'intraday', start_date = i, end_date = "1d", detail_level = "15min")
-    BulkRequest$get(type = 'intraday', start_date = i, end_date = "1d", detail_level = "1min")
+    BulkRequest$get(type = 'time', activity = 'steps', end_date = "7d", start_date = i)
+    BulkRequest$get(type = 'intraday', activity = 'steps', start_date = i, end_date = "1d", detail_level = "15min")
+    BulkRequest$get(type = 'intraday', activity = 'steps', start_date = i, end_date = "1d", detail_level = "1min")
 }
 
 ######## TYPES OF DATA
