@@ -29,7 +29,30 @@ DataLoader <- R6Class("DataLoader",
       req_start_date = NA,
       req_end_date = NA,
       req_detail_level = NA,
-      req_url = NA,
+      req_url = NA
+      
+  ),
+  
+  public = list (
+      
+      # Request response
+      response = NA,
+      
+      ### FUNCTION Initialize
+      
+      initialize = function(
+          appname = "cdlr",
+          key = "227FWR",
+          secret = "3089e3d1ac5dde1aa00b54a0c8661f42",
+          scope = c("activity", "heartrate", "location","nutrition", 
+                    "profile", "settings","sleep", "social", "weight")
+      ) {
+          private$api_appname <- appname
+          private$api_key <- key
+          private$api_secret <- secret
+          private$scope <- scope
+      },
+      
       
       ### FUNCTION Connect
       ### 
@@ -104,7 +127,7 @@ DataLoader <- R6Class("DataLoader",
       ### FUNCTION Write
       ### 
       ### Writes the result to a JSON file
-       
+      
       write = function(debug = FALSE) {
           
           # Writes the response content into a JSON file
@@ -119,31 +142,7 @@ DataLoader <- R6Class("DataLoader",
           write(resp_content, json_file)
           if(debug == TRUE) print(json_file)
           
-      }
-      
-      
-  ),
-  
-  public = list (
-      
-      # Request response
-      response = NA,
-      
-      ### FUNCTION Initialize
-      
-      initialize = function(
-          appname = "cdlr",
-          key = "227FWR",
-          secret = "3089e3d1ac5dde1aa00b54a0c8661f42",
-          scope = c("activity", "heartrate", "location","nutrition", 
-                    "profile", "settings","sleep", "social", "weight")
-      ) {
-          private$api_appname <- appname
-          private$api_key <- key
-          private$api_secret <- secret
-          private$scope <- scope
       },
-      
       
       ### FUNCTION Get
       # Public function that stocks variables and calls other functions for the request
@@ -162,9 +161,9 @@ DataLoader <- R6Class("DataLoader",
           private$req_detail_level <- detail_level
           
           # Call functions for authentication, request, and JSON writing
-          private$connect()
-          private$request(debug = TRUE)
-          private$write(debug = TRUE)
+          self$connect()
+          self$request(debug = TRUE)
+          self$write(debug = TRUE)
           
       }
       
