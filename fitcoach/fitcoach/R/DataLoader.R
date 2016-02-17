@@ -38,8 +38,9 @@ DataLoader <- R6Class("DataLoader",
       # Request response
       response = NA,
       
-      # JSON extract
+      # JSON extracts
       json_list = NA,
+      json_df = NA,
       
       ### FUNCTION Initialize
       
@@ -181,8 +182,9 @@ DataLoader <- R6Class("DataLoader",
                                          simplifyDataFrame = TRUE)
 
           ## /!\ 2DO: convert to Data frames, depending on the type of data
-          
-          self$json_list
+          ## And need to simplify Data Frame, to only get relevant data
+          self$json_df <- as.data.frame(self$json_list)
+          self$json_df
           
       }
        
@@ -206,7 +208,6 @@ for(i in paste("2016-02-", c("01", "02", "03", "04", "05"), sep = "")) {
 file_name <- "intraday_steps_2016-02-01_1d_15min.json"
 file_path <- "./inst/extdata/tests/"
 json_raw <- BulkRequest$readToDF(file = file_name, path = file_path)
-# WIP
 
 
 
