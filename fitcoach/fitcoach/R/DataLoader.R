@@ -38,6 +38,9 @@ DataLoader <- R6Class("DataLoader",
       # Request response
       response = NA,
       
+      # JSON extract
+      json_list = NA,
+      
       ### FUNCTION Initialize
       
       initialize = function(
@@ -145,7 +148,7 @@ DataLoader <- R6Class("DataLoader",
       },
       
       ### FUNCTION Get
-      # Public function that stocks variables and calls other functions for the request
+      # Stocks variables and calls other functions for the request
       
       get = function(type = "summary", 
                      activity = "", 
@@ -165,8 +168,24 @@ DataLoader <- R6Class("DataLoader",
           self$request(debug = TRUE)
           self$write(debug = TRUE)
           
-      }
+      },
       
+      ### FUNCTION Read to DF
+      # Reads JSON files and convert them to Dataframes
+      
+      readToDF = function(file, path) {
+          
+          file_path <- paste(path, file, sep = "")
+          self$json_list <- jsonlite::fromJSON(file_path, 
+                                         flatten = TRUE, 
+                                         simplifyDataFrame = TRUE)
+
+          ## /!\ 2DO: convert to Data frames, depending on the type of data
+          
+          self$json_list
+          
+      }
+       
   )
                   
 )
@@ -181,6 +200,13 @@ for(i in paste("2016-02-", c("01", "02", "03", "04", "05"), sep = "")) {
     BulkRequest$get(type = 'intraday', activity = 'steps', start_date = i, end_date = "1d", detail_level = "15min")
     BulkRequest$get(type = 'intraday', activity = 'steps', start_date = i, end_date = "1d", detail_level = "1min")
 }
+
+### Read JSON files and convert them to Data Frames
+
+file_name <- "intraday_steps_2016-02-01_1d_15min.json"
+file_path <- "./inst/extdata/tests/"
+json_raw <- BulkRequest$readToDF(file = file_name, path = file_path)
+
 
 ######## TYPES OF DATA
 ######## https://dev.fitbit.com/docs/activity/
