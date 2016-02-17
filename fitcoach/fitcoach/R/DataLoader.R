@@ -206,54 +206,7 @@ for(i in paste("2016-02-", c("01", "02", "03", "04", "05"), sep = "")) {
 file_name <- "intraday_steps_2016-02-01_1d_15min.json"
 file_path <- "./inst/extdata/tests/"
 json_raw <- BulkRequest$readToDF(file = file_name, path = file_path)
-
-
-######## TYPES OF DATA
-######## https://dev.fitbit.com/docs/activity/
-
-### Daily Activity Summary
-# https://api.fitbitcom/1/user/[user-id]/activities/date/[date].json
-# 
-### Activity Time Series
-# /1/user/[user-id]/[resource-path]/date/[date]/[period].json
-# /1/user/[user-id]/[resource-path]/date/[base-date]/[end-date].json
-# 
-## ACTIVITY
-# 
-# activities/calories  
-# activities/caloriesBMR  
-# activities/steps  
-# activities/distance  
-# activities/floors  
-# activities/elevation  
-# activities/minutesSedentary  
-# activities/minutesLightlyActive  
-# activities/minutesFairlyActive  
-# activities/minutesVeryActive  
-# activities/activityCalories
-# 
-# 
-## TRACKER ACTIVITY
-# 
-# activities/tracker/calories  
-# activities/tracker/steps  
-# activities/tracker/distance  
-# activities/tracker/floors  
-# activities/tracker/elevation  
-# activities/tracker/minutesSedentary  
-# activities/tracker/minutesLightlyActive  
-# activities/tracker/minutesFairlyActive  
-# activities/tracker/minutesVeryActive  
-# activities/tracker/activityCalories
-# 
-### Intraday Times Series
-# 
-# GET https://api.fitbit.com/1/user/-/[resource-path]/date/[date]/[date]/[detail-level].json
-# GET https://api.fitbit.com/1/user/-/[resource-path]/date/[date]/1d/[detail-level].json
-# GET https://api.fitbit.com/1/user/-/[resource-path]/date/[date]/[date]/[detail-level]/time/[start-time]/[end-time].json
-# GET https://api.fitbit.com/1/user/-/[resource-path]/date/[date]/1d/[detail-level]/time/[start-time]/[end-time].json
-# 
-# 
+# WIP
 
 
 
