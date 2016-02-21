@@ -63,16 +63,15 @@ DataLoader <- R6Class("DataLoader",
       ### API Connection
       connect = function() {
           
-          fitbit_endpoint <- httr::oauth_endpoint(
+          fitbit_api <- httr::oauth_endpoint(
               request = private$api_url_request,
               authorize = private$api_url_authorize,
               access = private$api_url_request
           )
           
-          # Get OAuth token
           private$api_token <-
               httr::oauth2.0_token(
-                  fitbit_endpoint,
+                  fitbit_api,
                   httr::oauth_app(private$api_appname, private$api_key, private$api_secret),
                   scope = private$scope,
                   use_basic_auth = TRUE
@@ -86,15 +85,14 @@ DataLoader <- R6Class("DataLoader",
       request = function(debug = FALSE) {
           
           # Check 'type' argument
-          if(!(private$req_type %in% c("summary", "time", "intraday"))) {
-              stop("Invalid type of data. Must be 'summary', 'time' or 'intraday'")
-          }
+          if(!(private$req_type %in% c("summary", "time", "intraday")))
+              stop("Invalid 'req_type'. Must be 'summary', 'time' or 'intraday'")
           
-          ## /!\ TO-DO: check all arguments formats
-          ## 
-          ## 
-          ## 
+          # Check 'start_date' argument
+          if(!(grepl("^[0-9]{4}-[0-9]{2}-[0-9]{2}$", private$req_start_date)))
+              stop("Invalid 'start_date'. Must be in the following format: 'YYYY-MM-dd'")
           
+
           # Build URL for request 
           if (private$req_type == "summary") {
               private$req_url <- paste("activities/date", 
