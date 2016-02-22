@@ -58,10 +58,47 @@ createTsMasterFrame <- function(tsFileFolder, resourcePath = getResourcePathList
     return(df)
   })
   masterdf <- as.data.frame(dflist[1])
+
+
   for(i in 2:length(dflist)){
     masterdf <- merge(masterdf , as.data.frame(dflist[i]) , by = "datetime")
+    #masterdf[,i] <- as.numeric(masterdf[,i])
   }
+
+  masterdf$datetime <- as.Date(masterdf$datetime)
+  lapply(2:ncol(masterdf), function(x) {
+    masterdf[,x] <<- as.numeric(masterdf[,x]);
+  })
   return(masterdf)
+}
+
+
+createGoalVariableVector <- function(master , goal){
+  y <-  eval(parse(text = paste("master$" , goal , sep = "")))
+}
+
+createDependentVariableFrame <- function(master , goal){
+  master$datetime <- NULL
+  #remove variables out of individuals direct control : eg calories
+  master$calories <- NULL
+  master$caloriesBMR <- NULL
+  master$activityCalories <- NULL
+  master$valid <- NULL
+  master$holiday <- ifelse(master$weekend , 1 , 0)
+  master$weekday <- NULL
+  master$weekend <- NULL
+  eval(parse(text = paste("master$" , goal , " = NULL" ,  sep = "")))
+  return(master)
+}
+
+
+augmentData <- function(masterTsDataFrame){
+  ## augment weekday information
+  masterTsDataFrame$weekday <- weekdays(as.Date(masterTsDataFrame$datetime))
+  masterTsDataFrame$weekday <- as.factor(masterTsDataFrame$weekday)
+  masterTsDataFrame$weekend <- ifelse(masterTsDataFrame$weekday == "Saturday" | masterTsDataFrame$weekday == "Sunday" , TRUE , FALSE)
+  return(masterTsDataFrame)
+
 }
 
 #' A function that incorporates rules for marking if the data entry in MasterTSFrame are valid or not
