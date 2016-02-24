@@ -85,8 +85,8 @@ DataLoader <- R6Class("DataLoader",
       request = function(debug = FALSE) {
           
           # Check 'type' argument
-          if(!(private$req_type %in% c("summary", "time", "intraday")))
-              stop("Invalid 'req_type'. Must be 'summary', 'time' or 'intraday'")
+          if(!(private$req_type %in% c("day", "intraday")))
+              stop("Invalid 'req_type'. Must be 'day' or 'intraday'")
           
           # Check 'start_date' argument
           if(!(grepl("^[0-9]{4}-[0-9]{2}-[0-9]{2}$", private$req_start_date)))
@@ -94,19 +94,12 @@ DataLoader <- R6Class("DataLoader",
           
 
           # Build URL for request 
-          if (private$req_type == "summary") {
-              private$req_url <- paste("activities/date", 
-                                       private$req_start_date,
-                                       sep = "/")
-              
-          } else if (private$req_type %in% c("time", "intraday")) {
-              private$req_url <- paste("activities", 
-                                       private$req_activity, 
-                                       "date",
-                                       private$req_start_date,
-                                       private$req_end_date,
-                                       sep = "/")
-          }
+          private$req_url <- paste("activities", 
+                                   private$req_activity, 
+                                   "date",
+                                   private$req_start_date,
+                                   private$req_end_date,
+                                   sep = "/")
           
           if (private$req_type == "intraday") {
               private$req_url <- paste(private$req_url,
@@ -122,34 +115,37 @@ DataLoader <- R6Class("DataLoader",
           # Send the request
           self$response <- GET(url = private$req_url, config(token = private$api_token))
           warn_for_status(self$response)
-          if(debug == TRUE) print(private$req_url)
-          
+
       },
       
       ### FUNCTION Write
       ### 
       ### Writes the result to a JSON file
       
-      write = function(debug = FALSE) {
+      write = function() {
           
           # Writes the response content into a JSON file
-          json_file <- paste(private$req_type, 
-                             private$req_activity, 
-                             private$req_start_date, 
-                             private$req_end_date, 
-                             private$req_detail_level, 
-                             sep = "_")
+          if(private$req_type == 'day') {
+              json_file <- paste("max",
+                                 private$req_activity, 
+                                 sep = "-")
+          } else if (private$req_type == 'intraday') {
+              json_file <- paste("intraday",
+                                 private$req_activity, 
+                                 private$detail_level,
+                                 sep = "-")
+          }
+          
           json_file <- paste("./inst/extdata/tests/", json_file, ".json", sep = "")
           resp_content <- content(self$response, as = "text")
           write(resp_content, json_file)
-          if(debug == TRUE) print(json_file)
-          
+
       },
       
       ### FUNCTION Get
       # Stocks variables and calls other functions for the request
       
-      get = function(type = "summary", 
+      get = function(type = "day", 
                      activity = "", 
                      start_date = Sys.Date(), 
                      end_date = "", 
@@ -164,28 +160,11 @@ DataLoader <- R6Class("DataLoader",
           
           # Call functions for authentication, request, and JSON writing
           self$connect()
-          self$request(debug = TRUE)
-          self$write(debug = TRUE)
-          
-      },
-      
-      ### FUNCTION Read to DF
-      # Reads JSON files and convert them to Dataframes
-      
-      readToDF = function(file, path) {
-          
-          file_path <- paste(path, file, sep = "")
-          self$json_list <- jsonlite::fromJSON(file_path, 
-                                         flatten = TRUE, 
-                                         simplifyDataFrame = TRUE)
-
-          ## /!\ 2DO: convert to Data frames, depending on the type of data
-          ## And need to simplify Data Frame, to only get relevant data
-          self$json_df <- as.data.frame(self$json_list)
-          self$json_df
+          self$request()
+          self$write()
           
       }
-       
+      
   )
                   
 )
@@ -194,18 +173,23 @@ DataLoader <- R6Class("DataLoader",
 
 BulkRequest <- DataLoader$new()
 
-for(i in paste("2016-02-", c("01", "02", "03", "04", "05"), sep = "")) {
-    BulkRequest$get(type = 'summary', start_date = i)
-    BulkRequest$get(type = 'time', activity = 'steps', end_date = "7d", start_date = i)
-    BulkRequest$get(type = 'intraday', activity = 'steps', start_date = i, end_date = "1d", detail_level = "15min")
-    BulkRequest$get(type = 'intraday', activity = 'steps', start_date = i, end_date = "1d", detail_level = "1min")
+bulk_activities <- list(
+    "calories",
+    "caloriesBMR",
+    "steps",
+    "distance",
+    "floors",
+    "elevation",
+    "minutesSedentary",
+    "minutesLightlyActive",
+    "minutesFairlyActive",
+    "minutesVeryActive",
+    "activityCalories"
+)
+
+lapply(bulk_activities, function(x) {
+    BulkRequest$get(type = 'day', activity = x, start_date = "2016-01-20", end_date = "2016-02-05")
 }
-
-### Read JSON files and convert them to Data Frames
-
-file_name <- "intraday_steps_2016-02-01_1d_15min.json"
-file_path <- "./inst/extdata/tests/"
-json_raw <- BulkRequest$readToDF(file = file_name, path = file_path)
-
+    )
 
 
