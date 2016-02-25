@@ -1,6 +1,7 @@
 library(httr)
 library(jsonlite)
 
+
 #-----------------------------------------------------------------------------------
 # Utility for Fitbit coach package
 #
@@ -25,6 +26,7 @@ fetchAndStoreFile <- function(request_url , token , targetFile ){
   return(targetFile)
 }
 
+#' @export
 getResourcePathList <- function(){
   resourcePath <- list(
     "calories",
@@ -72,11 +74,12 @@ createTsMasterFrame <- function(tsFileFolder, resourcePath = getResourcePathList
   return(masterdf)
 }
 
-
+#' @export
 createGoalVariableVector <- function(master , goal){
   y <-  eval(parse(text = paste("master$" , goal , sep = "")))
 }
 
+#' @export
 createDependentVariableFrame <- function(master , goal){
   master$datetime <- NULL
   #remove variables out of individuals direct control : eg calories
@@ -91,7 +94,7 @@ createDependentVariableFrame <- function(master , goal){
   return(master)
 }
 
-
+#' @export
 augmentData <- function(masterTsDataFrame){
   ## augment weekday information
   masterTsDataFrame$weekday <- weekdays(as.Date(masterTsDataFrame$datetime))

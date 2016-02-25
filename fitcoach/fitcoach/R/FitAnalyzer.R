@@ -12,20 +12,20 @@
 #' @export FitAnalyzer
 #' @section Methods:
 #' \describe{
-#'  \item{\code{analyze.ts.daily(ts.daily.json.folder)}}{This method uses \code{trip} as an argument to return a plot of 4 features (X-Y coordinates, velocity, acceleration, breaks).}
+#'  \item{\code{getTsDailyFrame(ts.daily.json.folder) }{This method uses \code{ts.daily.json.folder} as an argument to return a data.frame that is clean and augmented with additional features like weekend.}
 #' }
+#'
+#'
+#library(R6)
+#library(jsonlite)
+#library(glmnet)
+#source(file = "FitUtil.R")
 
- library(R6)
- library(jsonlite)
- library(glmnet)
- source(file = "FitUtil.R")
-
-FitAnalyzer <- R6Class("FitAnalyzer" ,
-                        public = list(
-                          dummy <- NA,
-                          initialize = function(){
-                            cat("init called")
-                          },
+FitAnalyzer <- R6Class("FitAnalyzer",
+                       public = list(
+                         initialize = function(){
+                           cat("init called")
+                         },
                          getTsDailyFrame = function(ts.daily.json.folder = NA){
                            private$ts.daily.json.folder <- ts.daily.json.folder
                            master <- createTsMasterFrame(ts.daily.json.folder)
@@ -40,9 +40,10 @@ FitAnalyzer <- R6Class("FitAnalyzer" ,
                          getGoal = function(){
                            return(private$goal)
                          }
-                         ),
-                        private = list(
-                           ts.daily.json.folder = NA,
-                          goal = NA
-                        )
-                    )
+                       ),
+                       private = list(
+                         ts.daily.json.folder = NA,
+                         goal = NA
+                       )
+)
+
