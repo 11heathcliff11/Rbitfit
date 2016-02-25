@@ -7,12 +7,16 @@
 #' @docType class
 #' @import R6
 #' @import jsonlite
+#' @import stats
+#' @import caret
+#' @import dplyr
 #' @format A \code{\link{R6Class}} generator object
 #' @keywords data
 #' @export FitAnalyzer
 #' @section Methods:
 #' \describe{
-#'  \item{\code{getTsDailyFrame(ts.daily.json.folder) }{This method uses \code{ts.daily.json.folder} as an argument to return a data.frame that is clean and augmented with additional features like weekend.}
+#'  \item{\code{getTsDailyFrame(ts.daily.json.folder) }{This method uses \code{ts.daily.json.folder} as an
+#'   argument to return a data.frame that is clean and augmented with additional features like weekend.}
 #' }
 #'
 #'
@@ -20,6 +24,9 @@
 #library(jsonlite)
 #library(glmnet)
 #source(file = "FitUtil.R")
+#library(stats)
+#library(caret)
+#library(dplyr)
 
 FitAnalyzer <- R6Class("FitAnalyzer",
                        public = list(
@@ -39,6 +46,16 @@ FitAnalyzer <- R6Class("FitAnalyzer",
                          },
                          getGoal = function(){
                            return(private$goal)
+                         },
+                         findImportantVariables = function(goal = getGoal() , tsDataFrame){
+                          y <- createGoalVariableVector(master = tsDataFrame , goal = goal)
+                          x <- createDependentVariableFrame(master = tsDataFrame , goal = goal)
+                          x <- as.matrix(x)
+                          fit <- glm(y~x , family = "gaussian")
+                          imp<- varImp(fit , scale = FALSE)
+                          imp$name <- rownames(imp)
+                          imp <- arrange(imp , -Overall)
+                          return(imp)
                          }
                        ),
                        private = list(
@@ -46,4 +63,5 @@ FitAnalyzer <- R6Class("FitAnalyzer",
                          goal = NA
                        )
 )
+
 

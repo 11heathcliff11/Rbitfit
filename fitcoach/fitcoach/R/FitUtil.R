@@ -61,7 +61,6 @@ createTsMasterFrame <- function(tsFileFolder, resourcePath = getResourcePathList
     })
     masterdf <- as.data.frame(dflist[1])
 
-
     for(i in 2:length(dflist)){
         masterdf <- merge(masterdf , as.data.frame(dflist[i]) , by = "datetime")
         #masterdf[,i] <- as.numeric(masterdf[,i])
@@ -90,7 +89,7 @@ createDependentVariableFrame <- function(master , goal){
     master$holiday <- ifelse(master$weekend , 1 , 0)
     master$weekday <- NULL
     master$weekend <- NULL
-    eval(parse(text = paste("master$" , goal , " = NULL" ,  sep = "")))
+    eval(parse(text = paste("master$" , goal , " <- NULL" ,  sep = "")))
     return(master)
 }
 

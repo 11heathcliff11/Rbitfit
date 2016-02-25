@@ -12,7 +12,9 @@ Imports:
     R6,
     jsonlite,
     glmnet,
-    httr
+    httr,
+    dplyr,
+    caret
 LazyData: TRUE
 Suggests: testthat, knitr
 RoxygenNote: 5.0.1
