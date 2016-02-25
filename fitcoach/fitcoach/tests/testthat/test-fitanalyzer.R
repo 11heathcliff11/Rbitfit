@@ -13,3 +13,5 @@ test_that("FitAnalyzer test cases", {
   # write test case 2 here
 
 })
+
+

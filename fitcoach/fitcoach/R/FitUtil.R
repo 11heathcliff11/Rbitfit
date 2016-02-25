@@ -27,7 +27,7 @@ fetchAndStoreFile <- function(request_url , token , targetFile ){
 }
 
 #' @export
-getResourcePathList <- function(){
+getResourcePathList <- function() {
     resourcePath <- list(
         "calories",
         "caloriesBMR",
@@ -114,4 +114,109 @@ markValidRows <- function(masterTsDataFrame){
   return(masterTsDataFrame)
 }
 
+######
+###### Utility functions for DataLoader R6 Class
+######
 
+#' Gets the scopes that will be retrieved by the API request
+#' 
+#' @export
+
+getAPIScope <- function() {
+    APIScope <- c(
+        "activity", 
+        "heartrate", 
+        "location",
+        "nutrition",
+        "profile", 
+        "settings",
+        "sleep", 
+        "social", 
+        "weight"
+    )
+    return (APIScope)
+}
+
+#' Connects to Fibit API with OAuth 2
+#' 
+#' @param appname Name of the Fitbit App
+#' @param key Fitbit API Client key
+#' @param secret Fibit API Client secret
+#' @import httr
+
+connectToAPI <- function(appname, key, secret) {
+    
+    fitbit_api <- httr::oauth_endpoint(
+        request = "https://api.fitbit.com/oauth2/token",
+        authorize = "https://www.fitbit.com/oauth2/authorize",
+        access = "https://api.fitbit.com/oauth2/token"
+    )
+    
+    api_token <-
+        httr::oauth2.0_token(
+            fitbit_api,
+            httr::oauth_app(appname, key, secret),
+            scope = getAPIScope(),
+            use_basic_auth = TRUE
+        )
+    
+    return(api_token)
+    
+}
+
+
+#' Make request to Fitbit API
+#' 
+#' @param type Type of time series. Must be 'day' or 'intraday'
+#' @param activity Type of activity. See below for details.
+#' @param start_date Start date in format YYYY-mm-dd
+#' @param start_date End date in format YYYY-mm-dd
+#' @param detail_level For intraday time series, specifies the granularity of time interval. Must be '1min' or '15min'.
+#' @param path Folder path where JSON files will be created
+#' @param api_token API token for connection to Fitbit API
+
+makeAPIRequest <- function(type, activity, start_date, end_date, detail_level, path, api_token) {
+    
+    # Check 'type' argument
+    if(!(type %in% c("day", "intraday")))
+        stop("Invalid 'req_type'. Must be 'day' or 'intraday'")
+    
+    # Check 'start_date' argument
+    if(!(grepl("^[0-9]{4}-[0-9]{2}-[0-9]{2}$", start_date)))
+        stop("Invalid 'start_date'. Must be in the following format: 'YYYY-MM-dd'")
+    
+    
+    # Build URL for request
+    req_url <- paste("activities",
+                     activity,
+                     "date",
+                     start_date,
+                     end_date,
+                     sep = "/")
+    
+    if (type == "intraday") {
+        req_url <- paste(req_url,
+                         detail_level,
+                         sep = "/")
+    }
+    
+    req_url <- paste("https://api.fitbit.com/1/user/-/",
+                     req_url,
+                     ".json",
+                     sep = "")
+    
+    # Send the request
+    response <- GET(url = req_url, config(token = api_token))
+    warn_for_status(response)
+    return(response)
+
+}
+
+
+#' Writes API response content to JSON files
+
+writeToJSON <- function(type, activity, path) {
+    
+    # WIP
+
+}
