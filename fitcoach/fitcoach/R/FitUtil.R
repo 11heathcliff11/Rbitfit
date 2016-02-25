@@ -53,21 +53,20 @@ getResourcePathList <- function(){
 #' @export
 
 createTsMasterFrame <- function(tsFileFolder, resourcePath = getResourcePathList()) {
-    
     dflist <- lapply(resourcePath, function(x){
-        df <- as.data.frame(fromJSON(paste(tsFileFolder , "max-" , x ,".json" , sep = "") , simplifyDataFrame = TRUE));
+        df <- as.data.frame(fromJSON(paste(tsFileFolder , .Platform$file.sep , "max-" , x ,".json" , sep = "") , simplifyDataFrame = TRUE));
         colnames(df)[1] <- "datetime";
         colnames(df)[2] <- x;
         return(df)
     })
     masterdf <- as.data.frame(dflist[1])
-    
-    
+
+
     for(i in 2:length(dflist)){
         masterdf <- merge(masterdf , as.data.frame(dflist[i]) , by = "datetime")
         #masterdf[,i] <- as.numeric(masterdf[,i])
     }
-    
+
     masterdf$datetime <- as.Date(masterdf$datetime)
     lapply(2:ncol(masterdf), function(x) {
         masterdf[,x] <<- as.numeric(masterdf[,x]);
@@ -102,7 +101,7 @@ augmentData <- function(masterTsDataFrame){
     masterTsDataFrame$weekday <- as.factor(masterTsDataFrame$weekday)
     masterTsDataFrame$weekend <- ifelse(masterTsDataFrame$weekday == "Saturday" | masterTsDataFrame$weekday == "Sunday" , TRUE , FALSE)
     return(masterTsDataFrame)
-    
+
 }
 
 #' A function that incorporates rules for marking if the data entry in MasterTSFrame are valid or not
