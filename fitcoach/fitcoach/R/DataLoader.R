@@ -140,28 +140,3 @@ DataLoader <- R6Class("DataLoader",
   
 )
 
-### Bulk requests using our DataLoader object
-
-
-#BulkRequest <- DataLoader$new()
-
-#bulk_activities <- list(
-#    "calories",
-#    "caloriesBMR",
-#    "steps",
-#    "distance",
-#    "floors",
-#    "elevation",
-#    "minutesSedentary",
-#    "minutesLightlyActive",
-#    "minutesFairlyActive",
-#    "minutesVeryActive",
-#    "activityCalories"
-#)
-
-#lapply(bulk_activities, function(x) {
-#    BulkRequest$get(type = 'day', activity = x, start_date = "2016-01-20", end_date = "2016-02-05")
-#}
-#    )
-
-
