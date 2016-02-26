@@ -19,3 +19,5 @@ test_that("FitAnalyzer test cases", {
    ana$showMostImportantCharts(ts)
 
 })
+
+

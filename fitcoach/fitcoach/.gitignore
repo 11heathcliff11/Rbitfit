@@ -1,2 +1,4 @@
 .httr-oauth
 man/
+.RData
+.Rhistory
