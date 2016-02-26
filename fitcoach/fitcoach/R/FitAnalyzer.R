@@ -24,10 +24,10 @@
 #library(jsonlite)
 #library(glmnet)
 #source(file = "FitUtil.R")
+#source(file = "FitChartsUtil.R")
 #library(stats)
 #library(caret)
 #library(dplyr)
-
 FitAnalyzer <- R6Class("FitAnalyzer",
                        public = list(
                          initialize = function(){
@@ -55,12 +55,17 @@ FitAnalyzer <- R6Class("FitAnalyzer",
                           imp<- varImp(fit , scale = FALSE)
                           imp$name <- rownames(imp)
                           imp <- arrange(imp , -Overall)
+                          private$imp.vars = imp
                           return(imp)
+                         },
+                         showMostImportantCharts = function(tsDataFrame){
+                           showCharts(tsDataFrame , c("minutesLightlyActive"))
                          }
                        ),
                        private = list(
                          ts.daily.json.folder = NA,
-                         goal = NA
+                         goal = NA,
+                         imp.vars = NA
                        )
 )
 

@@ -27,8 +27,9 @@ t <- GET(oauthString)
 
 ## Take the oauthString. Type in Browser and get the token from the redirected URL. Put the token String into the token field below
 
+token <- 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0NTcwMzcwNDQsInNjb3BlcyI6Indwcm8gd2xvYyB3bnV0IHdzbGUgd3NldCB3aHIgd3dlaSB3YWN0IHdzb2MiLCJzdWIiOiIzTUc0Q1kiLCJhdWQiOiIyMjlXUlkiLCJpc3MiOiJGaXRiaXQiLCJ0eXAiOiJhY2Nlc3NfdG9rZW4iLCJpYXQiOjE0NTY0MzIyNDR9.tnqU5euJHaX_o8OgpwGnksmFad31McWUE8DKM3Ub5E4'
 
-token <- 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0NTUxOTM0NjksInNjb3BlcyI6Indwcm8gd2xvYyB3bnV0IHdzbGUgd3NldCB3aHIgd3dlaSB3YWN0IHdzb2MiLCJzdWIiOiIzTUc0Q1kiLCJhdWQiOiIyMjlXUlkiLCJpc3MiOiJGaXRiaXQiLCJ0eXAiOiJhY2Nlc3NfdG9rZW4iLCJpYXQiOjE0NTUwNzQ4NTh9.M_QpMTbsGQp779qtsO4iZa9obNsESFcP3iUwUuvJd7Y'
+
 
 
 #Get Data for December days
@@ -44,9 +45,6 @@ request <- GET(request_url,
 bin <- content(request , as = "text")
 fileName <- paste('max-time' , d , '.json' , sep = "")
 writeBin(bin, fileName)
-
-
-
 
 for( d in days){
   request_url <- paste('https://api.fitbit.com/1/user/-/activities/date/2015-12-' ,
@@ -72,6 +70,21 @@ writeBin(bin, "myfile.json")
 str(content(request))
 headers(request)
 
+
+# INTRADAY data.
+intradayTsURL <- '/1/user/-/activities/calories/date/2014-09-01/1d/15min/time/12:30/12:45.json'
+
+request_url <-'https://api.fitbit.com/1/user/-/activities/calories/date/2015-12-01/1d/15min/time/00:00/23:59.json'
+
+request <- GET(request_url,
+               add_headers("Authorization"= token))
+
+bin <- content(request , as = "text")
+fileName <- paste('intra-2015-12-' , '01' , '.json' , sep = "")
+write(bin, fileName)
+
+
+df <- as.data.frame(fromJSON("C:/Users/webscale/Documents/GitHub/Rbitfit/intra-2015-12-01.json" , simplifyDataFrame = TRUE))
 
 
 
