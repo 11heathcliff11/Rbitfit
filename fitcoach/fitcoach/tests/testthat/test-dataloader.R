@@ -12,6 +12,11 @@ BulkRequest$connect(appname = "cdlr",
                     key = "227FWR",
                     secret = "3089e3d1ac5dde1aa00b54a0c8661f42"
                     )
+
+connectToAPI(appname = "cdlr",
+             key = "227FWR",
+             secret = "3089e3d1ac5dde1aa00b54a0c8661f42")
+
 expect_equal(BulkRequest$api_token$app$key, "227FWR")
 
 BulkRequest$request(type = 'day', 

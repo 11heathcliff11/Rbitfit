@@ -16,42 +16,20 @@
 #library('R6')
 #library('httr')
 DataLoader <- R6Class("DataLoader",
-  private = list(
-      # API URLs for authentication
-      api_url_request = "https://api.fitbit.com/oauth2/token",
-      api_url_authorize = "https://www.fitbit.com/oauth2/authorize",
-      api_url_access = "https://api.fitbit.com/oauth2/token",
-
-      # Authentication settings
-      api_token = NA,
-      api_appname = NA,
-      api_key = NA,
-      api_secret = NA,
-
-      # Scope of activities to be retrieved
-      # See http://dev.fitbit.com/docs/oauth2/#scope
-      scope = NA,
-
-      # Request paramaters
-      req_type = NA,
-      req_activity = NA,
-      req_start_date = NA,
-      req_end_date = NA,
-      req_detail_level = NA,
-      req_url = NA
-
-  ),
 
   public = list (
 
-      # Request response
-      response = NA,
+      ### 
+      ### Public variables
+      ### 
+     
+      api_token = NA, # API Token
+      response = NA, # Request response
 
-      # JSON extracts
-      json_list = NA,
-      json_df = NA,
-
+      ### 
       ### FUNCTION Initialize
+      ### Standard R6 Initialize function
+      ###
 
       initialize = function(
           appname = "cdlr",
@@ -66,11 +44,12 @@ DataLoader <- R6Class("DataLoader",
           private$scope <- scope
       },
 
-
+      ### 
       ### FUNCTION Connect
-      ###
-      ### API Connection
-      connect = function() {
+      ### Connects to the API with credentials
+      ### 
+      
+      connect = function(appname, key, secret) {
 
           fitbit_api <- httr::oauth_endpoint(
               request = private$api_url_request,
@@ -88,42 +67,25 @@ DataLoader <- R6Class("DataLoader",
 
       },
 
-      ### FUNCTION Request
       ###
+      ### FUNCTION Request
       ### Build URL, send request and write response to JSON file
-      request = function(debug = FALSE) {
-
-          # Check 'type' argument
-          if(!(private$req_type %in% c("day", "intraday")))
-              stop("Invalid 'req_type'. Must be 'day' or 'intraday'")
-
-          # Check 'start_date' argument
-          if(!(grepl("^[0-9]{4}-[0-9]{2}-[0-9]{2}$", private$req_start_date)))
-              stop("Invalid 'start_date'. Must be in the following format: 'YYYY-MM-dd'")
-
-
-          # Build URL for request
-          private$req_url <- paste("activities",
-                                   private$req_activity,
-                                   "date",
-                                   private$req_start_date,
-                                   private$req_end_date,
-                                   sep = "/")
-
-          if (private$req_type == "intraday") {
-              private$req_url <- paste(private$req_url,
-                                       private$req_detail_level,
-                                       sep = "/")
-          }
-
-          private$req_url <- paste("https://api.fitbit.com/1/user/-/",
-                                   private$req_url,
-                                   ".json",
-                                   sep = "")
-
-          # Send the request
-          self$response <- GET(url = private$req_url, config(token = private$api_token))
-          warn_for_status(self$response)
+      ### 
+      
+      request = function(type = "day",
+                         activity = "",
+                         start_date = Sys.Date(),
+                         end_date = "",
+                         path = "./json/"
+                         ) {
+          
+          self$response <- makeAPIRequest(type = type, 
+                                          activity = activity, 
+                                          start_date = start_date, 
+                                          end_date = end_date, 
+                                          path = path, 
+                                          api_token = self$api_token
+                                          )
 
       },
 
@@ -175,7 +137,7 @@ DataLoader <- R6Class("DataLoader",
       }
 
   )
-
+  
 )
 
 ### Bulk requests using our DataLoader object
