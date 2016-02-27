@@ -31,17 +31,9 @@ DataLoader <- R6Class("DataLoader",
       ### Standard R6 Initialize function
       ###
 
-      initialize = function(
-          appname = "cdlr",
-          key = "227FWR",
-          secret = "3089e3d1ac5dde1aa00b54a0c8661f42",
-          scope = c("activity", "heartrate", "location","nutrition",
-                    "profile", "settings","sleep", "social", "weight")
-      ) {
-          private$api_appname <- appname
-          private$api_key <- key
-          private$api_secret <- secret
-          private$scope <- scope
+      initialize = function()
+      {
+         print("Object DataLoader initialized")
       },
 
       ### 
@@ -51,20 +43,8 @@ DataLoader <- R6Class("DataLoader",
       
       connect = function(appname, key, secret) {
 
-          fitbit_api <- httr::oauth_endpoint(
-              request = private$api_url_request,
-              authorize = private$api_url_authorize,
-              access = private$api_url_request
-          )
-
-          private$api_token <-
-              httr::oauth2.0_token(
-                  fitbit_api,
-                  httr::oauth_app(private$api_appname, private$api_key, private$api_secret),
-                  scope = private$scope,
-                  use_basic_auth = TRUE
-              )
-
+            self$api_token <- connectToAPI(appname, key, secret)
+          
       },
 
       ###
