@@ -7,10 +7,6 @@
 #' @keywords data
 #' @export DataLoader
 
-
-### Load Libraries
-#library('R6')
-#library('httr')
 DataLoader <- R6Class(
     "DataLoader",
     
@@ -31,7 +27,7 @@ DataLoader <- R6Class(
         ###
         
         initialize = function() {
-            print("Object DataLoader initialized")
+            message("Object DataLoader initialized")
         },
         
         ###
@@ -42,17 +38,17 @@ DataLoader <- R6Class(
         connect = function(appname, key, secret) {
             if (file.exists('.httr-oauth')) {
                 if (difftime(Sys.time(), file.info('.httr-oauth')$mtime, units = "mins") < 60) { ### Less than 1 hour lifetime
-                    print('Use existing Oauth file') # Debug only
+                    message('Use existing Oauth file') # Debug only
                     self$api_token <- readRDS('.httr-oauth')[[1]]
                 } else {
                     # Known bug: autorefresh does not work in basic mode
                     # https://github.com/hadley/httr/pull/320
-                    print('Delete cache and create new Oauth file') # Debug only
+                    message('Delete cache and create new Oauth file') # Debug only
                     file.remove('.httr-oauth')
                     self$api_token <- connectToAPI(appname, key, secret)
                 }
             } else {
-                print('Create new Oauth file') # Debug only
+                message('Create new Oauth file') # Debug only
                 self$api_token <- connectToAPI(appname, key, secret)
             }
         },
