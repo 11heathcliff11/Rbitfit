@@ -1,28 +1,24 @@
-library(httr)
-library(jsonlite)
-library(R6)
-
 # -----------------------------------------------------------------------------------
 # Utility for Fitbit coach package Contains the various functions that are used
 # by R6 Classes in the package
 # -----------------------------------------------------------------------------------
 
-
-#' A function to fetch data from fitbit.com and store the data as json files
-#' to a user defined file destination
-#'
-#' @param request_url the URL for GET call to fitbit.com
-#' @param token the authorization token. Assumption that oauth2.0 has been done earlier in the flow
-#' @param targetFile the place to store the json file
-#' @return the targetfile
-#' @import httr
-#' @export
-fetchAndStoreFile <- function(request_url, token, targetFile) {
-  request <- GET(request_url, add_headers(Authorization = token))
-  bin <- content(request, as = "text")
-  write(bin, targetFile)
-  return(targetFile)
-}
+# 
+# #' A function to fetch data from fitbit.com and store the data as json files
+# #' to a user defined file destination
+# #'
+# #' @param request_url the URL for GET call to fitbit.com
+# #' @param token the authorization token. Assumption that oauth2.0 has been done earlier in the flow
+# #' @param targetFile the place to store the json file
+# #' @return the targetfile
+# #' @import httr
+# #' @export
+# fetchAndStoreFile <- function(request_url, token, targetFile) {
+#   request <- GET(request_url, add_headers(Authorization = token))
+#   bin <- content(request, as = "text")
+#   write(bin, targetFile)
+#   return(targetFile)
+# }
 
 #' @export
 getDailyResourcePathList <- function() {
@@ -152,7 +148,7 @@ getAPIScope <- function() {
 #' @param key Fitbit API Client key
 #' @param secret Fibit API Client secret
 #' 
-#' @import httr
+#' @importFrom httr oauth_endpoint oauth_app
 
 connectToAPI <- function(appname, key, secret) {
     fitbit_api <- httr::oauth_endpoint(

@@ -2,7 +2,6 @@
 #'
 #' @docType class
 #' @import R6
-#' @import httr
 #' @format A \code{\link{R6Class}} generator object
 #' @keywords data
 #' 
