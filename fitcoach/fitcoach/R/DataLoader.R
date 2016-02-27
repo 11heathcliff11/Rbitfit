@@ -44,7 +44,13 @@ DataLoader <- R6Class(
         ###
         
         connect = function(appname, key, secret) {
-            self$api_token <- connectToAPI(appname, key, secret)
+            if (file.exists('.httr-oauth')) {
+                print('Use existing Oauth file') # Debug only
+                self$api_token <- readRDS('.httr-oauth')[[1]]
+            } else {
+                print('Create new Oauth file') # Debug only
+                self$api_token <- connectToAPI(appname, key, secret)
+            }
         },
         
         ###
