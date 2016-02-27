@@ -86,7 +86,8 @@ DataLoader <- R6Class(
                 writeToJSON(content = content(self$response, as = "text"),
                             path = path,
                             type = type, 
-                            activity = acty)
+                            activity = acty,
+                            start_date = start_date)
                 
             }
         }

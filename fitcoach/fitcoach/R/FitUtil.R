@@ -232,12 +232,13 @@ makeAPIRequest <-
 #' 
 #' @export
 
-writeToJSON <- function(content, path, type, activity) {
+writeToJSON <- function(content, path, type, activity, start_date) {
     
-    json_file <- paste("max",
-                       activity,
-                       type,
-                       sep = "-")
+    if (type == 'day') {
+        json_file <- paste("max", activity, sep = "-")
+    } else if (type == 'intraday') {
+        json_file <- paste("intra", activity, start_date, sep = "-")
+    }
     
     json_file <- paste(path, json_file, ".json", sep = "")
     write(content, json_file)

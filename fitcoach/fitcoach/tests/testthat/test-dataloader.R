@@ -23,7 +23,7 @@ test_that("DataLoader test cases", {
         start_date = "2016-01-20", 
         end_date = "2016-02-05", 
         path = "./inst/extdata/tests/")
-    expect_equal(fromJSON('./inst/extdata/tests/max-steps-day.json')[[1]][17,2], '9282')
+    expect_equal(fromJSON('./inst/extdata/tests/max-steps.json')[[1]][17,2], '9282')
     
     # Test requests 2
     testObject$request(
@@ -31,7 +31,7 @@ test_that("DataLoader test cases", {
         activities = c('steps', 'calories', 'distance'), 
         start_date = "2016-02-01", 
         path = "./inst/extdata/tests/")
-    expect_equal(fromJSON('./inst/extdata/tests/max-steps-intraday.json')[[1]][[2]], '5198')
+    expect_equal(fromJSON('./inst/extdata/tests/intra-steps-2016-02-01.json')[[1]][[2]], '5198')
     
     }
 )
