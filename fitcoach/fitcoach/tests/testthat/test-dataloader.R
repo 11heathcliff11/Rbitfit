@@ -2,6 +2,7 @@ library('testthat')
 library('R6')
 
 test_that("DataLoader test cases", {
+    
     # Object creation 
     expect_message(
             testObject <- DataLoader$new(), 
@@ -30,8 +31,7 @@ test_that("DataLoader test cases", {
         activities = c('steps', 'calories', 'distance'), 
         start_date = "2016-02-01", 
         path = "./inst/extdata/tests/")
-    }
     expect_equal(fromJSON('./inst/extdata/tests/max-steps-intraday.json')[[1]][[2]], '5198')
     
-    
+    }
 )
