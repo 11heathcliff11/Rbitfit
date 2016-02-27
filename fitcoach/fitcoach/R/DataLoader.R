@@ -1,15 +1,11 @@
 #' R6 class for Loading fitbot data
 #'
-#'
-#'
 #' @docType class
 #' @import R6
 #' @import httr
 #' @format A \code{\link{R6Class}} generator object
 #' @keywords data
 #' @export DataLoader
-#'
-#'
 
 
 ### Load Libraries
@@ -45,8 +41,16 @@ DataLoader <- R6Class(
         
         connect = function(appname, key, secret) {
             if (file.exists('.httr-oauth')) {
-                print('Use existing Oauth file') # Debug only
-                self$api_token <- readRDS('.httr-oauth')[[1]]
+                if (difftime(Sys.time(), file.info('.httr-oauth')$mtime, units = "mins") < 60) { ### Less than 1 hour lifetime
+                    print('Use existing Oauth file') # Debug only
+                    self$api_token <- readRDS('.httr-oauth')[[1]]
+                } else {
+                    # Known bug: autorefresh does not work in basic mode
+                    # https://github.com/hadley/httr/pull/320
+                    print('Delete cache and create new Oauth file') # Debug only
+                    file.remove('.httr-oauth')
+                    self$api_token <- connectToAPI(appname, key, secret)
+                }
             } else {
                 print('Create new Oauth file') # Debug only
                 self$api_token <- connectToAPI(appname, key, secret)
@@ -54,11 +58,11 @@ DataLoader <- R6Class(
         },
         
         ###
-        ### FUNCTION requestAndWrite
+        ### FUNCTION request
         ### Build URL, send request and write response to JSON file
         ###
         
-        requestAndWrite = function(type = "day",
+        request = function(type = "day",
                            activities = "",
                            start_date = Sys.Date(),
                            end_date = "",
@@ -75,9 +79,6 @@ DataLoader <- R6Class(
             # Call request function for each activity
             for (acty in activities) {
 
-                # Debug only
-                print(paste("Making request for ", acty, sep = ""))
-                
                 self$response <- makeAPIRequest(
                     type = type,
                     activity = acty,
@@ -94,6 +95,5 @@ DataLoader <- R6Class(
             }
         }
     )
-    
 )
 
