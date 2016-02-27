@@ -1,10 +1,11 @@
-#' R6 class for Loading fitbot data
+#' R6 class for Loading fitbit data and creating JSON files
 #'
 #' @docType class
 #' @import R6
 #' @import httr
 #' @format A \code{\link{R6Class}} generator object
 #' @keywords data
+#' 
 #' @export DataLoader
 
 DataLoader <- R6Class(
@@ -37,7 +38,7 @@ DataLoader <- R6Class(
         
         connect = function(appname, key, secret) {
             if (file.exists('.httr-oauth')) {
-                if (difftime(Sys.time(), file.info('.httr-oauth')$mtime, units = "mins") < 60) { ### Less than 1 hour lifetime
+                if (difftime(Sys.time(), file.info('.httr-oauth')$mtime, units = "mins") < 60) {
                     message('Use existing Oauth file') # Debug only
                     self$api_token <- readRDS('.httr-oauth')[[1]]
                 } else {

@@ -1,6 +1,3 @@
-library('testthat')
-library('R6')
-
 test_that("DataLoader test cases", {
     
     # Object creation 

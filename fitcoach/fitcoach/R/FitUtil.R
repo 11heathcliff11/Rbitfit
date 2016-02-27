@@ -130,8 +130,6 @@ markValidRows <- function(masterTsDataFrame) {
 ######
 
 #' Gets the scopes that will be retrieved by the API request
-#' 
-#' @export
 
 getAPIScope <- function() {
     APIScope <- c(
@@ -153,9 +151,8 @@ getAPIScope <- function() {
 #' @param appname Name of the Fitbit App
 #' @param key Fitbit API Client key
 #' @param secret Fibit API Client secret
-#' @import httr
 #' 
-#' @export
+#' @import httr
 
 connectToAPI <- function(appname, key, secret) {
     fitbit_api <- httr::oauth_endpoint(
@@ -183,8 +180,6 @@ connectToAPI <- function(appname, key, secret) {
 #' @param start_date Start date in format YYYY-mm-dd
 #' @param end_date End date in format YYYY-mm-dd
 #' @param api_token API token for connection to Fitbit API
-#' 
-#' @export
 
 makeAPIRequest <-
     function(type,
@@ -229,8 +224,7 @@ makeAPIRequest <-
 #' @param path Path to folder where files will be created
 #' @param type Type of time series. Must be 'day' or 'intraday'
 #' @param activity Type of activity. See below for details.
-#' 
-#' @export
+#' @param start_date Start date
 
 writeToJSON <- function(content, path, type, activity, start_date) {
     
