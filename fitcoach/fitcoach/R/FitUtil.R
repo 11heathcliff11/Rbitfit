@@ -154,85 +154,86 @@ getAPIScope <- function() {
 #' @import httr
 
 connectToAPI <- function(appname, key, secret) {
+    fitbit_api <- httr::oauth_endpoint(
+        request = "https://api.fitbit.com/oauth2/token",
+        authorize = "https://www.fitbit.com/oauth2/authorize",
+        access = "https://api.fitbit.com/oauth2/token")
     
-    if(!file.exists('.httr-oauth')) {
-        
-        print('create new httr-oauth')
-        fitbit_api <- httr::oauth_endpoint(
-            request = "https://api.fitbit.com/oauth2/token",
-            authorize = "https://www.fitbit.com/oauth2/authorize",
-            access = "https://api.fitbit.com/oauth2/token"
+    api_token <-
+        httr::oauth2.0_token(
+            endpoint = fitbit_api,
+            app = httr::oauth_app(appname, key, secret),
+            scope = getAPIScope(),
+            use_basic_auth = TRUE,
+            cache = TRUE
         )
         
-        api_token <-
-            httr::oauth2.0_token(
-                endpoint = fitbit_api,
-                app = httr::oauth_app(appname, key, secret),
-                scope = getAPIScope(),
-                use_basic_auth = TRUE,
-                cache = TRUE
-            )
-        
-    }
-    
     return(api_token)
     
 }
-
 
 #' Make request to Fitbit API
 #' 
 #' @param type Type of time series. Must be 'day' or 'intraday'
 #' @param activity Type of activity. See below for details.
 #' @param start_date Start date in format YYYY-mm-dd
-#' @param start_date End date in format YYYY-mm-dd
-#' @param detail_level For intraday time series, specifies the granularity of time interval. Must be '1min' or '15min'.
-#' @param path Folder path where JSON files will be created
+#' @param end_date End date in format YYYY-mm-dd
 #' @param api_token API token for connection to Fitbit API
 
-makeAPIRequest <- function(type, activity, start_date, end_date, detail_level, path, api_token) {
-    
-    # Check 'type' argument
-    if(!(type %in% c("day", "intraday")))
-        stop("Invalid 'req_type'. Must be 'day' or 'intraday'")
-    
-    # Check 'start_date' argument
-    if(!(grepl("^[0-9]{4}-[0-9]{2}-[0-9]{2}$", start_date)))
-        stop("Invalid 'start_date'. Must be in the following format: 'YYYY-MM-dd'")
-    
-    
-    # Build URL for request
-    req_url <- paste("activities",
-                     activity,
-                     "date",
-                     start_date,
-                     end_date,
-                     sep = "/")
-    
-    if (type == "intraday") {
-        req_url <- paste(req_url,
-                         "1min",
+makeAPIRequest <-
+    function(type,
+             activity,
+             start_date,
+             end_date,
+             api_token) {
+        
+        # Build URL for request
+        req_url <- paste("activities",
+                         activity,
+                         "date",
+                         start_date,
                          sep = "/")
+        
+        if (end_date != "") {
+            req_url <- paste(req_url, end_date, sep = "/")
+        }
+        
+        if (type == "intraday") {
+            if (end_date == "") req_url <- paste(req_url, "1d", sep = "/")
+            req_url <- paste(req_url, "1min", sep = "/")
+        }
+        
+        req_url <- paste("https://api.fitbit.com/1/user/-/",
+                         req_url,
+                         ".json",
+                         sep = "")
+        # Debug only
+        print(req_url)
+
+        # Send the request
+        response <- GET(url = req_url, config(token = api_token))
+        warn_for_status(response)
+        return(response)
+        
     }
-    
-    req_url <- paste("https://api.fitbit.com/1/user/-/",
-                     req_url,
-                     ".json",
-                     sep = "")
-    
-    # Send the request
-    response <- GET(url = req_url, config(token = api_token))
-    warn_for_status(response)
-    return(response)
-
-}
-
 
 #' Writes API response content to JSON files
+#' 
+#' @param content JSON content to be written to file
+#' @param path Path to folder where files will be created
+#' @param type Type of time series. Must be 'day' or 'intraday'
+#' @param activity Type of activity. See below for details.
 
-writeToJSON <- function(type, activity, path) {
+writeToJSON <- function(content, path, type, activity) {
     
-    # WIP
+    json_file <- paste("max",
+                       activity,
+                       type,
+                       sep = "-")
+    
+    json_file <- paste(path, json_file, ".json", sep = "")
+    write(content, json_file)
     
 }
+
 
