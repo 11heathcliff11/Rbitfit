@@ -123,36 +123,51 @@ createIntraFrame <- function(resourceType , folder){
   files <- list.files(folder)
   indexes <- grep("intra-+" , files)
   files <- files[indexes]
-  indexes <- grep(paste('-' , resourceType , '-' , sep ="" ) , files)
+  
+  #Calorie
+  indexes <- grep(paste('-calories-' , sep ="" ) , files)
   res.files <- files[indexes]
-  res.files <- paste(intraTsFolder , res.files , sep = "")
-  
-  dfList <- lapply(res.files , function(x) {as.data.frame(fromJSON(x , simplifyDataFrame = TRUE ))   })
-  
-  res.df <- as.data.frame(dfList[1])
-  
-  for (i in 2:length(dfList)) {
-    res.df <- rbind(res.df , as.data.frame(dfList[i]))
-  }
-  
-  res.df$resource <- resourceType
-  if(resourceType != "calories"){
-    level <- rep(0 , nrow(res.df))
-    mets <- rep(NA , nrow(res.df))
-    res.df <- cbind(res.df[,1:2] , mets , level , res.df[,3:7])
-  }
+  res.files <- paste(folder , res.files , sep = "")
+  dfList <- lapply (res.files , 
+                    function(x) {
+                      as.data.frame (fromJSON (x , simplifyDataFrame = TRUE ))
+                    })
+  calorie.df <- ldply(dfList, data.frame)
+  calorie.df <- calorie.df[ -c(7,8) ]
   intraColNames <- c("date",
-                     "total.value",
+                     "calorie.daytotal",
                      "level",
                      "mets",
                      "time",
-                     "intra.value",
-                     "time.interval",
-                     "dataset.type" ,
-                     "resource")
+                     "calorie.value")
+  colnames(calorie.df) <- intraColNames
   
-  colnames(res.df) <- intraColNames
-  return(res.df)
+  #other resource types
+  resources <- getIntradayResourcePathList()
+  resources <- resources[-c(1)]
+  for(i in 1:length(resources)){
+    resource.df <- fetchIntraResourceData(folder , resources[i])
+    calorie.df <- inner_join(calorie.df , resource.df)  
+  }
+  return(calorie.df)
+}
+
+fetchIntraResourceData <- function (folder , resource){
+  indexes <- grep(paste('-' , resource , '-' , sep ="" ) , files)
+  res.files <- files[indexes]
+  res.files <- paste(folder , res.files , sep = "")
+  dfList <- lapply (res.files , 
+                    function(x) {
+                      as.data.frame (fromJSON (x , simplifyDataFrame = TRUE ))
+                    })
+  resource.df <- ldply(dfList, data.frame)
+  resource.df <- resource.df[(-c(5,6))]
+  intraColNames <- c("date",
+                     paste( resource , ".daytotal", sep = ""),
+                     "time",
+                     paste( resource , ".value", sep = ""))
+  colnames(resource.df) <- intraColNames
+  return (resource.df)
 }
 
 

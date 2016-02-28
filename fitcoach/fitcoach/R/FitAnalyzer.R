@@ -33,16 +33,20 @@ FitAnalyzer <- R6Class("FitAnalyzer",
                          initialize = function(){
                            cat("init called")
                          },
-                         getTsDailyFrame = function(ts.daily.json.folder = NA){
-                           private$ts.daily.json.folder <- ts.daily.json.folder
-                           master <- createTsMasterFrame(ts.daily.json.folder)
-                           master <- markValidRows(master)
-                           master <- master[master$valid == TRUE ,]
-                           master <- augmentData(master)
-                           return(master)
-                         },
-                         getTsIntradayFrame = function(intra.day.folder = NA){
-                           cat ("to be implemented")
+                         getAnalysisFrame = function(folder = NA , analysis.type = NA){
+                           private$folder <- folder
+                           private$analysis.type <- analysis.type
+                           master <- NULL
+                           if(analysis.type == "intra.day"){
+                             master <- createIntraFrame(folder)                             
+                           }else{
+                             master <- createTsMasterFrame(folder)
+                             master <- markValidRows(master)
+                             master <- master[master$valid == TRUE ,]
+                             master <- augmentData(master)
+                             return(master)
+                           }
+                           return (master)
                          },
                          setGoal = function(goal){
                            private$goal <- goal
@@ -69,9 +73,10 @@ FitAnalyzer <- R6Class("FitAnalyzer",
                          }
                        ),
                        private = list(
-                         ts.daily.json.folder = NA,
+                         folder = NA,
                          goal = "calorie",
-                         imp.vars = NA
+                         imp.vars = NA ,
+                         analysis.type 
                        )
 )
 

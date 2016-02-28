@@ -27,72 +27,7 @@ createIntraTsFilePath <- function(resource , year , month , day){
   fileName <- paste('intra-' , resource , '-' , year , '-' , month , '-' , day ,'.json' , sep = "")
 }
 
-intraFrame() <- function(folder){
-  files <- list.files(folder)
-  indexes <- grep("intra-+" , files)
-  files <- files[indexes]
 
-  #Calorie
-  indexes <- grep(paste('-calories-' , sep ="" ) , files)
-  res.files <- files[indexes]
-  res.files <- paste(folder , res.files , sep = "")
-  dfList <- lapply (res.files , 
-                    function(x) {
-                      as.data.frame (fromJSON (x , simplifyDataFrame = TRUE ))
-                    })
-  calorie.df <- ldply(dfList, data.frame)
-  calorie.df <- calorie.df[ -c(7,8) ]
-  intraColNames <- c("date",
-                     "calorie.daytotal",
-                     "level",
-                     "mets",
-                     "time",
-                     "calorie.value")
-  colnames(calorie.df) <- intraColNames
-  
-  #other resource types
-  indexes <- grep(paste('-floors-' , sep ="" ) , files)
-  res.files <- files[indexes]
-  res.files <- paste(folder , res.files , sep = "")
-  dfList <- lapply (res.files , 
-                    function(x) {
-                      as.data.frame (fromJSON (x , simplifyDataFrame = TRUE ))
-                    })
-  resource.df <- ldply(dfList, data.frame)
-  resource.df <- resource.df[(-c(5,6))]
-  intraColNames <- c("date",
-                     "floors.daytotal",
-                     "time",
-                     "floors.value")
-  colnames(resource.df) <- intraColNames
-  
-  a<- merge(calorie.df , resource.df , by())
-  
-  if(resourceType != "calories"){
-    level <- rep(0 , nrow(res.df))
-    mets <- rep(NA , nrow(res.df))
-    res.df <- cbind(res.df[,1:2] , mets , level , res.df[,3:7])
-  }
-  intraColNames <- c("date",
-                     "total.value",
-                     "level",
-                     "mets",
-                     "time",
-                     "intra.value",
-                     "time.interval",
-                     "dataset.type" ,
-                     "resource")
-  
-  colnames(res.df) <- intraColNames
-  
-  return(res.df)
-}
-
-
-
-zz <- function (folder){
-  
-}
 
 
 for(r in resources){
@@ -107,6 +42,7 @@ for(r in resources){
 
 # Data.frame conversion
 intraTsFolder <- 'fitcoach/inst/extdata/intra-daily-timeseries/'
+folder <- intraTsFolder
 
 a <- createIntraFrame("calories" , intraTsFolder)
 b <- createIntraFrame("steps" , intraTsFolder)
@@ -191,3 +127,15 @@ df$dataset.type <- as.character(df$dataset.type)
 str(df)
 
 sum(df$intra.calorie)
+
+
+
+#SWitch example
+
+
+
+
+
+
+
+
