@@ -22,7 +22,7 @@
 
 #' @export
 getDailyResourcePathList <- function() {
-  resourcePath <- list( "calories",
+  resourcePath <- list ("calories",
                         "caloriesBMR",
                         "steps",
                         "distance",
@@ -33,18 +33,17 @@ getDailyResourcePathList <- function() {
                         "minutesFairlyActive",
                         "minutesVeryActive",
                         "activityCalories")
-    return(resourcePath)
+    return (resourcePath)
 }
 
 #' @export
 getIntradayResourcePathList <- function() {
-  resourcePath <- list( "calories",
+  resourcePath <- list ("calories",
                         "steps",
                         "distance",
                         "floors",
-                        "elevation"
-                        )
-  return(resourcePath)
+                        "elevation")
+  return (resourcePath)
 }
 
 
@@ -56,19 +55,18 @@ getIntradayResourcePathList <- function() {
 #' @import jsonlite
 #' @export
 
-createTsMasterFrame <- function(tsFileFolder, resourcePath = getResourcePathList()) {
-  dflist <- lapply(resourcePath, function(x) {
-    df <- as.data.frame(fromJSON(paste(tsFileFolder, .Platform$file.sep, "max-",
-      x, ".json", sep = ""), simplifyDataFrame = TRUE))
-    colnames(df)[1] <- "datetime"
-    colnames(df)[2] <- x
-    return(df)
+createTsMasterFrame <- function (tsFileFolder, resourcePath = getResourcePathList ()) {
+  dflist <- lapply (resourcePath, function (x) {
+    df <- as.data.frame (fromJSON (paste(tsFileFolder, .Platform$file.sep, "max-",
+                          x, ".json", sep = ""), simplifyDataFrame = TRUE))
+    colnames (df)[1] <- "datetime"
+    colnames (df)[2] <- x
+    return (df)
   })
-  masterdf <- as.data.frame(dflist[1])
+  masterdf <- as.data.frame (dflist[1])
 
-  for (i in 2:length(dflist)) {
+  for (i in 2:length (dflist)) {
     masterdf <- merge(masterdf, as.data.frame(dflist[i]), by = "datetime")
-    # masterdf[,i] <- as.numeric(masterdf[,i])
   }
 
   masterdf$datetime <- as.Date(masterdf$datetime)
@@ -118,6 +116,55 @@ augmentData <- function(masterTsDataFrame) {
 markValidRows <- function(masterTsDataFrame) {
   masterTsDataFrame$valid <- (as.numeric(masterTsDataFrame$distance) != 0)
   return(masterTsDataFrame)
+}
+
+
+createIntraFrame <- function(resourceType , folder){
+  files <- list.files(folder)
+  indexes <- grep("intra-+" , files)
+  files <- files[indexes]
+  indexes <- grep(paste('-' , resourceType , '-' , sep ="" ) , files)
+  res.files <- files[indexes]
+  res.files <- paste(intraTsFolder , res.files , sep = "")
+  
+  dfList <- lapply(res.files , function(x) {as.data.frame(fromJSON(x , simplifyDataFrame = TRUE ))   })
+  
+  res.df <- as.data.frame(dfList[1])
+  
+  for (i in 2:length(dfList)) {
+    res.df <- rbind(res.df , as.data.frame(dfList[i]))
+  }
+  
+  res.df$resource <- resourceType
+  if(resourceType != "calories"){
+    level <- rep(0 , nrow(res.df))
+    mets <- rep(NA , nrow(res.df))
+    res.df <- cbind(res.df[,1:2] , mets , level , res.df[,3:7])
+  }
+  intraColNames <- c("date",
+                     "total.value",
+                     "level",
+                     "mets",
+                     "time",
+                     "intra.value",
+                     "time.interval",
+                     "dataset.type" ,
+                     "resource")
+  
+  colnames(res.df) <- intraColNames
+  return(res.df)
+}
+
+
+augmentIntraData <- function(inFrame){
+  inFrame$date <- as.Date(inFrame$date)
+  inFrame$dataset.type <- NULL
+  inFrame$time.interval <- NULL
+  inFrame$weekday <- weekdays(inFrame$date)
+  inFrame$weekday <- as.factor(inFrame$weekday)
+  inFrame$weekend <- ifelse(inFrame$weekday == "Saturday" |
+                              inFrame$weekday == "Sunday", TRUE, FALSE)
+  return(inFrame)
 }
 
 

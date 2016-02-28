@@ -41,6 +41,9 @@ FitAnalyzer <- R6Class("FitAnalyzer",
                            master <- augmentData(master)
                            return(master)
                          },
+                         getTsIntradayFrame = function(intra.day.folder = NA){
+                           cat ("to be implemented")
+                         },
                          setGoal = function(goal){
                            private$goal <- goal
                          },
@@ -60,11 +63,14 @@ FitAnalyzer <- R6Class("FitAnalyzer",
                          },
                          showMostImportantCharts = function(tsDataFrame){
                            showCharts(tsDataFrame , c("minutesLightlyActive"))
+                         },
+                         recommendationsToday = function(){
+                           cat ("to be implemented")
                          }
                        ),
                        private = list(
                          ts.daily.json.folder = NA,
-                         goal = NA,
+                         goal = "calorie",
                          imp.vars = NA
                        )
 )
