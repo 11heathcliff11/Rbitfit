@@ -1,10 +1,11 @@
 Package: fitcoach
 Type: Package
-Title: What the Package Does (Title Case)
-Version: 0.1.0
+Title: Personalized Coach For Fitbit
+Version: 0.9.0
 Author: Niraj Juneja, Charles de Lassence
 Maintainer:  Niraj Juneja <njuneja@gmail.com>
-Description: More about what it does (maybe more than one line)
+Description: Fitcoach improves your Fitbit performance by analyzing your data from API, 
+and giving personalized recommendations for the reste of the day, based on your behavior.
 License: GPL-3
 Depends:
     R (>= 3.2.3)
