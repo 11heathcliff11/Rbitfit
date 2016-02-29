@@ -213,7 +213,6 @@ connectToAPI <- function(appname, key, secret) {
         )
         
     return(api_token)
-    
 }
 
 #' Make request to Fitbit API
@@ -244,7 +243,7 @@ makeAPIRequest <-
         
         if (type == "intraday") {
             if (end_date == "") req_url <- paste(req_url, "1d", sep = "/")
-            req_url <- paste(req_url, "1min", sep = "/")
+            req_url <- paste(req_url, "15min", sep = "/")
         }
         
         req_url <- paste("https://api.fitbit.com/1/user/-/",
