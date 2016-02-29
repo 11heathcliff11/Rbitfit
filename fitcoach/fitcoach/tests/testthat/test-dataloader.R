@@ -16,7 +16,7 @@ test_that("DataLoader test cases", {
     # API connection - niraj
 #    testObject$connect(appname = "cdlr",
 #                       key = "229WRY",
-                       secret = "f4bcfad2bd8afed9d9d2eae89f83f291"
+#                       secret = "f4bcfad2bd8afed9d9d2eae89f83f291"
 #    )
 #    expect_equal(testObject$api_token$app$key, "229WRY")
     
