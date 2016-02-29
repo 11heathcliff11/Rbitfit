@@ -50,12 +50,12 @@ getIntradayResourcePathList <- function() {
 #' A function to create the Master Data Frame from Timeseries JSON files.
 #'
 #' @param tsFileFolder Folder containing all time-series files. Naming convention for files is max-[resource].json
-#' @param resourcePath the resource paths to look. Default will get getResourcePathList()
+#' @param resourcePath the resource paths to look. Default will get getDailyResourcePathList()
 #' @return The Master Data Frame
 #' @import jsonlite
 #' @export
 
-createTsMasterFrame <- function (tsFileFolder, resourcePath = getDailyResourcePathList ()) {
+createTsMasterFrame <- function (tsFileFolder, resourcePath = getDailyResourcePathList()) {
   dflist <- lapply (resourcePath, function (x) {
     df <- as.data.frame (fromJSON (paste(tsFileFolder, .Platform$file.sep, "max-",
                           x, ".json", sep = ""), simplifyDataFrame = TRUE))

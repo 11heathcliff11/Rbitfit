@@ -4,12 +4,12 @@
 \alias{createTsMasterFrame}
 \title{A function to create the Master Data Frame from Timeseries JSON files.}
 \usage{
-createTsMasterFrame(tsFileFolder, resourcePath = getResourcePathList())
+createTsMasterFrame(tsFileFolder, resourcePath = getDailyResourcePathList())
 }
 \arguments{
 \item{tsFileFolder}{Folder containing all time-series files. Naming convention for files is max-[resource].json}
 
-\item{resourcePath}{the resource paths to look. Default will get getResourcePathList()}
+\item{resourcePath}{the resource paths to look. Default will get getDailyResourcePathList()}
 }
 \value{
 The Master Data Frame

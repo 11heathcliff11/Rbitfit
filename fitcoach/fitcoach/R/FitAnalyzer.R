@@ -54,15 +54,20 @@ FitAnalyzer <- R6Class("FitAnalyzer",
                            return(private$goal)
                          },
                          findImportantVariables = function(goal = getGoal() , tsDataFrame){
-                          y <- createGoalVariableVector(master = tsDataFrame , goal = goal)
-                          x <- createDependentVariableFrame(master = tsDataFrame , goal = goal)
-                          x <- as.matrix(x)
-                          fit <- glm(y~x , family = "gaussian")
-                          imp<- varImp(fit , scale = FALSE)
-                          imp$name <- rownames(imp)
-                          imp <- arrange(imp , -Overall)
-                          private$imp.vars = imp
-                          return(imp)
+                           imp <- NULL
+                          if(analysis.type == "intra.day"){ #FIX : try to use switch here
+                            y <- createGoalVariableVector(master = tsDataFrame , goal = goal)
+                            x <- createDependentVariableFrame(master = tsDataFrame , goal = goal)
+                            x <- as.matrix(x)
+                            fit <- glm(y~x , family = "gaussian")
+                            imp<- varImp(fit , scale = FALSE)
+                            imp$name <- rownames(imp)
+                            imp <- arrange(imp , -Overall)
+                            private$imp.vars = imp
+                          }else{
+                            
+                          }
+                           return(imp)
                          },
                          showMostImportantCharts = function(tsDataFrame){
                            showCharts(tsDataFrame , c("minutesLightlyActive"))
