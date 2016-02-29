@@ -1,9 +1,9 @@
 #library(testthat)
-
+context("Fit util tests")
 test_that("Fitutil  test cases", {
   # Test 1
   masterPath <- system.file("extdata", "daily-time-series", package="fitcoach")
-  #masterPath <- 'inst/extdata/daily-time-series/'
+  masterPath <- 'fitcoach/inst/extdata/daily-time-series/'
   print(masterPath)
   master <- createTsMasterFrame(masterPath)
   master <- markValidRows(master)
@@ -19,10 +19,15 @@ test_that("Fitutil  test cases", {
   x <- createDependentVariableFrame(master , goal = "calories")
   expect_equal(ncol(x) , 9)
 
-
-
+  
 #  distance
 
+  
+# intra-day tests below : Tests 
+  folder <- system.file("extdata", "intra-daily-timeseries", package="fitcoach")
+  folder <- 'fitcoach/inst/extdata/intra-daily-timeseries/'
+  intraMaster <- createIntraFrame(folder)
+  intraMaster <- augmentIntraData(intraMaster)
 
 })
 

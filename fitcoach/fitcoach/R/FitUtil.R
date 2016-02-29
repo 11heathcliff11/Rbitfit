@@ -55,21 +55,22 @@ getIntradayResourcePathList <- function() {
 #' @import jsonlite
 #' @export
 
-createTsMasterFrame <- function (tsFileFolder, resourcePath = getResourcePathList ()) {
+createTsMasterFrame <- function (tsFileFolder, resourcePath = getDailyResourcePathList ()) {
   dflist <- lapply (resourcePath, function (x) {
     df <- as.data.frame (fromJSON (paste(tsFileFolder, .Platform$file.sep, "max-",
                           x, ".json", sep = ""), simplifyDataFrame = TRUE))
-    colnames (df)[1] <- "datetime"
+    colnames (df)[1] <- "date"
     colnames (df)[2] <- x
     return (df)
   })
   masterdf <- as.data.frame (dflist[1])
 
   for (i in 2:length (dflist)) {
-    masterdf <- merge(masterdf, as.data.frame(dflist[i]), by = "datetime")
+    #FIX : used dplyr here
+    masterdf <- merge(masterdf, as.data.frame(dflist[i]), by = "date")
   }
 
-  masterdf$datetime <- as.Date(masterdf$datetime)
+  masterdf$date <- as.Date(masterdf$date)
   lapply(2:ncol(masterdf), function(x) {
     masterdf[, x] <<- as.numeric(masterdf[, x])
   })
@@ -83,7 +84,7 @@ createGoalVariableVector <- function(master, goal) {
 
 #' @export
 createDependentVariableFrame <- function(master, goal) {
-  master$datetime <- NULL
+  master$date <- NULL
   # remove variables out of individuals direct control : eg calories
   master$calories <- NULL
   master$caloriesBMR <- NULL
@@ -99,7 +100,7 @@ createDependentVariableFrame <- function(master, goal) {
 #' @export
 augmentData <- function(masterTsDataFrame) {
   ## augment weekday information
-  masterTsDataFrame$weekday <- weekdays(as.Date(masterTsDataFrame$datetime))
+  masterTsDataFrame$weekday <- weekdays(as.Date(masterTsDataFrame$date))
   masterTsDataFrame$weekday <- as.factor(masterTsDataFrame$weekday)
   masterTsDataFrame$weekend <- ifelse(masterTsDataFrame$weekday == "Saturday" |
     masterTsDataFrame$weekday == "Sunday", TRUE, FALSE)
@@ -119,7 +120,8 @@ markValidRows <- function(masterTsDataFrame) {
 }
 
 
-createIntraFrame <- function(resourceType , folder){
+#' @export
+createIntraFrame <- function(folder){
   files <- list.files(folder)
   indexes <- grep("intra-+" , files)
   files <- files[indexes]
@@ -135,24 +137,25 @@ createIntraFrame <- function(resourceType , folder){
   calorie.df <- ldply(dfList, data.frame)
   calorie.df <- calorie.df[ -c(7,8) ]
   intraColNames <- c("date",
-                     "calorie.daytotal",
-                     "level",
-                     "mets",
+                     "calories",
+                     "intra.level",
+                     "intra.mets",
                      "time",
-                     "calorie.value")
+                     "intra.calorie")
   colnames(calorie.df) <- intraColNames
   
   #other resource types
   resources <- getIntradayResourcePathList()
   resources <- resources[-c(1)]
   for(i in 1:length(resources)){
-    resource.df <- fetchIntraResourceData(folder , resources[i])
+    resource.df <- fetchIntraResourceData(folder , resources[i] , files)
     calorie.df <- inner_join(calorie.df , resource.df)  
   }
   return(calorie.df)
 }
 
-fetchIntraResourceData <- function (folder , resource){
+#' @export
+fetchIntraResourceData <- function (folder , resource , files){
   indexes <- grep(paste('-' , resource , '-' , sep ="" ) , files)
   res.files <- files[indexes]
   res.files <- paste(folder , res.files , sep = "")
@@ -163,9 +166,9 @@ fetchIntraResourceData <- function (folder , resource){
   resource.df <- ldply(dfList, data.frame)
   resource.df <- resource.df[(-c(5,6))]
   intraColNames <- c("date",
-                     paste( resource , ".daytotal", sep = ""),
+                     resource ,
                      "time",
-                     paste( resource , ".value", sep = ""))
+                     paste( 'intra.' , resource , sep = ""))
   colnames(resource.df) <- intraColNames
   return (resource.df)
 }

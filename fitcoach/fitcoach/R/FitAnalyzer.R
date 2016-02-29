@@ -15,7 +15,7 @@
 #' @export FitAnalyzer
 #' @section Methods:
 #' \describe{
-#'  \item{\code{getTsDailyFrame(ts.daily.json.folder) }{This method uses \code{ts.daily.json.folder} as an
+#'  \item{\code{getAnalysisFrame(folder , analysis.type) }{This method uses \code{folder} \code{analysis.type} as an
 #'   argument to return a data.frame that is clean and augmented with additional features like weekend.}
 #' }
 #'
@@ -37,14 +37,13 @@ FitAnalyzer <- R6Class("FitAnalyzer",
                            private$folder <- folder
                            private$analysis.type <- analysis.type
                            master <- NULL
-                           if(analysis.type == "intra.day"){
+                           if(analysis.type == "intra.day"){ #FIX : try to use switch here
                              master <- createIntraFrame(folder)                             
                            }else{
                              master <- createTsMasterFrame(folder)
                              master <- markValidRows(master)
                              master <- master[master$valid == TRUE ,]
                              master <- augmentData(master)
-                             return(master)
                            }
                            return (master)
                          },
@@ -76,7 +75,7 @@ FitAnalyzer <- R6Class("FitAnalyzer",
                          folder = NA,
                          goal = "calorie",
                          imp.vars = NA ,
-                         analysis.type 
+                         analysis.type  = NA
                        )
 )
 
