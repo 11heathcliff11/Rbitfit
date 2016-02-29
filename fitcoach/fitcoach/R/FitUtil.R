@@ -132,7 +132,9 @@ createIntraFrame <- function(folder){
   res.files <- paste(folder , res.files , sep = "")
   dfList <- lapply (res.files , 
                     function(x) {
-                      as.data.frame (fromJSON (x , simplifyDataFrame = TRUE ))
+                      d <- as.data.frame (fromJSON (x , simplifyDataFrame = TRUE ))
+                      d$sequence <- seq(1: nrow(d))
+                      return(d)
                     })
   calorie.df <- ldply(dfList, data.frame)
   calorie.df <- calorie.df[ -c(7,8) ]
@@ -141,7 +143,8 @@ createIntraFrame <- function(folder){
                      "intra.level",
                      "intra.mets",
                      "time",
-                     "intra.calorie")
+                     "intra.calorie" ,
+                      "timeseq")
   colnames(calorie.df) <- intraColNames
   
   #other resource types

@@ -1,8 +1,8 @@
-#library(testthat)
-#library(caret)
-#library(dplyr)
-#library(fitcoach)
-#library(R6)
+library(testthat)
+library(caret)
+library(dplyr)
+library(fitcoach)
+library(R6)
 context("FitAnalyzer tests")
 
 test_that("FitAnalyzer test cases", {
@@ -22,8 +22,7 @@ test_that("FitAnalyzer test cases", {
   # Test 3
   ana$showMostImportantCharts(ts)
 
-  
-  
+
   # Tests for intra-day analysis
   masterPath <- system.file("extdata", "intra-daily-timeseries", package = "fitcoach")
   masterPath <- 'fitcoach/inst/extdata/intra-daily-timeseries/'
@@ -32,7 +31,7 @@ test_that("FitAnalyzer test cases", {
   expect_equal(nrow(intra), 2016)
   
   
-  
+
 })
 
 

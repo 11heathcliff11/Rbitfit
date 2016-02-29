@@ -33,7 +33,7 @@ FitAnalyzer <- R6Class("FitAnalyzer",
                          initialize = function(){
                            cat("init called")
                          },
-                         getAnalysisFrame = function(folder = NA , analysis.type = NA){
+                         getAnalysisFrame = function(folder = NA , analysis.type){
                            private$folder <- folder
                            private$analysis.type <- analysis.type
                            master <- NULL
@@ -65,14 +65,14 @@ FitAnalyzer <- R6Class("FitAnalyzer",
                             imp <- arrange(imp , -Overall)
                             private$imp.vars = imp
                           }else{
-                            
+                            cat(" TBD")
                           }
                            return(imp)
                          },
                          showMostImportantCharts = function(tsDataFrame){
                            showCharts(tsDataFrame , c("minutesLightlyActive"))
                          },
-                         recommendationsToday = function(){
+                         predictGoalToday = function(){
                            cat ("to be implemented")
                          }
                        ),
