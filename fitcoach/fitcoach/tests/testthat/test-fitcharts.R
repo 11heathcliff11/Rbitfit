@@ -4,7 +4,8 @@ test_that("FitCharts test cases", {
     ana <- FitAnalyzer$new()
     masterData <- ana$getAnalysisFrame(folder = masterPath , analysis.type = "daily")
 
-    showCharts(data = masterData, x_axis = "date", y_axis = "steps")
+    testCharts <- MakeChart$new()
+    testCharts$showCharts(data = masterData, activity = "steps")
 
     }
 )

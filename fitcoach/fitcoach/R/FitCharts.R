@@ -26,8 +26,8 @@ MakeChart <- R6Class(
         ### Builds the relevant charts, with the master data frame
         ###
 
-        showCharts = function(data, y_axis) {
-            buildChart(data = data, x_axis = "date", y_axis = y_axis)
+        showCharts = function(data, activity) {
+            buildChart(data = data, x_axis = "date", y_axis = activity)
         }
         
     )
