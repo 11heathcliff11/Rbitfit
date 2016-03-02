@@ -216,7 +216,7 @@ getAPIScope <- function() {
 #' @param key Fitbit API Client key
 #' @param secret Fibit API Client secret
 #' 
-#' @importFrom httr oauth_endpoint oauth_app
+#' @importFrom httr oauth_endpoint oauth_app oauth2.0_token
 
 connectToAPI <- function(appname, key, secret) {
     fitbit_api <- httr::oauth_endpoint(

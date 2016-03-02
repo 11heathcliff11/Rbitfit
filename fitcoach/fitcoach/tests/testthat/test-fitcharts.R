@@ -7,5 +7,4 @@ test_that("FitCharts test cases", {
     testCharts <- MakeChart$new()
     testCharts$showCharts(data = masterData, activity = "steps")
 
-    }
-)
+})
