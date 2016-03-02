@@ -244,13 +244,11 @@ connectToAPI <- function(appname, key, secret) {
 #' @param end_date End date in format YYYY-mm-dd
 #' @param api_token API token for connection to Fitbit API
 #' 
-#' @ImportFrom httr GET warn_for_status
+#' @importFrom httr GET warn_for_status
 
 makeAPIRequest <-
-    function(type,
-             activity,
-             start_date,
-             end_date,
+    function(type, activity,
+             start_date, end_date,
              api_token) {
         
         # Build URL for request
