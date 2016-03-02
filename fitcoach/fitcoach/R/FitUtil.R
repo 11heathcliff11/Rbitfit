@@ -243,6 +243,8 @@ connectToAPI <- function(appname, key, secret) {
 #' @param start_date Start date in format YYYY-mm-dd
 #' @param end_date End date in format YYYY-mm-dd
 #' @param api_token API token for connection to Fitbit API
+#' 
+#' @ImportFrom httr GET warn_for_status
 
 makeAPIRequest <-
     function(type,
@@ -275,8 +277,8 @@ makeAPIRequest <-
         print(req_url)
 
         # Send the request
-        response <- GET(url = req_url, config(token = api_token))
-        warn_for_status(response)
+        response <- httr::GET(url = req_url, config(token = api_token))
+        httr::warn_for_status(response)
         return(response)
         
     }
