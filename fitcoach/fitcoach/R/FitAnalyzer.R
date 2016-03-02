@@ -1,13 +1,18 @@
 #' R6 class for Analyzing Fitbit  Data
 #'
-#' This is a R6 class for Analyzing Fitbit data.
-#' Class is useful one you have the fitbit json files loaded in a folder as a starting point
-#'
-#'
+#' FitAnalyzer is an R6 class for analyzing Fitbit data. It is an opinionated implementation of a particular workflow for analysis. 
+#' For people attempting to conduct their own analysis in a different fashion you should use the more generic functions implemented in #' FitUtil.
+#' The workflow implemented for FitAnalyzer is the following
+#' 1.	Create the FitAnalyzer with the goal variable for analysis. Eg: Calories or steps or distance. The goal variable is your personal #' goal that you are trying to analyze better.
+#' 2.	Call \code{findImportantVariables} to understand the most important variables unique to you that enable meeting your goal. 
+#' 3.	Call \code{showMostImportantCharts} to get relevant charts that are unique to your data
+#' 4.	Call \code{predictGoal} to get a prediction on performance of the goal
+#' You can conduct two types of analysis based on the type of dataset in consideration. \code{analysis.type} can be 'intra.day'
+#' analysis or it can be 'daily' . 
+#' 
 #' @docType class
 #' @import R6
 #' @import jsonlite
-#' @import stats
 #' @import caret
 #' @import dplyr
 #' @format A \code{\link{R6Class}} generator object
@@ -22,16 +27,14 @@
 #'
 #library(R6)
 #library(jsonlite)
-#library(glmnet)
 #source(file = "FitUtil.R")
 #source(file = "FitChartsUtil.R")
-#library(stats)
 #library(caret)
 #library(dplyr)
 FitAnalyzer <- R6Class("FitAnalyzer",
                        public = list(
-                         initialize = function(){
-                           cat("init called")
+                         initialize = function(goal = "calories"){
+                           private$goal <- goal
                          },
                          getAnalysisFrame = function(folder = NA , analysis.type){
                            private$folder <- folder
@@ -47,40 +50,45 @@ FitAnalyzer <- R6Class("FitAnalyzer",
                            }
                            return (master)
                          },
-                         setGoal = function(goal){
-                           private$goal <- goal
-                         },
-                         getGoal = function(){
-                           return(private$goal)
-                         },
-                         findImportantVariables = function(goal = getGoal() , tsDataFrame){
+                         findImportantVariables = function(tsDataFrame){
                            imp <- NULL
-                          if(analysis.type == "intra.day"){ #FIX : try to use switch here
-                            y <- createGoalVariableVector(master = tsDataFrame , goal = goal)
-                            x <- createDependentVariableFrame(master = tsDataFrame , goal = goal)
-                            x <- as.matrix(x)
-                            fit <- glm(y~x , family = "gaussian")
-                            imp<- varImp(fit , scale = FALSE)
+                           if(private$analysis.type == "intra.day"){ #FIX : try to use switch here
+                             cat(" To be implemented")
+                          }else{
+                            y <- createGoalVariableVector(master = tsDataFrame , goal = private$goal)
+                            x <- createDependentVariableFrame(master = tsDataFrame , goal = private$goal)
+                            glm.fit <- glm(y~. , data = x, family = "gaussian")
+                            imp<- varImp(glm.fit , scale = FALSE)
                             imp$name <- rownames(imp)
                             imp <- arrange(imp , -Overall)
                             private$imp.vars = imp
-                          }else{
-                            cat(" TBD")
+                            private$fit <- glm.fit
                           }
                            return(imp)
                          },
                          showMostImportantCharts = function(tsDataFrame){
-                           showCharts(tsDataFrame , c("minutesLightlyActive"))
+                           if(private$analysis.type == "intra.day"){
+                             cat(" To be implemented")
+                           }else{
+                             showCharts(tsDataFrame , c("minutesLightlyActive"))
+                           }
                          },
-                         predictGoalToday = function(){
-                           cat ("to be implemented")
+                         predictGoal = function(x){
+                           response <- NULL
+                           if(private$analysis.type == "intra.day"){
+                             cat(" To be implemented")
+                           }else{
+                             response <- predict.glm(private$fit , newdata = as.data.frame(x) , type = "response")
+                           }
+                           return(response)
                          }
                        ),
                        private = list(
                          folder = NA,
-                         goal = "calorie",
+                         goal = NA,
                          imp.vars = NA ,
-                         analysis.type  = NA
+                         analysis.type  = NA,
+                         fit = NA
                        )
 )
 

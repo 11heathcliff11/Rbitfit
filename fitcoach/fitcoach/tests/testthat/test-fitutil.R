@@ -10,7 +10,7 @@ test_that("Fitutil  test cases", {
   master <- master[master$valid == TRUE ,]
   master <- augmentData(master)
   expect_equal(nrow(master) , 191)
-
+  
   # Test 2
   y <- createGoalVariableVector(master  , goal = "calories")
   expect_gte(mean(y) , 2632)
