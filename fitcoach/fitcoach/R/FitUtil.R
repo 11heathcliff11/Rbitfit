@@ -4,21 +4,6 @@
 # -----------------------------------------------------------------------------------
 
 # 
-# #' A function to fetch data from fitbit.com and store the data as json files
-# #' to a user defined file destination
-# #'
-# #' @param request_url the URL for GET call to fitbit.com
-# #' @param token the authorization token. Assumption that oauth2.0 has been done earlier in the flow
-# #' @param targetFile the place to store the json file
-# #' @return the targetfile
-# #' @import httr
-# #' @export
-# fetchAndStoreFile <- function(request_url, token, targetFile) {
-#   request <- GET(request_url, add_headers(Authorization = token))
-#   bin <- content(request, as = "text")
-#   write(bin, targetFile)
-#   return(targetFile)
-# }
 
 #' @export
 getDailyResourcePathList <- function() {
@@ -26,8 +11,8 @@ getDailyResourcePathList <- function() {
                         "caloriesBMR",
                         "steps",
                         "distance",
-                        "floors",
-                        "elevation",
+                        # "floors",
+                        # "elevation",
                         "minutesSedentary",
                         "minutesLightlyActive",
                         "minutesFairlyActive",
@@ -40,9 +25,9 @@ getDailyResourcePathList <- function() {
 getIntradayResourcePathList <- function() {
   resourcePath <- list ("calories",
                         "steps",
-                        "distance",
-                        "floors",
-                        "elevation")
+                        # "floors",
+                        # "elevation",
+                        "distance")
   return (resourcePath)
 }
 
@@ -55,27 +40,36 @@ getIntradayResourcePathList <- function() {
 #' @import jsonlite
 #' @export
 
-createTsMasterFrame <- function (tsFileFolder, resourcePath = getDailyResourcePathList()) {
-  dflist <- lapply (resourcePath, function (x) {
-    df <- as.data.frame (fromJSON (paste(tsFileFolder, .Platform$file.sep, "max-",
-                          x, ".json", sep = ""), simplifyDataFrame = TRUE))
-    colnames (df)[1] <- "date"
-    colnames (df)[2] <- x
-    return (df)
-  })
-  masterdf <- as.data.frame (dflist[1])
-
-  for (i in 2:length (dflist)) {
-    #FIX : used dplyr here
-    masterdf <- merge(masterdf, as.data.frame(dflist[i]), by = "date")
-  }
-
-  masterdf$date <- as.Date(masterdf$date)
-  lapply(2:ncol(masterdf), function(x) {
-    masterdf[, x] <<- as.numeric(masterdf[, x])
-  })
-  return(masterdf)
-}
+createTsMasterFrame <-
+    function(tsFileFolder, resourcePath = getDailyResourcePathList()) {
+        dflist <- lapply(resourcePath, function (x) {
+            df <-
+                json_file <- paste(
+                    tsFileFolder,
+                    .Platform$file.sep,
+                    "max-", x, ".json",
+                    sep = ""
+                )
+            print(json_file)
+            as.data.frame(jsonlite::fromJSON(json_file, simplifyDataFrame = TRUE))
+            colnames (df)[1] <- "date"
+            colnames (df)[2] <- x
+            return (df)
+        })
+        masterdf <- as.data.frame(dflist[1])
+        
+        for (i in 2:length(dflist)) {
+            #FIX : used dplyr here
+            masterdf <-
+                merge(masterdf, as.data.frame(dflist[i]), by = "date")
+        }
+        
+        masterdf$date <- as.Date(masterdf$date)
+        lapply(2:ncol(masterdf), function(x) {
+            masterdf[, x] <<- as.numeric(masterdf[, x])
+        })
+        return(masterdf)
+    }
 
 #' @export
 createGoalVariableVector <- function(master, goal) {
@@ -115,8 +109,9 @@ augmentData <- function(masterTsDataFrame) {
 #' @export
 
 markValidRows <- function(masterTsDataFrame) {
-  masterTsDataFrame$valid <- (as.numeric(masterTsDataFrame$distance) != 0)
-  return(masterTsDataFrame)
+    masterTsDataFrame$valid <-
+        (as.numeric(masterTsDataFrame$distance) != 0)
+    return(masterTsDataFrame)
 }
 
 
@@ -244,7 +239,7 @@ connectToAPI <- function(appname, key, secret) {
 #' @param end_date End date in format YYYY-mm-dd
 #' @param api_token API token for connection to Fitbit API
 #' 
-#' @importFrom httr GET warn_for_status
+#' @importFrom httr GET warn_for_status config
 
 makeAPIRequest <-
     function(type, activity,
@@ -275,7 +270,7 @@ makeAPIRequest <-
         print(req_url)
 
         # Send the request
-        response <- httr::GET(url = req_url, config(token = api_token))
+        response <- httr::GET(url = req_url, httr::config(token = api_token))
         httr::warn_for_status(response)
         return(response)
         
@@ -290,6 +285,10 @@ makeAPIRequest <-
 #' @param start_date Start date
 
 writeToJSON <- function(content, path, type, activity, start_date) {
+    
+    if (!dir.exists(path)) { 
+        dir.create(path)    
+    }
     
     if (type == 'day') {
         json_file <- paste("max", activity, sep = "-")

@@ -1,13 +1,16 @@
-#' R6 class for Loading fitbit data and creating JSON files
+#' R6 class for Loading Fitbit data 
+#' 
+#' Description to do
 #'
 #' @docType class
-#' @import R6
+#' @importFrom R6 R6Class
+#' @importFrom httr content
 #' @format A \code{\link{R6Class}} generator object
 #' @keywords data
 #' 
-#' @export DataLoader
+#' @export
 
-DataLoader <- R6Class(
+DataLoader <- R6::R6Class(
     "DataLoader",
     
     public = list (
@@ -83,7 +86,7 @@ DataLoader <- R6Class(
                     api_token = self$api_token
                 )
                 
-                writeToJSON(content = content(self$response, as = "text"),
+                writeToJSON(content = httr::content(self$response, as = "text"),
                             path = path,
                             type = type, 
                             activity = acty,
