@@ -2,3 +2,4 @@
 man/
 .RData
 .Rhistory
+.Rcheck
