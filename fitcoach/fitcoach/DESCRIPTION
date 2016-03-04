@@ -9,6 +9,7 @@ License: GPL-3
 Depends:
     R (>= 3.2.3)
 Imports:
+	caret,
     dplyr,
     ggplot2,
     httr,
