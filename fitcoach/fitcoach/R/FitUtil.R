@@ -109,6 +109,9 @@ augmentData <- function(masterTsDataFrame) {
 #'
 #' @param masterTsDataFrame The Master Time Series data Frame
 #' @return The marked Master Data Frame. i.e column valid is added at the end of the data.frame
+#' 
+#' @importFrom dplyr inner_join
+#' @importFrom plyr ldply
 #' @export
 
 markValidRows <- function(masterTsDataFrame) {
@@ -134,7 +137,7 @@ createIntraFrame <- function(folder) {
                           d$sequence <- seq(1:nrow(d))
                           return(d)
                       })
-    calorie.df <- ldply(dfList, data.frame)
+    calorie.df <- plyr::ldply(dfList, data.frame)
     calorie.df <- calorie.df[-c(7, 8)]
     intraColNames <- c(
         "date",
@@ -152,7 +155,7 @@ createIntraFrame <- function(folder) {
     resources <- resources[-c(1)]
     for (i in 1:length(resources)) {
         resource.df <- fetchIntraResourceData(folder, resources[i], files)
-        calorie.df <- inner_join(calorie.df, resource.df)
+        calorie.df <- dplyr::inner_join(calorie.df, resource.df)
     }
     return(calorie.df)
 }
@@ -162,11 +165,11 @@ fetchIntraResourceData <- function (folder, resource, files) {
     indexes <- grep(paste('-', resource, '-', sep = ""), files)
     res.files <- files[indexes]
     res.files <- paste(folder, res.files, sep = "")
-    dfList <- lapply (res.files,
-                      function(x) {
-                          as.data.frame (fromJSON (x, simplifyDataFrame = TRUE))
-                      })
-    resource.df <- ldply(dfList, data.frame)
+    dfList <- lapply(res.files,
+                     function(x) {
+                         as.data.frame (fromJSON (x, simplifyDataFrame = TRUE))
+                     })
+    resource.df <- plyr::ldply(dfList, data.frame)
     resource.df <- resource.df[(-c(5, 6))]
     intraColNames <- c("date", resource, "time",
                        paste('intra.', resource, sep = ""))
@@ -334,7 +337,7 @@ buildChart <- function(data, x_axis, y_axis) {
     # Build graph
     graph <- ggplot(data = data, aes(x = data[[x_axis]])) +
         geom_area(aes(y = data[[y_axis]], fill = y_axis, color = y_axis), alpha = 0.5) +
-        geom_line(aes(y = Average, color = "moving average"), na.rm = TRUE) +
+        geom_line(aes(y = data$Average, color = "moving average"), na.rm = TRUE) +
         labs(title = "", x = x_axis, y = y_axis) + 
         scale_colour_manual(values = c("black", "red"), name = "") +
         guides(fill = "none")
@@ -352,8 +355,5 @@ buildChart <- function(data, x_axis, y_axis) {
 movingAvg <- function(data, n = 7) {
     stats::filter(data, rep(1/n, n), sides = 2)
 }
-
-
-
 
 

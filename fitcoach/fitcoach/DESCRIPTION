@@ -9,13 +9,12 @@ License: GPL-3
 Depends:
     R (>= 3.2.3)
 Imports:
-    R6,
-    jsonlite,
-    glmnet,
-    httr,
     dplyr,
-    caret,
-    ggplot2
+    ggplot2,
+    httr,
+    jsonlite,
+    plyr,
+    R6,
 LazyData: TRUE
 Suggests: testthat, knitr
 RoxygenNote: 5.0.1

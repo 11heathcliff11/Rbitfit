@@ -21,14 +21,8 @@ analysis or it can be 'daily' .
 }
 \section{Methods}{
 
-\describe{
-  \item{ 
-    \code{getAnalysisFrame(folder , analysis.type)}
-    {This method uses \code{folder} \code{analysis.type} as an argument
-    to return a data.frame that is clean and augmented with 
-    additional features like weekend.}
-  }
-}
+\code{getAnalysisFrame(folder, analysis.type)}
+This method uses \code{folder} \code{analysis.type} as an argument to return a data.frame that is clean and augmented with additional features like weekend.
 }
 \keyword{data}
 
