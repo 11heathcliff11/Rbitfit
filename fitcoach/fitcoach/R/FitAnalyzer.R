@@ -13,6 +13,7 @@
 #' @docType class
 #' @importFrom R6 R6Class
 #' @importFrom dplyr arrange
+#' @importFrom caret varImp
 #' @format A \code{\link{R6Class}} generator object
 #' @keywords data
 #' @export FitAnalyzer
@@ -67,9 +68,9 @@ FitAnalyzer <- R6::R6Class(
                     createDependentVariableFrame(master = tsDataFrame, goal = private$goal)
                 glm.fit <-
                     glm(y ~ ., data = x, family = "gaussian")
-                imp <- varImp(glm.fit, scale = FALSE)
+                imp <- caret::varImp(glm.fit, scale = FALSE)
                 imp$name <- rownames(imp)
-                imp <- arrange(imp,-Overall)
+                imp <- dplyr::arrange(imp,-Overall)
                 private$imp.vars = imp
                 private$fit <- glm.fit
             }
@@ -81,7 +82,7 @@ FitAnalyzer <- R6::R6Class(
             if (private$analysis.type == "intra.day") {
                 cat("To be implemented")
             } else {
-                showCharts(tsDataFrame, c("minutesLightlyActive"))
+                self$showCharts(tsDataFrame, c("minutesLightlyActive"))
             }
         },
         

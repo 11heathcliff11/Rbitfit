@@ -270,12 +270,12 @@ makeAPIRequest <-
                          sep = "/")
         
         if (end_date != "") {
-            req_url <- paste(req_url, end_date, sep = "/")
+            req_url <- paste(req_url, end_date, sep = .Platform$file.sep)
         }
         
         if (type == "intraday") {
             if (end_date == "") req_url <- paste(req_url, "1d", sep = "/")
-            req_url <- paste(req_url, "15min", sep = "/")
+            req_url <- paste(req_url, "15min", sep = .Platform$file.sep)
         }
         
         req_url <- paste("https://api.fitbit.com/1/user/-/",
