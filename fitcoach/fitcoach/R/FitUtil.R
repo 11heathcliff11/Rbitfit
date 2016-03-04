@@ -10,6 +10,8 @@ getDailyResourcePathList <- function() {
                         "caloriesBMR",
                         "steps",
                         "distance",
+                        # Charles: needed to remove these two lines, as my
+                        # app doesn't support floors and elevation...
                         # "floors",
                         # "elevation",
                         "minutesSedentary",
@@ -24,6 +26,7 @@ getDailyResourcePathList <- function() {
 getIntradayResourcePathList <- function() {
   resourcePath <- list ("calories",
                         "steps",
+                        # Same as above
                         # "floors",
                         # "elevation",
                         "distance")
