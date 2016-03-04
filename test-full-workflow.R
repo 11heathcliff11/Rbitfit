@@ -41,4 +41,4 @@ ana <- FitAnalyzer$new()
 masterData <- ana$getAnalysisFrame(folder = masterPath , analysis.type = "daily")
 
 # Plot a chart
-ana$showCharts(data = masterData, activity = "steps")
+ana$showCharts(data = masterData, activity = "steps", average = 7)

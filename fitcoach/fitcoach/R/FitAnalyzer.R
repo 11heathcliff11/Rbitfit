@@ -31,7 +31,7 @@ FitAnalyzer <- R6::R6Class(
         },
         
         # Get Analysis frame
-        getAnalysisFrame = function(folder = NA , analysis.type) {
+        getAnalysisFrame = function(folder = NA, analysis.type) {
             
             private$folder <- folder
             private$analysis.type <- analysis.type
@@ -47,7 +47,7 @@ FitAnalyzer <- R6::R6Class(
                 master <- 
                     markValidRows(master)
                 master <-
-                    master[master$valid == TRUE , ]
+                    master[master$valid == TRUE, ]
                 master <- augmentData(master)
             }
             return (master)
@@ -62,14 +62,14 @@ FitAnalyzer <- R6::R6Class(
                 cat(" To be implemented")
             } else {
                 y <-
-                    createGoalVariableVector(master = tsDataFrame , goal = private$goal)
+                    createGoalVariableVector(master = tsDataFrame, goal = private$goal)
                 x <-
-                    createDependentVariableFrame(master = tsDataFrame , goal = private$goal)
+                    createDependentVariableFrame(master = tsDataFrame, goal = private$goal)
                 glm.fit <-
-                    glm(y ~ . , data = x, family = "gaussian")
-                imp <- varImp(glm.fit , scale = FALSE)
+                    glm(y ~ ., data = x, family = "gaussian")
+                imp <- varImp(glm.fit, scale = FALSE)
                 imp$name <- rownames(imp)
-                imp <- arrange(imp ,-Overall)
+                imp <- arrange(imp,-Overall)
                 private$imp.vars = imp
                 private$fit <- glm.fit
             }
@@ -92,14 +92,14 @@ FitAnalyzer <- R6::R6Class(
                 cat("To be implemented")
             } else{
                 response <-
-                    predict.glm(private$fit, newdata = as.data.frame(x) , type = "response")
+                    predict.glm(private$fit, newdata = as.data.frame(x), type = "response")
             }
             return(response)
         },
         
         # Plot a chart
-        showCharts = function(data, activity) {
-            buildChart(data = data, x_axis = "date", y_axis = activity)
+        showCharts = function(data, activity, average = 7) {
+            buildChart(data = data, x_axis = "date", y_axis = activity, moving = average)
         }
         
     ),
@@ -108,7 +108,7 @@ FitAnalyzer <- R6::R6Class(
     private = list(
         folder = NA,
         goal = NA,
-        imp.vars = NA ,
+        imp.vars = NA,
         analysis.type  = NA,
         fit = NA
     )

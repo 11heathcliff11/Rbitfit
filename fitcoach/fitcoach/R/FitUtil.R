@@ -326,10 +326,11 @@ writeToJSON <- function(content, path, type, activity, start_date) {
 #' @param data Dataframe
 #' @param x_axis Name of the X-axis data. Default is 'date'.
 #' @param y_axis Name of the Y-axis data. 
+#' @param moving Number of observations to use for moving average. Default is 7.
 #' 
 #' @import ggplot2
 
-buildChart <- function(data, x_axis, y_axis) {
+buildChart <- function(data, x_axis, y_axis, moving = 7) {
     
     # Build graph
     graph <- ggplot(data = data, aes(x = data[[x_axis]])) +
@@ -339,11 +340,11 @@ buildChart <- function(data, x_axis, y_axis) {
         guides(fill = "none")
     
     # Moving average if n > 7
-    if (length(data[[x_axis]]) > 7) {
-        data$Average <- movingAvg(data[[y_axis]])
+    if ((moving > 0) & (length(data[[x_axis]]) > moving)) {
+        data$average <- movingAvg(data[[y_axis]], n = moving)
         graph <- 
             graph +
-            geom_line(aes(y = data$Average, color = "moving average"), na.rm = TRUE)
+            geom_line(aes(y = data$average, color = "moving average"), na.rm = TRUE)
     }
     
     plot(graph)
@@ -356,7 +357,7 @@ buildChart <- function(data, x_axis, y_axis) {
 #' @param data Vector of data
 #' @param n Number of observations used for moving average. Default is 7.
 
-movingAvg <- function(data, n = 7) {
+movingAvg <- function(data, n) {
     stats::filter(data, rep(1/n, n), sides = 2)
 }
 
