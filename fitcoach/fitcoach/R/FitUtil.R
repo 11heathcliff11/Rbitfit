@@ -331,16 +331,20 @@ writeToJSON <- function(content, path, type, activity, start_date) {
 
 buildChart <- function(data, x_axis, y_axis) {
     
-    # Moving average
-    data$Average <- movingAvg(data[[y_axis]]) 
-    
     # Build graph
     graph <- ggplot(data = data, aes(x = data[[x_axis]])) +
         geom_area(aes(y = data[[y_axis]], fill = y_axis, color = y_axis), alpha = 0.5) +
-        geom_line(aes(y = data$Average, color = "moving average"), na.rm = TRUE) +
         labs(title = "", x = x_axis, y = y_axis) + 
         scale_colour_manual(values = c("black", "red"), name = "") +
         guides(fill = "none")
+    
+    # Moving average if n > 7
+    if (length(data[[x_axis]]) > 7) {
+        data$Average <- movingAvg(data[[y_axis]])
+        graph <- 
+            graph +
+            geom_line(aes(y = data$Average, color = "moving average"), na.rm = TRUE)
+    }
     
     plot(graph)
 }
