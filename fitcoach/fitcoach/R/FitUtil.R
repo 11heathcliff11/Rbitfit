@@ -1,9 +1,8 @@
-# -----------------------------------------------------------------------------------
-# Utility for Fitbit coach package Contains the various functions that are used
-# by R6 Classes in the package
-# -----------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# Utility for 'fitcoach' package. Contains the various functions 
+# that are used by R6 Classes in the package.
+# ------------------------------------------------------------------------------
 
-# 
 
 #' @export
 getDailyResourcePathList <- function() {
@@ -32,26 +31,25 @@ getIntradayResourcePathList <- function() {
 }
 
 
-#' A function to create the Master Data Frame from Timeseries JSON files.
+#' Creates the Master Data Frame from Timeseries JSON files.
 #'
 #' @param tsFileFolder Folder containing all time-series files. Naming convention for files is max-[resource].json
 #' @param resourcePath the resource paths to look. Default will get getDailyResourcePathList()
 #' @return The Master Data Frame
-#' @import jsonlite
+#' @importFrom jsonlite fromJSON
+#' 
 #' @export
 
 createTsMasterFrame <-
     function(tsFileFolder, resourcePath = getDailyResourcePathList()) {
         dflist <- lapply(resourcePath, function (x) {
-            df <-
-                json_file <- paste(
-                    tsFileFolder,
-                    .Platform$file.sep,
-                    "max-", x, ".json",
-                    sep = ""
-                )
-            print(json_file)
-            as.data.frame(jsonlite::fromJSON(json_file, simplifyDataFrame = TRUE))
+            json_file <- paste(
+                tsFileFolder,
+                .Platform$file.sep,
+                "max-", x, ".json",
+                sep = ""
+            )
+            df <- as.data.frame(jsonlite::fromJSON(json_file, simplifyDataFrame = TRUE))
             colnames (df)[1] <- "date"
             colnames (df)[2] <- x
             return (df)
@@ -73,33 +71,38 @@ createTsMasterFrame <-
 
 #' @export
 createGoalVariableVector <- function(master, goal) {
-  y <- eval(parse(text = paste("master$", goal, sep = "")))
+    y <- eval(parse(text = paste("master$", goal, sep = "")))
 }
 
 #' @export
 createDependentVariableFrame <- function(master, goal) {
-  master$date <- NULL
-  # remove variables out of individuals direct control : eg calories
-  master$calories <- NULL
-  master$caloriesBMR <- NULL
-  master$activityCalories <- NULL
-  master$valid <- NULL
-  master$holiday <- ifelse(master$weekend, 1, 0)
-  master$weekday <- NULL
-  master$weekend <- NULL
-  eval(parse(text = paste("master$", goal, " <- NULL", sep = "")))
-  return(master)
+    master$date <- NULL
+    # remove variables out of individuals direct control : eg calories
+    master$calories <- NULL
+    master$caloriesBMR <- NULL
+    master$activityCalories <- NULL
+    master$valid <- NULL
+    master$holiday <- ifelse(master$weekend, 1, 0)
+    master$weekday <- NULL
+    master$weekend <- NULL
+    eval(parse(text = paste("master$", goal, " <- NULL", sep = "")))
+    return(master)
 }
 
 #' @export
 augmentData <- function(masterTsDataFrame) {
-  ## augment weekday information
-  masterTsDataFrame$weekday <- weekdays(as.Date(masterTsDataFrame$date))
-  masterTsDataFrame$weekday <- as.factor(masterTsDataFrame$weekday)
-  masterTsDataFrame$weekend <- ifelse(masterTsDataFrame$weekday == "Saturday" |
-    masterTsDataFrame$weekday == "Sunday", TRUE, FALSE)
-  return(masterTsDataFrame)
-
+    ## augment weekday information
+    masterTsDataFrame$weekday <-
+        weekdays(as.Date(masterTsDataFrame$date))
+    masterTsDataFrame$weekday <- as.factor(masterTsDataFrame$weekday)
+    masterTsDataFrame$weekend <-
+        ifelse(
+            masterTsDataFrame$weekday == "Saturday" |
+                masterTsDataFrame$weekday == "Sunday",
+            TRUE,
+            FALSE
+        )
+    return(masterTsDataFrame)
 }
 
 #' A function that incorporates rules for marking if the data entry in MasterTSFrame are valid or not
@@ -115,72 +118,74 @@ markValidRows <- function(masterTsDataFrame) {
 }
 
 
-#' @export
-createIntraFrame <- function(folder){
-  files <- list.files(folder)
-  indexes <- grep("intra-+" , files)
-  files <- files[indexes]
-  
-  #Calorie
-  indexes <- grep(paste('-calories-' , sep ="" ) , files)
-  res.files <- files[indexes]
-  res.files <- paste(folder , res.files , sep = "")
-  dfList <- lapply (res.files , 
-                    function(x) {
-                      d <- as.data.frame (fromJSON (x , simplifyDataFrame = TRUE ))
-                      d$sequence <- seq(1: nrow(d))
-                      return(d)
-                    })
-  calorie.df <- ldply(dfList, data.frame)
-  calorie.df <- calorie.df[ -c(7,8) ]
-  intraColNames <- c("date",
-                     "calories",
-                     "intra.level",
-                     "intra.mets",
-                     "time",
-                     "intra.calorie" ,
-                      "timeseq")
-  colnames(calorie.df) <- intraColNames
-  
-  #other resource types
-  resources <- getIntradayResourcePathList()
-  resources <- resources[-c(1)]
-  for(i in 1:length(resources)){
-    resource.df <- fetchIntraResourceData(folder , resources[i] , files)
-    calorie.df <- inner_join(calorie.df , resource.df)  
-  }
-  return(calorie.df)
+# Create Intraday Frame
+createIntraFrame <- function(folder) {
+    files <- list.files(folder)
+    indexes <- grep("intra-+", files)
+    files <- files[indexes]
+    
+    #Calorie
+    indexes <- grep(paste('-calories-', sep = ""), files)
+    res.files <- files[indexes]
+    res.files <- paste(folder, res.files, sep = "")
+    dfList <- lapply (res.files,
+                      function(x) {
+                          d <- as.data.frame (fromJSON (x, simplifyDataFrame = TRUE))
+                          d$sequence <- seq(1:nrow(d))
+                          return(d)
+                      })
+    calorie.df <- ldply(dfList, data.frame)
+    calorie.df <- calorie.df[-c(7, 8)]
+    intraColNames <- c(
+        "date",
+        "calories",
+        "intra.level",
+        "intra.mets",
+        "time",
+        "intra.calorie",
+        "timeseq"
+    )
+    colnames(calorie.df) <- intraColNames
+    
+    # Other resource types
+    resources <- getIntradayResourcePathList()
+    resources <- resources[-c(1)]
+    for (i in 1:length(resources)) {
+        resource.df <- fetchIntraResourceData(folder, resources[i], files)
+        calorie.df <- inner_join(calorie.df, resource.df)
+    }
+    return(calorie.df)
 }
 
 #' @export
-fetchIntraResourceData <- function (folder , resource , files){
-  indexes <- grep(paste('-' , resource , '-' , sep ="" ) , files)
-  res.files <- files[indexes]
-  res.files <- paste(folder , res.files , sep = "")
-  dfList <- lapply (res.files , 
-                    function(x) {
-                      as.data.frame (fromJSON (x , simplifyDataFrame = TRUE ))
-                    })
-  resource.df <- ldply(dfList, data.frame)
-  resource.df <- resource.df[(-c(5,6))]
-  intraColNames <- c("date",
-                     resource ,
-                     "time",
-                     paste( 'intra.' , resource , sep = ""))
-  colnames(resource.df) <- intraColNames
-  return (resource.df)
+fetchIntraResourceData <- function (folder, resource, files) {
+    indexes <- grep(paste('-', resource, '-', sep = ""), files)
+    res.files <- files[indexes]
+    res.files <- paste(folder, res.files, sep = "")
+    dfList <- lapply (res.files,
+                      function(x) {
+                          as.data.frame (fromJSON (x, simplifyDataFrame = TRUE))
+                      })
+    resource.df <- ldply(dfList, data.frame)
+    resource.df <- resource.df[(-c(5, 6))]
+    intraColNames <- c("date", resource, "time",
+                       paste('intra.', resource, sep = ""))
+    colnames(resource.df) <- intraColNames
+    return (resource.df)
 }
 
 
-augmentIntraData <- function(inFrame){
-  inFrame$date <- as.Date(inFrame$date)
-  inFrame$dataset.type <- NULL
-  inFrame$time.interval <- NULL
-  inFrame$weekday <- weekdays(inFrame$date)
-  inFrame$weekday <- as.factor(inFrame$weekday)
-  inFrame$weekend <- ifelse(inFrame$weekday == "Saturday" |
-                              inFrame$weekday == "Sunday", TRUE, FALSE)
-  return(inFrame)
+augmentIntraData <- function(inFrame) {
+    inFrame$date <- as.Date(inFrame$date)
+    inFrame$dataset.type <- NULL
+    inFrame$time.interval <- NULL
+    inFrame$weekday <- weekdays(inFrame$date)
+    inFrame$weekday <- as.factor(inFrame$weekday)
+    inFrame$weekend <- ifelse(inFrame$weekday == "Saturday" |
+                                  inFrame$weekday == "Sunday",
+                              TRUE,
+                              FALSE)
+    return(inFrame)
 }
 
 
@@ -188,7 +193,10 @@ augmentIntraData <- function(inFrame){
 ###### Utility functions for DataLoader R6 Class
 ######
 
-#' Gets the scopes that will be retrieved by the API request
+#' Get API scope
+#' 
+#' Gets the scopes that will be retrieved by the API request to fitbit.
+#' See https://dev.fitbit.com/docs/oauth2/#scope 
 
 getAPIScope <- function() {
     APIScope <- c(
@@ -205,7 +213,10 @@ getAPIScope <- function() {
     return (APIScope)
 }
 
-#' Connects to Fibit API with OAuth 2
+#' Connects to Fibit API 
+#' 
+#' Connects to the Fitbit API with OAuth 2. 
+#' See https://dev.fitbit.com/docs/oauth2/
 #' 
 #' @param appname Name of the Fitbit App
 #' @param key Fitbit API Client key
@@ -231,7 +242,9 @@ connectToAPI <- function(appname, key, secret) {
     return(api_token)
 }
 
-#' Make request to Fitbit API
+#' Make API Request
+#' 
+#' Makes request to Fitbit API, and stores the response into a variable.
 #' 
 #' @param type Type of time series. Must be 'day' or 'intraday'
 #' @param activity Type of activity. See below for details.
@@ -276,7 +289,9 @@ makeAPIRequest <-
         
     }
 
-#' Writes API response content to JSON files
+#' Write to JSON
+#' 
+#' Writes API response content to JSON files, in a specific folder
 #' 
 #' @param content JSON content to be written to file
 #' @param path Path to folder where files will be created
@@ -301,7 +316,9 @@ writeToJSON <- function(content, path, type, activity, start_date) {
     
 }
 
-#' Plots charts that have been selected as most relevant
+#' Build Chart
+#' 
+#' Plots charts that have been selected as most relevant.
 #' 
 #' @param data Dataframe
 #' @param x_axis Name of the X-axis data. Default is 'date'.
@@ -325,7 +342,9 @@ buildChart <- function(data, x_axis, y_axis) {
     plot(graph)
 }
 
-#' Computes moving average for charts
+#' Moving average
+#' 
+#' Computes moving average for charts. 
 #' 
 #' @param data Vector of data
 #' @param n Number of observations used for moving average. Default is 7.

@@ -36,7 +36,7 @@ testObject$request(
 ###
 
 # Get JSON files and build dataframe
-masterPath <- "~/check-daily"
+masterPath <- "~/check-daily/"
 ana <- FitAnalyzer$new()
 masterData <- ana$getAnalysisFrame(folder = masterPath , analysis.type = "daily")
 

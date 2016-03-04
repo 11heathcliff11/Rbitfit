@@ -19,5 +19,16 @@ The workflow implemented for FitAnalyzer is the following
 You can conduct two types of analysis based on the type of dataset in consideration. \code{analysis.type} can be 'intra.day'
 analysis or it can be 'daily' .
 }
+\section{Methods}{
+
+\describe{
+  \item{ 
+    \code{getAnalysisFrame(folder , analysis.type)}
+    {This method uses \code{folder} \code{analysis.type} as an argument
+    to return a data.frame that is clean and augmented with 
+    additional features like weekend.}
+  }
+}
+}
 \keyword{data}
 

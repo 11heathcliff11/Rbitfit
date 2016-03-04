@@ -16,10 +16,15 @@
 #' @format A \code{\link{R6Class}} generator object
 #' @keywords data
 #' @export FitAnalyzer
+#' 
 #' @section Methods:
 #' \describe{
-#'  \item{\code{getAnalysisFrame(folder , analysis.type) }{This method uses \code{folder} \code{analysis.type} as an
-#'   argument to return a data.frame that is clean and augmented with additional features like weekend.}
+#'   \item{ 
+#'     \code{getAnalysisFrame(folder , analysis.type)}
+#'     {This method uses \code{folder} \code{analysis.type} as an argument
+#'     to return a data.frame that is clean and augmented with 
+#'     additional features like weekend.}
+#'   }
 #' }
 
 FitAnalyzer <- R6::R6Class(
@@ -31,6 +36,7 @@ FitAnalyzer <- R6::R6Class(
             private$goal <- goal
         },
         
+        # Get Analysis frame
         getAnalysisFrame = function(folder = NA , analysis.type) {
             
             private$folder <- folder
@@ -53,6 +59,7 @@ FitAnalyzer <- R6::R6Class(
             return (master)
         },
         
+        # Find important variables
         findImportantVariables = function(tsDataFrame) {
         
             imp <- NULL
@@ -75,6 +82,7 @@ FitAnalyzer <- R6::R6Class(
             return(imp)
         },
         
+        # Choose most important charts
         showMostImportantCharts = function(tsDataFrame) {
             if (private$analysis.type == "intra.day") {
                 cat("To be implemented")
@@ -83,6 +91,7 @@ FitAnalyzer <- R6::R6Class(
             }
         },
         
+        # Predict goals
         predictGoal = function(x) {
             response <- NULL
             if (private$analysis.type == "intra.day") {
@@ -101,6 +110,7 @@ FitAnalyzer <- R6::R6Class(
         
     ),
     
+    # Private variables
     private = list(
         folder = NA,
         goal = NA,

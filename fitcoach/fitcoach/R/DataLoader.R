@@ -8,7 +8,7 @@
 #' @format A \code{\link{R6Class}} generator object
 #' @keywords data
 #' 
-#' @export
+#' @export DataLoader
 
 DataLoader <- R6::R6Class(
     "DataLoader",
