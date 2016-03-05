@@ -18,9 +18,7 @@ test_that("Fitutil test cases", {
     
     # Test 3
     x <- createDependentVariableFrame(master, goal = "calories")
-    # Charles: modified the number of colums to 7, 
-    # as my app does not support elevation and floors...
-    expect_equal(ncol(x), 7)
+    expect_equal(ncol(x), length(getDailyResourcePathList()))
     
     # Distance
     
