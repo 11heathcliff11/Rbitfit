@@ -3,12 +3,19 @@
 #' Description to do
 #'
 #' @docType class
-#' @importFrom R6 R6Class
-#' @importFrom httr content
 #' @format A \code{\link{R6Class}} generator object
 #' @keywords data
 #' 
+#' @importFrom R6 R6Class
+#' @importFrom httr content
 #' @export DataLoader
+#' 
+#' @section Methods:
+#' \code{connect(appname, key, secret)}
+#' Description to do
+#' \code{request(type = "day", activities = "", start.date = Sys.Date(), end.date = "", path = "./json/"))}
+#' Description to do
+
 
 DataLoader <- R6::R6Class(
     "DataLoader",
@@ -20,12 +27,12 @@ DataLoader <- R6::R6Class(
         ###
         
         # API Token
-        api_token = NA,
+        api.token = NA,
         # Request response
         response = NA,
         
         ###
-        ### FUNCTION initialize
+        ### METHOD initialize
         ### Standard R6 Initialize function
         ###
         
@@ -34,7 +41,7 @@ DataLoader <- R6::R6Class(
         },
         
         ###
-        ### FUNCTION connect
+        ### METHOD connect
         ### Connects to the API with credentials
         ###
         
@@ -42,38 +49,38 @@ DataLoader <- R6::R6Class(
             if (file.exists('.httr-oauth')) {
                 if (difftime(Sys.time(), file.info('.httr-oauth')$mtime, units = "mins") < 60) {
                     message('Use existing Oauth file') # Debug only
-                    self$api_token <- readRDS('.httr-oauth')[[1]]
+                    self$api.token <- readRDS('.httr-oauth')[[1]]
                 } else {
                     # Known bug: autorefresh does not work in basic mode
                     # https://github.com/hadley/httr/pull/320
                     message('Delete cache and create new Oauth file') # Debug only
                     file.remove('.httr-oauth')
-                    self$api_token <- connectToAPI(appname, key, secret)
+                    self$api.token <- connectToAPI(appname, key, secret)
                 }
             } else {
                 message('Create new Oauth file') # Debug only
-                self$api_token <- connectToAPI(appname, key, secret)
+                self$api.token <- connectToAPI(appname, key, secret)
             }
         },
         
         ###
-        ### FUNCTION request
+        ### METHOD request
         ### Build URL, send request and write response to JSON file
         ###
         
         request = function(type = "day",
                            activities = "",
-                           start_date = Sys.Date(),
-                           end_date = "",
+                           start.date = Sys.Date(),
+                           end.date = "",
                            path = "./json/") {
          
             # Check 'type' argument
             if (!(type %in% c("day", "intraday")))
-                stop("Invalid 'req_type'. Must be 'day' or 'intraday'")
+                stop("Invalid 'type'. Must be 'day' or 'intraday'")
             
-            # Check 'start_date' argument
-            if (!(grepl("^[0-9]{4}-[0-9]{2}-[0-9]{2}$", start_date)))
-                stop("Invalid 'start_date'. Must be in the following format: 'YYYY-MM-dd'")
+            # Check 'start.date' argument
+            if (!(grepl("^[0-9]{4}-[0-9]{2}-[0-9]{2}$", start.date)))
+                stop("Invalid 'start.date'. Must be in the following format: 'YYYY-MM-dd'")
             
             # Call request function for each activity
             for (acty in activities) {
@@ -81,16 +88,16 @@ DataLoader <- R6::R6Class(
                 self$response <- makeAPIRequest(
                     type = type,
                     activity = acty,
-                    start_date = start_date,
-                    end_date = end_date,
-                    api_token = self$api_token
+                    start.date = start.date,
+                    end.date = end.date,
+                    api.token = self$api.token
                 )
                 
                 writeToJSON(content = httr::content(self$response, as = "text"),
                             path = path,
                             type = type, 
                             activity = acty,
-                            start_date = start_date)
+                            start.date = start.date)
                 
             }
         }

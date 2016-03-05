@@ -12,22 +12,22 @@ testObject$connect(appname = "cdlr",
 )
 
 # Get Daily data for all possible activities
-all_daily_activities <- getDailyResourcePathList()
+all.daily.activities <- getDailyResourcePathList()
     
 testObject$request(
     type = 'day', 
-    activities = all_daily_activities, 
-    start_date = "2016-01-20", 
-    end_date = "2016-02-05", 
+    activities = all.daily.activities, 
+    start.date = "2016-01-20", 
+    end.date = "2016-02-05", 
     path = "~/check-daily/")
 
 # Get Intraday data for all possible activities
-all_intraday_activities <- getIntradayResourcePathList()
+all.intraday.activities <- getIntradayResourcePathList()
 
 testObject$request(
     type = 'intraday', 
-    activities = all_intraday_activities, 
-    start_date = "2016-02-01", 
+    activities = all.intraday.activities, 
+    start.date = "2016-02-01", 
     path = "~/check-intraday/")
 
 

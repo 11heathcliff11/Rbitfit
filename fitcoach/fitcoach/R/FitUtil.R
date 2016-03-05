@@ -46,13 +46,13 @@ getIntradayResourcePathList <- function() {
 createTsMasterFrame <-
     function(tsFileFolder, resourcePath = getDailyResourcePathList()) {
         dflist <- lapply(resourcePath, function (x) {
-            json_file <- paste(
+            json.file <- paste(
                 tsFileFolder,
                 .Platform$file.sep,
                 "max-", x, ".json",
                 sep = ""
             )
-            df <- as.data.frame(jsonlite::fromJSON(json_file, simplifyDataFrame = TRUE))
+            df <- as.data.frame(jsonlite::fromJSON(json.file, simplifyDataFrame = TRUE))
             colnames (df)[1] <- "date"
             colnames (df)[2] <- x
             return (df)
@@ -231,21 +231,21 @@ getAPIScope <- function() {
 #' @importFrom httr oauth_endpoint oauth_app oauth2.0_token
 
 connectToAPI <- function(appname, key, secret) {
-    fitbit_api <- httr::oauth_endpoint(
+    fitbit.api <- httr::oauth_endpoint(
         request = "https://api.fitbit.com/oauth2/token",
         authorize = "https://www.fitbit.com/oauth2/authorize",
         access = "https://api.fitbit.com/oauth2/token")
     
-    api_token <-
+    api.token <-
         httr::oauth2.0_token(
-            endpoint = fitbit_api,
+            endpoint = fitbit.api,
             app = httr::oauth_app(appname, key, secret),
             scope = getAPIScope(),
             use_basic_auth = TRUE,
             cache = TRUE
         )
         
-    return(api_token)
+    return(api.token)
 }
 
 #' Make API Request
@@ -254,42 +254,42 @@ connectToAPI <- function(appname, key, secret) {
 #' 
 #' @param type Type of time series. Must be 'day' or 'intraday'
 #' @param activity Type of activity. See below for details.
-#' @param start_date Start date in format YYYY-mm-dd
-#' @param end_date End date in format YYYY-mm-dd
-#' @param api_token API token for connection to Fitbit API
+#' @param start.date Start date in format YYYY-mm-dd
+#' @param end.date End date in format YYYY-mm-dd
+#' @param api.token API token for connection to Fitbit API
 #' 
 #' @importFrom httr GET warn_for_status config
 
 makeAPIRequest <-
     function(type, activity,
-             start_date, end_date,
-             api_token) {
+             start.date, end.date,
+             api.token) {
         
         # Build URL for request
-        req_url <- paste("activities",
+        req.url <- paste("activities",
                          activity,
                          "date",
-                         start_date,
+                         start.date,
                          sep = "/")
         
-        if (end_date != "") {
-            req_url <- paste(req_url, end_date, sep = .Platform$file.sep)
+        if (end.date != "") {
+            req.url <- paste(req.url, end.date, sep = .Platform$file.sep)
         }
         
         if (type == "intraday") {
-            if (end_date == "") req_url <- paste(req_url, "1d", sep = "/")
-            req_url <- paste(req_url, "15min", sep = .Platform$file.sep)
+            if (end.date == "") req.url <- paste(req.url, "1d", sep = "/")
+            req.url <- paste(req.url, "15min", sep = .Platform$file.sep)
         }
         
-        req_url <- paste("https://api.fitbit.com/1/user/-/",
-                         req_url,
+        req.url <- paste("https://api.fitbit.com/1/user/-/",
+                         req.url,
                          ".json",
                          sep = "")
         # Debug only
-        print(req_url)
+        print(req.url)
 
         # Send the request
-        response <- httr::GET(url = req_url, httr::config(token = api_token))
+        response <- httr::GET(url = req.url, httr::config(token = api.token))
         httr::warn_for_status(response)
         return(response)
         
@@ -303,22 +303,22 @@ makeAPIRequest <-
 #' @param path Path to folder where files will be created
 #' @param type Type of time series. Must be 'day' or 'intraday'
 #' @param activity Type of activity. See below for details.
-#' @param start_date Start date
+#' @param start.date Start date
 
-writeToJSON <- function(content, path, type, activity, start_date) {
+writeToJSON <- function(content, path, type, activity, start.date) {
     
     if (!dir.exists(path)) { 
         dir.create(path)    
     }
     
     if (type == 'day') {
-        json_file <- paste("max", activity, sep = "-")
+        json.file <- paste("max", activity, sep = "-")
     } else if (type == 'intraday') {
-        json_file <- paste("intra", activity, start_date, sep = "-")
+        json.file <- paste("intra", activity, start.date, sep = "-")
     }
     
-    json_file <- paste(path, json_file, ".json", sep = "")
-    write(content, json_file)
+    json.file <- paste(path, json.file, ".json", sep = "")
+    write(content, json.file)
     
 }
 
@@ -327,24 +327,24 @@ writeToJSON <- function(content, path, type, activity, start_date) {
 #' Plots charts that have been selected as most relevant.
 #' 
 #' @param data Dataframe
-#' @param x_axis Name of the X-axis data. Default is 'date'.
-#' @param y_axis Name of the Y-axis data. 
+#' @param x.axis Name of the X-axis data. Default is 'date'.
+#' @param y.axis Name of the Y-axis data. 
 #' @param moving Number of observations to use for moving average. Default is 7.
 #' 
 #' @import ggplot2
 
-buildChart <- function(data, x_axis, y_axis, moving = 7) {
+buildChart <- function(data, x.axis, y.axis, moving = 7) {
     
     # Build graph
-    graph <- ggplot(data = data, aes(x = data[[x_axis]])) +
-        geom_area(aes(y = data[[y_axis]], fill = y_axis, color = y_axis), alpha = 0.5) +
-        labs(title = "", x = x_axis, y = y_axis) + 
+    graph <- ggplot(data = data, aes(x = data[[x.axis]])) +
+        geom_area(aes(y = data[[y.axis]], fill = y.axis, color = y.axis), alpha = 0.5) +
+        labs(title = "", x = x.axis, y = y.axis) + 
         scale_colour_manual(values = c("black", "red"), name = "") +
         guides(fill = "none")
     
     # Moving average if n > 7
-    if ((moving > 0) & (length(data[[x_axis]]) > moving)) {
-        data$average <- movingAvg(data[[y_axis]], n = moving)
+    if ((moving > 0) & (length(data[[x.axis]]) > moving)) {
+        data$average <- movingAvg(data[[y.axis]], n = moving)
         graph <- 
             graph +
             geom_line(aes(y = data$average, color = "moving average"), na.rm = TRUE)
