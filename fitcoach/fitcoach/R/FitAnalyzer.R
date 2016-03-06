@@ -11,11 +11,12 @@
 #' analysis or it can be 'daily' . 
 #' 
 #' @docType class
+#' @format A \code{\link{R6Class}} generator object
+#' @keywords data
+#' 
 #' @importFrom R6 R6Class
 #' @importFrom dplyr arrange
 #' @importFrom caret varImp
-#' @format A \code{\link{R6Class}} generator object
-#' @keywords data
 #' @export FitAnalyzer
 #' 
 #' @section Methods:
@@ -96,10 +97,8 @@ FitAnalyzer <- R6::R6Class(
         },
         
         # Plot a chart
-        showCharts = function(data, activity.1, activity.2, average = 7) {
-            buildChart(data = data, x.axis = "date", 
-                       y.axis.1 = activity.1, y.axis.2 = activity.2, 
-                       moving = average)
+        showCharts = function(data, activities) {
+            buildChart(data = data, x.axis = "date", y.axes = activities)
         }
         
     ),

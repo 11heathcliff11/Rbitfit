@@ -43,9 +43,7 @@ test_that("FitAnalyzer test cases", {
     expect_equal(names(vars[1]), "steps")
     
     ### Test for charts plotting
-    
-    ana$showCharts(ts, activity.1 = "steps", activity.2 = "calories")
-    ana$showCharts(ts, activity.1 = "distance", activity.2 = "caloriesBMR")
-    ana$showCharts(ts, activity.1 = "minutesSedentary", activity.2 = "minutesLightlyActive")
-    
+    # To be used in the vignette
+    ana$showCharts(ts, activities = c("steps", "distance", "calories", "minutesSedentary"))
+
 })

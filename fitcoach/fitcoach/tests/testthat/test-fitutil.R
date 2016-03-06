@@ -29,7 +29,7 @@ test_that("Fitutil test cases", {
     expect_equal(ncol(x), 8)
     
         
-    # Intra-day tests below : Tests
+    ### Intra-day tests
     # Test 6 
      folder <-
          system.file("extdata", "intra-daily-timeseries", package = "fitcoach")
@@ -40,5 +40,4 @@ test_that("Fitutil test cases", {
      intraMaster <- augmentIntraData(intraMaster)
      expect_equal(18 , ncol(intraMaster))
      
-
 })

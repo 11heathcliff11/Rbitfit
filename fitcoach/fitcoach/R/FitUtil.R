@@ -343,45 +343,26 @@ writeToJSON <- function(content, path, type, activity, start.date) {
 #' 
 #' @param data Dataframe
 #' @param x.axis Name of the X-axis data. Default is 'date'.
-#' @param y.axis Name of the Y-axis data. 
-#' @param moving Number of observations to use for moving average. Default is 7.
+#' @param y.axes Name of the Y-axes data, as a vector of characters
 #' 
 #' @import ggplot2
 #' @importFrom reshape2 melt
 
-buildChart <- function(data, x.axis, y.axis.1, y.axis.2, moving = 7) {
+buildChart <- function(data, x.axis, y.axes) {
     
     # Keep only relevant columns
-    data <- subset(data, select = c(x.axis, y.axis.1, y.axis.2))
-
-    # Compute moving average if applicable
-    if ((moving > 0) & (length(data[[x.axis]]) > moving)) {
-        data$avg.1 <- movingAvg(data[[y.axis.1]], n = moving)
-        data$avg.2 <- movingAvg(data[[y.axis.2]], n = moving)
-    }
+    data <- subset(data, select = c(x.axis, y.axes))
     
     # Melt data
-    data.melt <- reshape2::melt(data, id.vars = x.axis)
+    data <- reshape2::melt(data, id.vars = x.axis)
     
     # Build graph
     graph <- 
-        ggplot(data.melt, aes(x = data.melt[[x.axis]], y = value, color = variable)) +
-        geom_line(na.rm = TRUE) +
-        labs(title = "", x = x.axis, y = "") +
-        scale_colour_manual(values = c("blue", "red", "gray", "gray"), name = "")
+        ggplot(data, aes(x = data[[x.axis]], y = data$value, color = data$variable)) +
+        geom_line(na.rm = TRUE, alpha = 0.3) +
+        geom_smooth(span = 0.1, se = FALSE) + 
+        facet_grid(variable ~ ., scales = "free_y") +
+        labs(title = "", x = x.axis, y = "")
     plot(graph)
     
 }
-
-#' Moving average
-#' 
-#' Computes moving average for charts. 
-#' 
-#' @param data Vector of data
-#' @param n Number of observations used for moving average. Default is 7.
-
-movingAvg <- function(data, n) {
-    as.numeric(stats::filter(data, rep(1/n, n), sides = 2))
-}
-
-
