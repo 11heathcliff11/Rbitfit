@@ -351,6 +351,9 @@ writeToJSON <- function(content, path, type, activity, start.date) {
 
 buildChart <- function(data, x.axis, y.axis.1, y.axis.2, moving = 7) {
     
+    # Keep only relevant columns
+    data <- subset(data, select = c(x.axis, y.axis.1, y.axis.2))
+
     # Compute moving average if applicable
     if ((moving > 0) & (length(data[[x.axis]]) > moving)) {
         data$avg.1 <- movingAvg(data[[y.axis.1]], n = moving)
@@ -359,7 +362,6 @@ buildChart <- function(data, x.axis, y.axis.1, y.axis.2, moving = 7) {
     
     # Melt data
     data.melt <- reshape2::melt(data, id.vars = x.axis)
-    View(data.melt)
     
     # Build graph
     graph <- 

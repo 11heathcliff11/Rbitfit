@@ -97,7 +97,9 @@ FitAnalyzer <- R6::R6Class(
         
         # Plot a chart
         showCharts = function(data, activity.1, activity.2, average = 7) {
-            buildChart(data = data, x.axis = "date", y.axis.1 = activity.1, y.axis.2 = activity.2, moving = average)
+            buildChart(data = data, x.axis = "date", 
+                       y.axis.1 = activity.1, y.axis.2 = activity.2, 
+                       moving = average)
         }
         
     ),

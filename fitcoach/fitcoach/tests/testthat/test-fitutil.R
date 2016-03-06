@@ -40,9 +40,5 @@ test_that("Fitutil test cases", {
      intraMaster <- augmentIntraData(intraMaster)
      expect_equal(18 , ncol(intraMaster))
      
-     
-     
-     
-     
-    
+
 })
