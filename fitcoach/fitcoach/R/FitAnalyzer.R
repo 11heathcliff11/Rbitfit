@@ -81,7 +81,6 @@ FitAnalyzer <- R6::R6Class(
         },
         
         # Choose most important charts 
-        # Charles - is this method required . Can we get rid of this and use showCharts only
         showMostImportantCharts = function(tsDataFrame) {
             if (private$analysis.type == "intra.day") {
                 cat("To be implemented")
@@ -89,7 +88,7 @@ FitAnalyzer <- R6::R6Class(
                 buildChart(data = tsDataFrame, 
                            x.axis = "date", 
                            # FIX: only keep max 4 variables
-                           y.axes = unlist(private$imp.vars$name)[1:3])
+                           y.axes = unlist(private$imp.vars$name)[1:4])
             }
         },
         
@@ -117,27 +116,41 @@ FitAnalyzer <- R6::R6Class(
         analysis.type  = NA,
         fit = NA,
         gbm.best.iter = NA,
-        createDailyFrameFit = function(master){
-          y <-
-            createGoalVariableVector(master, goal = private$goal)
-          x <-
-            createDependentVariableFrame(master, goal = private$goal)
-          glm.fit <-
-            glm(y ~ ., data = x, family = "gaussian")
-          imp <- caret::varImp(glm.fit, scale = FALSE)
-          imp$name <- rownames(imp)
-          imp <- dplyr::arrange(imp,-Overall)
-          private$fit <- glm.fit
-          private$imp.vars <- imp
+        
+        createDailyFrameFit = function(master) {
+            y <-
+                createGoalVariableVector(master, goal = private$goal)
+            x <-
+                createDependentVariableFrame(master, goal = private$goal)
+            glm.fit <-
+                glm(y ~ ., data = x, family = "gaussian")
+            imp <- caret::varImp(glm.fit, scale = FALSE)
+            imp$name <- rownames(imp)
+            imp <- dplyr::arrange(imp, -Overall)
+            private$fit <- glm.fit
+            private$imp.vars <- imp
         },
-        createIntraFit = function(master){
-          master$date <- NULL
-          gbm.fit <- gbm::gbm(formula = calories~., data = master, distribution = "gaussian", n.trees = 500,
-                          shrinkage = .05, interaction.depth = 5, bag.fraction = .5, train.fraction = .8,
-                          cv.folds = 3, verbose = FALSE)
-          private$fit <- gbm.fit
-          private$gbm.best.iter <- gbm::gbm.perf(gbm.fit,method="test")
-          private$imp.vars <-  relative.influence(gbm.fit, n.trees = 500, scale = TRUE)
+        
+        createIntraFit = function(master) {
+            master$date <- NULL
+            gbm.fit <-
+                gbm::gbm(
+                    formula = calories ~ .,
+                    data = master,
+                    distribution = "gaussian",
+                    n.trees = 500,
+                    shrinkage = .05,
+                    interaction.depth = 5,
+                    bag.fraction = .5,
+                    train.fraction = .8,
+                    cv.folds = 3,
+                    verbose = FALSE
+                )
+            private$fit <- gbm.fit
+            private$gbm.best.iter <-
+                gbm::gbm.perf(gbm.fit, method = "test")
+            private$imp.vars <-
+                relative.influence(gbm.fit, n.trees = 500, scale = TRUE)
         }
     )
 )
