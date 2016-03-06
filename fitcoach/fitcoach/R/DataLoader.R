@@ -11,10 +11,32 @@
 #' @export DataLoader
 #' 
 #' @section Methods:
-#' \code{connect(appname, key, secret)}
-#' Description to do
-#' \code{request(type = "day", activities = "", start.date = Sys.Date(), end.date = "", path = "./json/"))}
-#' Description to do
+#' \describe{
+#'   \item{\code{connect(appname, key, secret)}}{This method connects to the Fitbit API and to your application. 
+#'   \cr \code{appname}: Name of the Fitbit App
+#'   \cr \code{key}: Fitbit API Client key
+#'   \cr \code{secret}: Fibit API Client secret}
+#'   \item{\code{request(type = "day", activities = "", start.date = Sys.Date(), end.date = "", path = "./json/"))}}{This method builds the request URLs, sends the requests and writes response to JSON files, in the specified folder.
+#'   \cr \code{type}: Type of time series. Must be 'day' or 'intraday'.
+#'   \cr \code{activities}: A list of the Fitibit activities to be retrieved.
+#'   \cr \code{start.date}: Start date in format YYYY-mm-dd.
+#'   \cr \code{end.date}: End date in format YYYY-mm-dd.
+#'   \cr \code{path}: Folder where the JSON files will be written.}
+#' }
+#' 
+#' @example 
+#' testObject <- DataLoader$new()
+#' 
+#' testObject$connect(appname = "abcd",
+#'                    key = "123ABC",
+#'                    secret = "3089e3h1ac9dde0aa67b54ajc8691j44")
+#' 
+#' testObject$request(
+#'     type = 'day', 
+#'     activities = list("calories", "steps", "distance", "minutesVeryActive"), 
+#'     start.date = "2016-01-01", 
+#'     end.date = "2016-02-01", 
+#'     path = "~/fitbit-daily/")
 
 
 DataLoader <- R6::R6Class(
