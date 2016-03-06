@@ -87,6 +87,7 @@ createDependentVariableFrame <- function(master, goal) {
     eval(parse(text = paste("master$", goal, " <- NULL", sep = "")))
     return(master)
 }
+
 #' @export
 augmentData <- function(masterTsDataFrame) {
     ## augment weekday information
@@ -192,19 +193,31 @@ augmentIntraData <- function(inFrame) {
                               0)
     inFrame$calories <- as.numeric(inFrame$calories)
     inFrame$time <- NULL
-    inFrame[,2:9] <- lapply(2:9, function(x) as.numeric(inFrame[,x]))
+    inFrame[, 2:9] <-
+        lapply(2:9, function(x)
+            as.numeric(inFrame[, x]))
     
     
-    a<- cut(inFrame$timeseq, breaks = c(0,23, 41, 77, 90, 96), labels = c("night", "morning", "day","eve", "latenight" ) )
+    a <-
+        cut(
+            inFrame$timeseq,
+            breaks = c(0, 23, 41, 77, 90, 96),
+            labels = c("night", "morning", "day", "eve", "latenight")
+        )
     inFrame$slot <- a
-    #mod<- transform(df,  cumsum.calorie = ave(intra.calorie, date, slot, FUN=cumsum)) 
-    mod<- transform(inFrame,  cumsum.calorie = ave(intra.calorie, date,  FUN=cumsum)) 
-    mod<- transform(mod, cumsum.steps = ave(intra.steps, date, FUN=cumsum)) 
-    mod<- transform(mod, cumsum.level = ave(intra.level, date, FUN=cumsum)) 
-    mod<- transform(mod, cumsum.mets = ave(intra.mets, date, FUN=cumsum)) 
-    mod<- transform(mod, cumsum.distance = ave(intra.distance, date, FUN=cumsum)) 
-    #mod<- transform(mod, cumsum.floors = ave(intra.floors, date, FUN=cumsum)) 
-    #mod<- transform(mod, cumsum.elevation = ave(intra.elevation, date, FUN=cumsum)) 
+    #mod<- transform(df,  cumsum.calorie = ave(intra.calorie, date, slot, FUN=cumsum))
+    mod <-
+        transform(inFrame,  cumsum.calorie = ave(intra.calorie, date,  FUN = cumsum))
+    mod <-
+        transform(mod, cumsum.steps = ave(intra.steps, date, FUN = cumsum))
+    mod <-
+        transform(mod, cumsum.level = ave(intra.level, date, FUN = cumsum))
+    mod <-
+        transform(mod, cumsum.mets = ave(intra.mets, date, FUN = cumsum))
+    mod <-
+        transform(mod, cumsum.distance = ave(intra.distance, date, FUN = cumsum))
+    #mod<- transform(mod, cumsum.floors = ave(intra.floors, date, FUN=cumsum))
+    #mod<- transform(mod, cumsum.elevation = ave(intra.elevation, date, FUN=cumsum))
     inFrame <- mod
     return(inFrame)
 }
@@ -300,8 +313,6 @@ makeAPIRequest <-
                          req.url,
                          ".json",
                          sep = "")
-        # Debug only
-        print(req.url)
 
         # Send the request
         response <- httr::GET(url = req.url, httr::config(token = api.token))
@@ -350,10 +361,8 @@ writeToJSON <- function(content, path, type, activity, start.date) {
 
 buildChart <- function(data, x.axis, y.axes) {
     
-    # Keep only relevant columns
+    # Keep only relevant columns and melt data
     data <- subset(data, select = c(x.axis, y.axes))
-    
-    # Melt data
     data <- reshape2::melt(data, id.vars = x.axis)
     
     # Build graph

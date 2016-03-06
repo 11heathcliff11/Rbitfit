@@ -110,6 +110,7 @@ FitAnalyzer <- R6::R6Class(
     
     # Private variables
     private = list(
+        
         folder = NA,
         goal = NA,
         imp.vars = NA,
