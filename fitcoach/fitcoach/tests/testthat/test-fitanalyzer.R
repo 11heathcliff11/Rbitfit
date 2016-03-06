@@ -44,7 +44,6 @@ test_that("FitAnalyzer test cases", {
     
     ### Test for charts plotting
     
-    # Test 7
     ana$showCharts(ts, activity.1 = "steps", activity.2 = "calories")
     ana$showCharts(ts, activity.1 = "distance", activity.2 = "caloriesBMR")
     ana$showCharts(ts, activity.1 = "minutesSedentary", activity.2 = "minutesLightlyActive")
