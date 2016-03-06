@@ -61,7 +61,7 @@ FitAnalyzer <- R6::R6Class(
               return (private$imp.vars)
             }
 
-           ifelse (private$analysis.type == "intra.day" ,
+           ifelse (private$analysis.type == "intra.day",
                    private$createIntraFit (tsDataFrame),
                    private$createDailyFrameFit (tsDataFrame))
 
@@ -85,7 +85,7 @@ FitAnalyzer <- R6::R6Class(
         predictGoal = function(x) {
             response <- NULL
             response <- 
-                  ifelse (private$analysis.type == "intra.day" ,
+                  ifelse (private$analysis.type == "intra.day",
                           gbm::predict.gbm(private$fit, newdata = x,
                                            n.trees = private$gbm.best.iter),
                           predict.glm(private$fit, 
@@ -96,8 +96,8 @@ FitAnalyzer <- R6::R6Class(
         },
         
         # Plot a chart
-        showCharts = function(data, activity, average = 7) {
-            buildChart(data = data, x.axis = "date", y.axis = activity, moving = average)
+        showCharts = function(data, activity.1, activity.2, average = 7) {
+            buildChart(data = data, x.axis = "date", y.axis.1 = activity.1, y.axis.2 = activity.2, moving = average)
         }
         
     ),
@@ -125,12 +125,12 @@ FitAnalyzer <- R6::R6Class(
         },
         createIntraFit = function(master){
           master$date <- NULL
-          gbm.fit <- gbm::gbm(formula = calories~. , data = master, distribution = "gaussian" , n.trees = 500 ,
-                          shrinkage = .05 , interaction.depth = 5 , bag.fraction = .5 , train.fraction = .8 ,
-                          cv.folds = 3 , verbose = FALSE)
+          gbm.fit <- gbm::gbm(formula = calories~., data = master, distribution = "gaussian", n.trees = 500,
+                          shrinkage = .05, interaction.depth = 5, bag.fraction = .5, train.fraction = .8,
+                          cv.folds = 3, verbose = FALSE)
           private$fit <- gbm.fit
           private$gbm.best.iter <- gbm::gbm.perf(gbm.fit,method="test")
-          private$imp.vars <-  relative.influence(gbm.fit , n.trees = 500 , scale = TRUE)
+          private$imp.vars <-  relative.influence(gbm.fit, n.trees = 500, scale = TRUE)
         }
     )
 )

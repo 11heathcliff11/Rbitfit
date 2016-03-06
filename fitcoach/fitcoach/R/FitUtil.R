@@ -134,7 +134,7 @@ createIntraFrame <- function(folder) {
     
     dfList <- lapply (res.files,
                       function(x) {
-                          d <- as.data.frame (jsonlite::fromJSON (x, simplifyDataFrame = TRUE , flatten = TRUE))
+                          d <- as.data.frame (jsonlite::fromJSON (x, simplifyDataFrame = TRUE, flatten = TRUE))
                           d$sequence <- seq(1:nrow(d))
                           return(d)
                       })
@@ -166,7 +166,7 @@ createIntraFrame <- function(folder) {
 fetchIntraResourceData <- function (folder, resource, files) {
     indexes <- grep(paste('-', resource, '-', sep = ""), files)
     res.files <- files[indexes]
-    res.files <- paste(folder, "/" , res.files, sep = "")
+    res.files <- paste(folder, "/", res.files, sep = "")
     dfList <- lapply(res.files,
                      function(x) {
                          as.data.frame (jsonlite::fromJSON (x, simplifyDataFrame = TRUE))
@@ -192,19 +192,19 @@ augmentIntraData <- function(inFrame) {
                               0)
     inFrame$calories <- as.numeric(inFrame$calories)
     inFrame$time <- NULL
-    inFrame[,2:9] <- lapply(2:9 , function(x) as.numeric(inFrame[,x]))
+    inFrame[,2:9] <- lapply(2:9, function(x) as.numeric(inFrame[,x]))
     
     
-    a<- cut(inFrame$timeseq , breaks = c(0,23, 41 , 77 , 90 , 96) , labels = c("night" , "morning" , "day" ,"eve" , "latenight" ) )
+    a<- cut(inFrame$timeseq, breaks = c(0,23, 41, 77, 90, 96), labels = c("night", "morning", "day","eve", "latenight" ) )
     inFrame$slot <- a
-    #mod<- transform(df,  cumsum.calorie = ave(intra.calorie , date, slot , FUN=cumsum)) 
-    mod<- transform(inFrame,  cumsum.calorie = ave(intra.calorie , date,  FUN=cumsum)) 
-    mod<- transform(mod, cumsum.steps = ave(intra.steps , date, FUN=cumsum)) 
-    mod<- transform(mod, cumsum.level = ave(intra.level , date, FUN=cumsum)) 
-    mod<- transform(mod, cumsum.mets = ave(intra.mets , date, FUN=cumsum)) 
-    mod<- transform(mod, cumsum.distance = ave(intra.distance , date, FUN=cumsum)) 
-    #mod<- transform(mod, cumsum.floors = ave(intra.floors , date, FUN=cumsum)) 
-    #mod<- transform(mod, cumsum.elevation = ave(intra.elevation , date, FUN=cumsum)) 
+    #mod<- transform(df,  cumsum.calorie = ave(intra.calorie, date, slot, FUN=cumsum)) 
+    mod<- transform(inFrame,  cumsum.calorie = ave(intra.calorie, date,  FUN=cumsum)) 
+    mod<- transform(mod, cumsum.steps = ave(intra.steps, date, FUN=cumsum)) 
+    mod<- transform(mod, cumsum.level = ave(intra.level, date, FUN=cumsum)) 
+    mod<- transform(mod, cumsum.mets = ave(intra.mets, date, FUN=cumsum)) 
+    mod<- transform(mod, cumsum.distance = ave(intra.distance, date, FUN=cumsum)) 
+    #mod<- transform(mod, cumsum.floors = ave(intra.floors, date, FUN=cumsum)) 
+    #mod<- transform(mod, cumsum.elevation = ave(intra.elevation, date, FUN=cumsum)) 
     inFrame <- mod
     return(inFrame)
 }
@@ -347,25 +347,28 @@ writeToJSON <- function(content, path, type, activity, start.date) {
 #' @param moving Number of observations to use for moving average. Default is 7.
 #' 
 #' @import ggplot2
+#' @importFrom reshape2 melt
 
-buildChart <- function(data, x.axis, y.axis, moving = 7) {
+buildChart <- function(data, x.axis, y.axis.1, y.axis.2, moving = 7) {
     
-    # Build graph
-    graph <- ggplot(data = data, aes(x = data[[x.axis]])) +
-        geom_area(aes(y = data[[y.axis]], fill = y.axis, color = y.axis), alpha = 0.5) +
-        labs(title = "", x = x.axis, y = y.axis) + 
-        scale_colour_manual(values = c("black", "red"), name = "") +
-        guides(fill = "none")
-    
-    # Moving average if n > 7
+    # Compute moving average if applicable
     if ((moving > 0) & (length(data[[x.axis]]) > moving)) {
-        data$average <- movingAvg(data[[y.axis]], n = moving)
-        graph <- 
-            graph +
-            geom_line(aes(y = data$average, color = "moving average"), na.rm = TRUE)
+        data$avg.1 <- movingAvg(data[[y.axis.1]], n = moving)
+        data$avg.2 <- movingAvg(data[[y.axis.2]], n = moving)
     }
     
+    # Melt data
+    data.melt <- reshape2::melt(data, id.vars = x.axis)
+    View(data.melt)
+    
+    # Build graph
+    graph <- 
+        ggplot(data.melt, aes(x = data.melt[[x.axis]], y = value, color = variable)) +
+        geom_line(na.rm = TRUE) +
+        labs(title = "", x = x.axis, y = "") +
+        scale_colour_manual(values = c("blue", "red", "gray", "gray"), name = "")
     plot(graph)
+    
 }
 
 #' Moving average
@@ -376,7 +379,7 @@ buildChart <- function(data, x.axis, y.axis, moving = 7) {
 #' @param n Number of observations used for moving average. Default is 7.
 
 movingAvg <- function(data, n) {
-    stats::filter(data, rep(1/n, n), sides = 2)
+    as.numeric(stats::filter(data, rep(1/n, n), sides = 2))
 }
 
 
