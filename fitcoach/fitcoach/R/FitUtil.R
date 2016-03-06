@@ -2,8 +2,6 @@
 # Utility for 'fitcoach' package. Contains the various functions 
 # that are used by R6 Classes in the package.
 # ------------------------------------------------------------------------------
-
-
 #' @export
 getDailyResourcePathList <- function() {
   resourcePath <- list ("calories",
@@ -40,9 +38,7 @@ getIntradayResourcePathList <- function() {
 #' @param resourcePath the resource paths to look. Default will get getDailyResourcePathList()
 #' @return The Master Data Frame
 #' @importFrom jsonlite fromJSON
-#' 
 #' @export
-
 createTsMasterFrame <-
     function(tsFileFolder, resourcePath = getDailyResourcePathList()) {
         dflist <- lapply(resourcePath, function (x) {
@@ -91,7 +87,6 @@ createDependentVariableFrame <- function(master, goal) {
     eval(parse(text = paste("master$", goal, " <- NULL", sep = "")))
     return(master)
 }
-
 #' @export
 augmentData <- function(masterTsDataFrame) {
     ## augment weekday information
@@ -124,7 +119,9 @@ markValidRows <- function(masterTsDataFrame) {
 }
 
 
-# Create Intraday Frame
+#' Create Intraday Frame
+#' @importFrom jsonlite fromJSON
+#' @export
 createIntraFrame <- function(folder) {
     files <- list.files(folder)
     indexes <- grep("intra-+", files)
@@ -133,10 +130,11 @@ createIntraFrame <- function(folder) {
     #Calorie
     indexes <- grep(paste('-calories-', sep = ""), files)
     res.files <- files[indexes]
-    res.files <- paste(folder, res.files, sep = "")
+    res.files <- paste(folder, "/", res.files, sep = "")
+    
     dfList <- lapply (res.files,
                       function(x) {
-                          d <- as.data.frame (fromJSON (x, simplifyDataFrame = TRUE))
+                          d <- as.data.frame (jsonlite::fromJSON (x, simplifyDataFrame = TRUE , flatten = TRUE))
                           d$sequence <- seq(1:nrow(d))
                           return(d)
                       })
@@ -163,14 +161,15 @@ createIntraFrame <- function(folder) {
     return(calorie.df)
 }
 
+#' @importFrom jsonlite fromJSON
 #' @export
 fetchIntraResourceData <- function (folder, resource, files) {
     indexes <- grep(paste('-', resource, '-', sep = ""), files)
     res.files <- files[indexes]
-    res.files <- paste(folder, res.files, sep = "")
+    res.files <- paste(folder, "/" , res.files, sep = "")
     dfList <- lapply(res.files,
                      function(x) {
-                         as.data.frame (fromJSON (x, simplifyDataFrame = TRUE))
+                         as.data.frame (jsonlite::fromJSON (x, simplifyDataFrame = TRUE))
                      })
     resource.df <- plyr::ldply(dfList, data.frame)
     resource.df <- resource.df[(-c(5, 6))]
@@ -180,7 +179,7 @@ fetchIntraResourceData <- function (folder, resource, files) {
     return (resource.df)
 }
 
-
+#' @export
 augmentIntraData <- function(inFrame) {
     inFrame$date <- as.Date(inFrame$date)
     inFrame$dataset.type <- NULL
@@ -189,8 +188,24 @@ augmentIntraData <- function(inFrame) {
     inFrame$weekday <- as.factor(inFrame$weekday)
     inFrame$weekend <- ifelse(inFrame$weekday == "Saturday" |
                                   inFrame$weekday == "Sunday",
-                              TRUE,
-                              FALSE)
+                              1,
+                              0)
+    inFrame$calories <- as.numeric(inFrame$calories)
+    inFrame$time <- NULL
+    inFrame[,2:9] <- lapply(2:9 , function(x) as.numeric(inFrame[,x]))
+    
+    
+    a<- cut(inFrame$timeseq , breaks = c(0,23, 41 , 77 , 90 , 96) , labels = c("night" , "morning" , "day" ,"eve" , "latenight" ) )
+    inFrame$slot <- a
+    #mod<- transform(df,  cumsum.calorie = ave(intra.calorie , date, slot , FUN=cumsum)) 
+    mod<- transform(inFrame,  cumsum.calorie = ave(intra.calorie , date,  FUN=cumsum)) 
+    mod<- transform(mod, cumsum.steps = ave(intra.steps , date, FUN=cumsum)) 
+    mod<- transform(mod, cumsum.level = ave(intra.level , date, FUN=cumsum)) 
+    mod<- transform(mod, cumsum.mets = ave(intra.mets , date, FUN=cumsum)) 
+    mod<- transform(mod, cumsum.distance = ave(intra.distance , date, FUN=cumsum)) 
+    #mod<- transform(mod, cumsum.floors = ave(intra.floors , date, FUN=cumsum)) 
+    #mod<- transform(mod, cumsum.elevation = ave(intra.elevation , date, FUN=cumsum)) 
+    inFrame <- mod
     return(inFrame)
 }
 

@@ -20,16 +20,29 @@ test_that("Fitutil test cases", {
     x <- createDependentVariableFrame(master, goal = "calories")
     expect_equal(ncol(x), length(getDailyResourcePathList()))
     
-    # Distance
+    # Test 4 - Distance Goal
+    y <- createGoalVariableVector(master, goal = "distance")
+    expect_lte(mean(y) , 4.9)
     
+    # Test 5 - Distance X
+    x <- createDependentVariableFrame(master, goal = "distance")
+    expect_equal(ncol(x), 8)
     
+        
     # Intra-day tests below : Tests
-    # 
-    # >>>> TO FIX: are these functions working yet ?
-    # 
-    # folder <-
-    #     system.file("extdata", "intra-daily-timeseries", package = "fitcoach")
-    # intraMaster <- createIntraFrame(folder)
-    # intraMaster <- augmentIntraData(intraMaster)
+    # Test 6 
+     folder <-
+         system.file("extdata", "intra-daily-timeseries", package = "fitcoach")
+     intraMaster <- createIntraFrame(folder)
+     expect_equal(nrow(intraMaster) , 2016)
+
+     # Test 7
+     intraMaster <- augmentIntraData(intraMaster)
+     expect_equal(18 , ncol(intraMaster))
+     
+     
+     
+     
+     
     
 })

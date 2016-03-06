@@ -39,9 +39,10 @@ FitAnalyzer <- R6::R6Class(
             master <- NULL
             
             if (analysis.type == "intra.day") {
-                #FIX : try to use switch here
-                master <-
+              master <-
                     createIntraFrame(folder)
+              master <-
+                    augmentIntraData(master)
             } else {
                 master <- 
                     createTsMasterFrame(folder)
@@ -56,28 +57,22 @@ FitAnalyzer <- R6::R6Class(
         
         # Find important variables
         findImportantVariables = function(tsDataFrame) {
-        
-            imp <- NULL
-            if (private$analysis.type == "intra.day") {
-                #FIX : try to use switch here
-                cat(" To be implemented")
-            } else {
-                y <-
-                    createGoalVariableVector(master = tsDataFrame, goal = private$goal)
-                x <-
-                    createDependentVariableFrame(master = tsDataFrame, goal = private$goal)
-                glm.fit <-
-                    glm(y ~ ., data = x, family = "gaussian")
-                imp <- caret::varImp(glm.fit, scale = FALSE)
-                imp$name <- rownames(imp)
-                imp <- dplyr::arrange(imp,-Overall)
-                private$imp.vars = imp
-                private$fit <- glm.fit
+            if(!is.na (private$fit)){
+              return (private$imp.vars)
             }
-            return(imp)
+
+           ifelse (private$analysis.type == "intra.day" ,
+                   private$createIntraFit (tsDataFrame),
+                   private$createDailyFrameFit (tsDataFrame))
+
+           return (private$imp.vars)
+        },
+        getFit = function(){
+          return (private$fit)
         },
         
-        # Choose most important charts
+        # Choose most important charts 
+        # Charles - is this method required . Can we get rid of this and use showCharts only
         showMostImportantCharts = function(tsDataFrame) {
             if (private$analysis.type == "intra.day") {
                 cat("To be implemented")
@@ -89,12 +84,14 @@ FitAnalyzer <- R6::R6Class(
         # Predict goals
         predictGoal = function(x) {
             response <- NULL
-            if (private$analysis.type == "intra.day") {
-                cat("To be implemented")
-            } else{
-                response <-
-                    predict.glm(private$fit, newdata = as.data.frame(x), type = "response")
-            }
+            response <- 
+                  ifelse (private$analysis.type == "intra.day" ,
+                          gbm::predict.gbm(private$fit, newdata = x,
+                                           n.trees = private$gbm.best.iter),
+                          predict.glm(private$fit, 
+                                      newdata = as.data.frame (x), 
+                                      type = "response"))
+
             return(response)
         },
         
@@ -111,7 +108,30 @@ FitAnalyzer <- R6::R6Class(
         goal = NA,
         imp.vars = NA,
         analysis.type  = NA,
-        fit = NA
+        fit = NA,
+        gbm.best.iter = NA,
+        createDailyFrameFit = function(master){
+          y <-
+            createGoalVariableVector(master, goal = private$goal)
+          x <-
+            createDependentVariableFrame(master, goal = private$goal)
+          glm.fit <-
+            glm(y ~ ., data = x, family = "gaussian")
+          imp <- caret::varImp(glm.fit, scale = FALSE)
+          imp$name <- rownames(imp)
+          imp <- dplyr::arrange(imp,-Overall)
+          private$fit <- glm.fit
+          private$imp.vars <- imp
+        },
+        createIntraFit = function(master){
+          master$date <- NULL
+          gbm.fit <- gbm::gbm(formula = calories~. , data = master, distribution = "gaussian" , n.trees = 500 ,
+                          shrinkage = .05 , interaction.depth = 5 , bag.fraction = .5 , train.fraction = .8 ,
+                          cv.folds = 3 , verbose = FALSE)
+          private$fit <- gbm.fit
+          private$gbm.best.iter <- gbm::gbm.perf(gbm.fit,method="test")
+          private$imp.vars <-  relative.influence(gbm.fit , n.trees = 500 , scale = TRUE)
+        }
     )
 )
 
