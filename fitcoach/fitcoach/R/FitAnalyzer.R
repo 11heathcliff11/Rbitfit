@@ -1,14 +1,13 @@
 #' R6 class for Analyzing Fitbit  Data
 #'
 #' FitAnalyzer is an R6 class for analyzing Fitbit data. It is an opinionated implementation of a particular workflow for analysis. 
-#' For people attempting to conduct their own analysis in a different fashion you should use the more generic functions implemented in #' FitUtil.
-#' The workflow implemented for FitAnalyzer is the following
-#' 1.	Create the FitAnalyzer with the goal variable for analysis. Eg: Calories or steps or distance. The goal variable is your personal #' goal that you are trying to analyze better.
-#' 2.	Call \code{findImportantVariables} to understand the most important variables unique to you that enable meeting your goal. 
-#' 3.	Call \code{showMostImportantCharts} to get relevant charts that are unique to your data
-#' 4.	Call \code{predictGoal} to get a prediction on performance of the goal
-#' You can conduct two types of analysis based on the type of dataset in consideration. \code{analysis.type} can be 'intra.day'
-#' analysis or it can be 'daily' . 
+#' For people attempting to conduct their own analysis in a different fashion you should use the more generic functions implemented in #' FitUtil. \cr \cr
+#' The workflow implemented for FitAnalyzer is the following: \cr
+#' 1.	Create the FitAnalyzer with the goal variable for analysis. Eg: Calories or steps or distance. The goal variable is your personal #' goal that you are trying to analyze better. \cr
+#' 2.	Call \code{findImportantVariables} to understand the most important variables unique to you that enable meeting your goal. \cr
+#' 3.	Call \code{showMostImportantCharts} to get relevant charts that are unique to your data \cr
+#' 4.	Call \code{predictGoal} to get a prediction on performance of the goal \cr \cr
+#' You can conduct two types of analysis based on the type of dataset in consideration. \code{analysis.type} can be 'intra.day' analysis or it can be 'daily' . 
 #' 
 #' @docType class
 #' @format A \code{\link{R6Class}} generator object
@@ -20,8 +19,15 @@
 #' @export FitAnalyzer
 #' 
 #' @section Methods:
-#' \code{getAnalysisFrame(folder, analysis.type)}
-#' This method uses \code{folder} \code{analysis.type} as an argument to return a data.frame that is clean and augmented with additional features like weekend.
+#' \describe{
+#'   \item{\code{getAnalysisFrame(folder, analysis.type)}}{This method uses \code{folder} \code{analysis.type} as an argument to return a data.frame that is clean and augmented with additional features like weekend.}
+#'   \item{\code{showMostImportantCharts(data, activities)}}{This method shows charts for the most relevant goals, with actual data and moving average.}
+#' }
+#' 
+#' @examples 
+#' Example 1
+#' Example 2
+
 
 FitAnalyzer <- R6::R6Class(
     "FitAnalyzer",
@@ -59,7 +65,7 @@ FitAnalyzer <- R6::R6Class(
         # Find important variables
         findImportantVariables = function(tsDataFrame) {
             if(!is.na (private$fit)){
-              return (private$imp.vars)
+                return (private$imp.vars)
             }
 
            ifelse (private$analysis.type == "intra.day",
@@ -68,7 +74,9 @@ FitAnalyzer <- R6::R6Class(
 
            return (private$imp.vars)
         },
-        getFit = function(){
+        
+        # Get fit
+        getFit = function() {
           return (private$fit)
         },
         
@@ -78,7 +86,10 @@ FitAnalyzer <- R6::R6Class(
             if (private$analysis.type == "intra.day") {
                 cat("To be implemented")
             } else {
-                self$showCharts(tsDataFrame, c("minutesLightlyActive"))
+                buildChart(data = tsDataFrame, 
+                           x.axis = "date", 
+                           # FIX: only keep max 4 variables
+                           y.axes = unlist(private$imp.vars$name)[1:3])
             }
         },
         
@@ -94,11 +105,6 @@ FitAnalyzer <- R6::R6Class(
                                       type = "response"))
 
             return(response)
-        },
-        
-        # Plot a chart
-        showCharts = function(data, activities) {
-            buildChart(data = data, x.axis = "date", y.axes = activities)
         }
         
     ),

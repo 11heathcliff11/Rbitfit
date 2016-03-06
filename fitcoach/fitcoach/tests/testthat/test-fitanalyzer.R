@@ -18,6 +18,7 @@ test_that("FitAnalyzer test cases", {
     expect_equal(vars$name[1], "minutesLightlyActive")
     
     # Test 3
+    ana$findImportantVariables()
     ana$showMostImportantCharts(ts)
     
     # Test 4
@@ -42,8 +43,4 @@ test_that("FitAnalyzer test cases", {
     vars <- sort(vars, decreasing = TRUE)
     expect_equal(names(vars[1]), "steps")
     
-    ### Test for charts plotting
-    # To be used in the vignette
-    ana$showCharts(ts, activities = c("steps", "distance", "calories", "minutesSedentary"))
-
 })

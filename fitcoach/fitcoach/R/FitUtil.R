@@ -362,7 +362,7 @@ buildChart <- function(data, x.axis, y.axes) {
         geom_line(na.rm = TRUE, alpha = 0.3) +
         geom_smooth(span = 0.1, se = FALSE) + 
         facet_grid(variable ~ ., scales = "free_y") +
-        labs(title = "", x = x.axis, y = "")
+        labs(title = "", x = x.axis, y = "", color = "Activity")
     plot(graph)
     
 }
