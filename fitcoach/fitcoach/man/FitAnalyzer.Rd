@@ -10,9 +10,9 @@ FitAnalyzer
 }
 \description{
 FitAnalyzer is an R6 class for analyzing Fitbit data. It is an opinionated implementation of a particular workflow for analysis. 
-For people attempting to conduct their own analysis in a different fashion you should use the more generic functions implemented in FitUtil. \cr \cr
+For people attempting to conduct their own analysis in a different fashion you should use the more generic functions implemented in #' FitUtil. \cr \cr
 The workflow implemented for FitAnalyzer is the following: \cr
-1.	Create the FitAnalyzer with the goal variable for analysis. Eg: Calories or steps or distance. The goal variable is your personal goal that you are trying to analyze better. \cr
+1.	Create the FitAnalyzer with the goal variable for analysis. Eg: Calories or steps or distance. The goal variable is your personal #' goal that you are trying to analyze better. \cr
 2.	Call \code{findImportantVariables} to understand the most important variables unique to you that enable meeting your goal. \cr
 3.	Call \code{showMostImportantCharts} to get relevant charts that are unique to your data \cr
 4.	Call \code{predictGoal} to get a prediction on performance of the goal \cr \cr

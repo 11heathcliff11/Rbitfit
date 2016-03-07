@@ -24,7 +24,7 @@
 #'   \cr \code{path}: Folder where the JSON files will be written.}
 #' }
 #' 
-#' @example 
+#' @examples \dontrun{
 #' testObject <- DataLoader$new()
 #' 
 #' testObject$connect(appname = "abcd",
@@ -37,6 +37,7 @@
 #'     start.date = "2016-01-01", 
 #'     end.date = "2016-02-01", 
 #'     path = "~/fitbit-daily/")
+#' }
 
 
 DataLoader <- R6::R6Class(
