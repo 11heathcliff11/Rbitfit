@@ -2,7 +2,9 @@
 # Utility for 'fitcoach' package. Contains the various functions 
 # that are used by R6 Classes in the package.
 # ------------------------------------------------------------------------------
-#' @export
+
+#'Returns a list of Fitbit Daily activities
+
 getDailyResourcePathList <- function() {
   resourcePath <- list ("calories",
                         "caloriesBMR",
@@ -20,7 +22,8 @@ getDailyResourcePathList <- function() {
     return (resourcePath)
 }
 
-#' @export
+#' Returns a list of Fitbit Intraday activities
+
 getIntradayResourcePathList <- function() {
   resourcePath <- list ("calories",
                         "steps",
@@ -37,8 +40,10 @@ getIntradayResourcePathList <- function() {
 #' @param tsFileFolder Folder containing all time-series files. Naming convention for files is max-[resource].json
 #' @param resourcePath the resource paths to look. Default will get getDailyResourcePathList()
 #' @return The Master Data Frame
+#'
 #' @importFrom jsonlite fromJSON
 #' @export
+
 createTsMasterFrame <-
     function(tsFileFolder, resourcePath = getDailyResourcePathList()) {
         dflist <- lapply(resourcePath, function (x) {
@@ -88,7 +93,8 @@ createDependentVariableFrame <- function(master, goal) {
     return(master)
 }
 
-#' @export
+#' Augments the Master dataframe with additional information
+
 augmentData <- function(masterTsDataFrame) {
     ## augment weekday information
     masterTsDataFrame$weekday <-
@@ -121,8 +127,12 @@ markValidRows <- function(masterTsDataFrame) {
 
 
 #' Create Intraday Frame
+#' 
+#' @param folder The folder in which JSON files will be read.
+#' 
 #' @importFrom jsonlite fromJSON
-#' @export
+
+
 createIntraFrame <- function(folder) {
     files <- list.files(folder)
     indexes <- grep("intra-+", files)
@@ -207,15 +217,15 @@ augmentIntraData <- function(inFrame) {
     inFrame$slot <- a
     #mod<- transform(df,  cumsum.calorie = ave(intra.calorie, date, slot, FUN=cumsum))
     mod <-
-        transform(inFrame,  cumsum.calorie = ave(intra.calorie, date,  FUN = cumsum))
+        transform(inFrame, cumsum.calorie = ave(inFrame$intra.calorie, date, FUN = cumsum))
     mod <-
-        transform(mod, cumsum.steps = ave(intra.steps, date, FUN = cumsum))
+        transform(mod, cumsum.steps = ave(inFrame$intra.steps, date, FUN = cumsum))
     mod <-
-        transform(mod, cumsum.level = ave(intra.level, date, FUN = cumsum))
+        transform(mod, cumsum.level = ave(inFrame$intra.level, date, FUN = cumsum))
     mod <-
-        transform(mod, cumsum.mets = ave(intra.mets, date, FUN = cumsum))
+        transform(mod, cumsum.mets = ave(inFrame$intra.mets, date, FUN = cumsum))
     mod <-
-        transform(mod, cumsum.distance = ave(intra.distance, date, FUN = cumsum))
+        transform(mod, cumsum.distance = ave(inFrame$intra.distance, date, FUN = cumsum))
     #mod<- transform(mod, cumsum.floors = ave(intra.floors, date, FUN=cumsum))
     #mod<- transform(mod, cumsum.elevation = ave(intra.elevation, date, FUN=cumsum))
     inFrame <- mod
@@ -270,6 +280,7 @@ connectToAPI <- function(appname, key, secret) {
             app = httr::oauth_app(appname, key, secret),
             scope = getAPIScope(),
             use_basic_auth = TRUE,
+            use_oob = FALSE,
             cache = TRUE
         )
         

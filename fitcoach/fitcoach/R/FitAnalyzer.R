@@ -21,12 +21,10 @@
 #' @section Methods:
 #' \describe{
 #'   \item{\code{getAnalysisFrame(folder, analysis.type)}}{This method uses \code{folder} \code{analysis.type} as an argument to return a data.frame that is clean and augmented with additional features like weekend.}
-#'   \item{\code{showMostImportantCharts(data, activities)}}{This method shows charts for the most relevant goals, with actual data and moving average.}
+#'   \item{\code{showMostImportantCharts(tsDataFrame)}}{This method plots charts for the most relevant goals, with actual data and moving average using geom_smooth().
+#'   \cr \code{tsDataFrame}: a dataframe containing the fitibit activities.}
 #' }
 #' 
-#' @examples 
-#' Example 1
-#' Example 2
 
 
 FitAnalyzer <- R6::R6Class(
@@ -64,7 +62,7 @@ FitAnalyzer <- R6::R6Class(
         
         # Find important variables
         findImportantVariables = function(tsDataFrame) {
-            if(!is.na (private$fit)){
+            if (!is.na(private$fit)){
                 return (private$imp.vars)
             }
 
@@ -80,14 +78,13 @@ FitAnalyzer <- R6::R6Class(
           return (private$fit)
         },
         
-        # Choose most important charts 
+        # Plot most important charts 
         showMostImportantCharts = function(tsDataFrame) {
             if (private$analysis.type == "intra.day") {
                 cat("To be implemented")
             } else {
                 buildChart(data = tsDataFrame, 
                            x.axis = "date", 
-                           # FIX: only keep max 4 variables
                            y.axes = unlist(private$imp.vars$name)[1:4])
             }
         },
@@ -103,7 +100,7 @@ FitAnalyzer <- R6::R6Class(
                                       newdata = as.data.frame (x), 
                                       type = "response"))
 
-            return(response)
+            return (response)
         }
         
     ),

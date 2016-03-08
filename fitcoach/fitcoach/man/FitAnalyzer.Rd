@@ -22,12 +22,9 @@ You can conduct two types of analysis based on the type of dataset in considerat
 
 \describe{
   \item{\code{getAnalysisFrame(folder, analysis.type)}}{This method uses \code{folder} \code{analysis.type} as an argument to return a data.frame that is clean and augmented with additional features like weekend.}
-  \item{\code{showMostImportantCharts(data, activities)}}{This method shows charts for the most relevant goals, with actual data and moving average.}
+  \item{\code{showMostImportantCharts(tsDataFrame)}}{This method plots charts for the most relevant goals, with actual data and moving average using geom_smooth().
+  \cr \code{tsDataFrame}: a dataframe containing the fitibit activities.}
 }
-}
-\examples{
-Example 1
-Example 2
 }
 \keyword{data}
 
