@@ -16,7 +16,7 @@
 #' @importFrom R6 R6Class
 #' @importFrom dplyr arrange
 #' @importFrom caret varImp
-#' @importFrom gbm predict.gbm
+#' @importFrom gbm gbm predict.gbm gbm.perf
 #' @export FitAnalyzer
 #' 
 #' @section Methods:
