@@ -1,7 +1,7 @@
 Package: fitcoach
 Type: Package
 Title: Personalized Coach For Fitbit
-Version: 0.9.1
+Version: 1.0
 Author: Niraj Juneja [aut, cre], Charles de Lassence [aut, cre]
 Maintainer:  Niraj Juneja <njuneja@gmail.com>
 Description: Fitcoach improves your Fitbit performance by analyzing your data from API, and giving personalized recommendations for the rest of the day, based on your behavior.
@@ -16,6 +16,7 @@ Imports:
     jsonlite,
     plyr,
     R6,
+    gbm,
     reshape2
 LazyData: TRUE
 Suggests: testthat, knitr
