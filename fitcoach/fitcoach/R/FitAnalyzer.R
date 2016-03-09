@@ -16,6 +16,7 @@
 #' @importFrom R6 R6Class
 #' @importFrom dplyr arrange
 #' @importFrom caret varImp
+#' @importFrom gbm predict.gbm
 #' @export FitAnalyzer
 #' 
 #' @section Methods:
@@ -81,7 +82,10 @@ FitAnalyzer <- R6::R6Class(
         # Plot most important charts 
         showMostImportantCharts = function(tsDataFrame) {
             if (private$analysis.type == "intra.day") {
-                cat("To be implemented")
+                print(private$imp.vars)
+                buildChart(data = tsDataFrame, 
+                           x.axis = "date", 
+                           y.axes = unlist(private$imp.vars$name)[1:4])
             } else {
                 buildChart(data = tsDataFrame, 
                            x.axis = "date", 
