@@ -61,8 +61,9 @@ FitAnalyzer <- R6::R6Class(
         },
         
         # Find important variables
-        findImportantVariables = function(tsDataFrame) {
-            if (!is.na(private$fit)){
+        findImportantVariables = function(tsDataFrame , seed = 12345) {
+          set.seed(seed)
+            if (!is.null(private$fit)){
                 return (private$imp.vars)
             }
 
@@ -108,12 +109,12 @@ FitAnalyzer <- R6::R6Class(
     # Private variables
     private = list(
         
-        folder = NA,
-        goal = NA,
-        imp.vars = NA,
-        analysis.type  = NA,
-        fit = NA,
-        gbm.best.iter = NA,
+        folder = NULL,
+        goal = NULL,
+        imp.vars = NULL,
+        analysis.type  = NULL,
+        fit = NULL,
+        gbm.best.iter = NULL,
         
         createDailyFrameFit = function(master) {
             y <-
@@ -122,7 +123,7 @@ FitAnalyzer <- R6::R6Class(
                 createDependentVariableFrame(master, goal = private$goal)
             glm.fit <-
                 glm(y ~ ., data = x, family = "gaussian")
-            imp <- caret::varImp(glm.fit, scale = FALSE)
+            imp <- caret::varImp(glm.fit, scale = TRUE)
             imp$name <- rownames(imp)
             imp <- dplyr::arrange(imp, -Overall)
             private$fit <- glm.fit
@@ -148,7 +149,8 @@ FitAnalyzer <- R6::R6Class(
             private$gbm.best.iter <-
                 gbm::gbm.perf(gbm.fit, method = "test")
             private$imp.vars <-
-                relative.influence(gbm.fit, n.trees = 500, scale = TRUE)
+                gbm::relative.influence(gbm.fit, n.trees = 500, scale = TRUE)
+            private$imp.vars <- sort(private$imp.vars , decreasing = TRUE)
         }
     )
 )

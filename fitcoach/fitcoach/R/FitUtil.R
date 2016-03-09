@@ -10,10 +10,8 @@ getDailyResourcePathList <- function() {
                         "caloriesBMR",
                         "steps",
                         "distance",
-                        # Charles: needed to remove these two lines, as my
-                        # app doesn't support floors and elevation...
-                        # "floors",
-                        # "elevation",
+                        "floors",
+                        "elevation",
                         "minutesSedentary",
                         "minutesLightlyActive",
                         "minutesFairlyActive",
@@ -27,9 +25,8 @@ getDailyResourcePathList <- function() {
 getIntradayResourcePathList <- function() {
   resourcePath <- list ("calories",
                         "steps",
-                        # Same as above
-                        # "floors",
-                        # "elevation",
+                        "floors",
+                        "elevation",
                         "distance")
   return (resourcePath)
 }
@@ -42,7 +39,6 @@ getIntradayResourcePathList <- function() {
 #' @return The Master Data Frame
 #'
 #' @importFrom jsonlite fromJSON
-#' @export
 
 createTsMasterFrame <-
     function(tsFileFolder, resourcePath = getDailyResourcePathList()) {
@@ -73,12 +69,12 @@ createTsMasterFrame <-
         return(masterdf)
     }
 
-#' @export
+
 createGoalVariableVector <- function(master, goal) {
     y <- eval(parse(text = paste("master$", goal, sep = "")))
 }
 
-#' @export
+
 createDependentVariableFrame <- function(master, goal) {
     master$date <- NULL
     # remove variables out of individuals direct control : eg calories
@@ -117,7 +113,6 @@ augmentData <- function(masterTsDataFrame) {
 #' 
 #' @importFrom dplyr inner_join
 #' @importFrom plyr ldply
-#' @export
 
 markValidRows <- function(masterTsDataFrame) {
     masterTsDataFrame$valid <-
@@ -131,8 +126,6 @@ markValidRows <- function(masterTsDataFrame) {
 #' @param folder The folder in which JSON files will be read.
 #' 
 #' @importFrom jsonlite fromJSON
-
-
 createIntraFrame <- function(folder) {
     files <- list.files(folder)
     indexes <- grep("intra-+", files)
@@ -173,7 +166,6 @@ createIntraFrame <- function(folder) {
 }
 
 #' @importFrom jsonlite fromJSON
-#' @export
 fetchIntraResourceData <- function (folder, resource, files) {
     indexes <- grep(paste('-', resource, '-', sep = ""), files)
     res.files <- files[indexes]
@@ -190,7 +182,7 @@ fetchIntraResourceData <- function (folder, resource, files) {
     return (resource.df)
 }
 
-#' @export
+
 augmentIntraData <- function(inFrame) {
     inFrame$date <- as.Date(inFrame$date)
     inFrame$dataset.type <- NULL
@@ -203,8 +195,8 @@ augmentIntraData <- function(inFrame) {
                               0)
     inFrame$calories <- as.numeric(inFrame$calories)
     inFrame$time <- NULL
-    inFrame[, 2:9] <-
-        lapply(2:9, function(x)
+    inFrame[, 2:15] <-
+        lapply(2:15, function(x)
             as.numeric(inFrame[, x]))
     
     
@@ -226,8 +218,8 @@ augmentIntraData <- function(inFrame) {
         transform(mod, cumsum.mets = ave(inFrame$intra.mets, date, FUN = cumsum))
     mod <-
         transform(mod, cumsum.distance = ave(inFrame$intra.distance, date, FUN = cumsum))
-    #mod<- transform(mod, cumsum.floors = ave(intra.floors, date, FUN=cumsum))
-    #mod<- transform(mod, cumsum.elevation = ave(intra.elevation, date, FUN=cumsum))
+    mod<- transform(mod, cumsum.floors = ave(intra.floors, date, FUN=cumsum))
+    mod<- transform(mod, cumsum.elevation = ave(intra.elevation, date, FUN=cumsum))
     inFrame <- mod
     return(inFrame)
 }
