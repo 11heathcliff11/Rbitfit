@@ -82,10 +82,11 @@ FitAnalyzer <- R6::R6Class(
         # Plot most important charts 
         showMostImportantCharts = function(tsDataFrame) {
             if (private$analysis.type == "intra.day") {
-                print(private$imp.vars)
+                intra.vars <- names(sort(private$imp.vars, decreasing = TRUE))
+                intra.vars <- intra.vars[grep('intra.|cumsum.', intra.vars)]
                 buildChart(data = tsDataFrame, 
                            x.axis = "date", 
-                           y.axes = unlist(private$imp.vars$name)[1:4])
+                           y.axes = intra.vars[1:4])
             } else {
                 buildChart(data = tsDataFrame, 
                            x.axis = "date", 
