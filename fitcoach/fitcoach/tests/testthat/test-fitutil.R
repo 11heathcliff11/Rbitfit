@@ -1,4 +1,4 @@
-#library(testthat)
+
 context("Fit util tests")
 
 test_that("Fitutil test cases", {
@@ -18,7 +18,7 @@ test_that("Fitutil test cases", {
     
     # Test 3
     x <- createDependentVariableFrame(master, goal = "calories")
-    expect_equal(ncol(x), length(getDailyResourcePathList()))
+    expect_equal(ncol(x), 9)
     
     # Test 4 - Distance Goal
     y <- createGoalVariableVector(master, goal = "distance")
@@ -38,6 +38,6 @@ test_that("Fitutil test cases", {
 
      # Test 7
      intraMaster <- augmentIntraData(intraMaster)
-     expect_equal(18 , ncol(intraMaster))
+     expect_equal(ncol(intraMaster) ,24)
      
 })
