@@ -46,4 +46,7 @@ test_that("FitAnalyzer test cases", {
     vars <- sort(vars , decreasing = TRUE)
     expect_equal(names(vars[1]), "steps")
 
+    # Test 7
+    ana$showMostImportantCharts(intra)
+
 })
