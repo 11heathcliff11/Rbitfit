@@ -1,6 +1,6 @@
 ---
 title: "Fitanalyzer workflow example"
-author: "Niraj Juneja, Charles De Lassence"
+author: "Niraj Juneja, Charles de Lassence"
 date: "March 9, 2016"
 output: html_document
 ---
@@ -9,6 +9,37 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 
 ```
+
+## Getting data from Fitbit API
+
+This part explains how to connect to the Fitbit API and get your data, using DataLoader. 
+
+
+Step 1: You first need to make sure that you have [registered an app](https://dev.fitbit.com/) and set it as *Personal* in order to retrieve intraday data. You will need the following credentials in order to connect the API: App name (or *OAuth 2.0 Client ID*), Client Key and Client Secret. 
+
+Step 2: We initialize a new DataLoader object, and connect to the API with Oauth2, using the credentials described above.
+
+```{r}
+mydata <- DataLoader$new()
+ 
+mydata$connect(appname = "abcd",
+               key = "123ABC",
+               secret = "3089e3h1ac9dde0aa67b54ajc8691j44")
+```
+
+Step 3: We request the data and write it to JSON files using the `request` method. You need to specify the type of timeseries ('day' or 'intraday'), the list of activities [full list here](https://dev.fitbit.com/docs/activity/), the start and end dates, and the folder in which the JSON files will be written.
+
+```{r}
+mydata$request(
+    type = 'day', 
+    activities = list("calories", "steps", "distance", "minutesVeryActive"), 
+    start.date = "2016-01-01", 
+    end.date = "2016-02-01", 
+    path = "~/fitbit-daily/"
+)
+```
+
+Once the JSON files have been created, they can be used for further analysis.
 
 ## Example 1 : Daily File Analysis
 
