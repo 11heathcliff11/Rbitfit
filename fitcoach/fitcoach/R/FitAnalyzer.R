@@ -14,9 +14,9 @@
 #' @keywords data
 #' 
 #' @importFrom R6 R6Class
-#' @importFrom dplyr arrange
+#' @importFrom dplyr arrange select group_by summarise_each
 #' @importFrom caret varImp
-#' @importFrom gbm gbm predict.gbm gbm.perf
+#' @importFrom gbm gbm predict.gbm gbm.perf relative.influence
 #' @export FitAnalyzer
 #' 
 #' @section Methods:
@@ -62,18 +62,19 @@ FitAnalyzer <- R6::R6Class(
         },
         
         # Find important variables
-        findImportantVariables = function(tsDataFrame , seed = 12345 ) {
-          set.seed(seed)
+
+        findImportantVariables = function(tsDataFrame, seed = 12345) {
+            set.seed(seed)
             if (!is.null(private$fit)){
                 return (private$imp.vars)
             }
 
-           ifelse (private$analysis.type == "intra.day",
+            ifelse (private$analysis.type == "intra.day",
                    private$createIntraFit (tsDataFrame),
                    private$createDailyFrameFit (tsDataFrame))
 
-           return (private$imp.vars)
-        },
+            return (private$imp.vars)
+          },
         
         # Get fit
         getFit = function() {
@@ -83,10 +84,14 @@ FitAnalyzer <- R6::R6Class(
         # Plot most important charts 
         showMostImportantCharts = function(tsDataFrame) {
             if (private$analysis.type == "intra.day") {
+                tsDataFrame <- tsDataFrame %>% 
+                    select(matches("timeseq|intra.")) %>% 
+                    group_by(timeseq) %>% 
+                    summarise_each(funs(mean))
                 intra.vars <- names(sort(private$imp.vars, decreasing = TRUE))
-                intra.vars <- intra.vars[grep('intra.|cumsum.', intra.vars)]
+                intra.vars <- intra.vars[grep('intra.', intra.vars)]
                 buildChart(data = tsDataFrame, 
-                           x.axis = "date", 
+                           x.axis = "timeseq", 
                            y.axes = intra.vars[1:4])
             } else {
                 buildChart(data = tsDataFrame, 
@@ -151,10 +156,10 @@ FitAnalyzer <- R6::R6Class(
                   )
             private$fit <- gbm.fit
             private$gbm.best.iter <-
-                gbm::gbm.perf(gbm.fit, method = "test")
+                gbm::gbm.perf(gbm.fit, method = "test", plot.it = FALSE)
             private$imp.vars <-
                 gbm::relative.influence(gbm.fit, n.trees = 500, scale = TRUE)
-            private$imp.vars <- sort(private$imp.vars , decreasing = TRUE)
+            private$imp.vars <- sort(private$imp.vars, decreasing = TRUE)
         }
     )
 )
