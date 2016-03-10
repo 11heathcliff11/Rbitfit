@@ -174,6 +174,10 @@ createIntraFrame <- function(folder) {
     return(calorie.df)
 }
 #' loads the json files for intra-daya data and returns a data.frame
+#' @param folder the folder to source the files from
+#' @param  resource the type of resource(Eg: calories , steps , distance etc)
+#' @param  files the list of files to look into for fetch
+#' @return resource frame
 #' @importFrom jsonlite fromJSON
 fetchIntraResourceData <- function (folder, resource, files) {
     indexes <- grep(paste('-', resource, '-', sep = ""), files)
@@ -193,7 +197,7 @@ fetchIntraResourceData <- function (folder, resource, files) {
 
 
 #' Augments the intra day data.frame  with additional information
-#' @param masterTsDataFrame The Master Time Series data Frame
+#' @param inFrame The Master Time Series data Frame
 #' @return The Master Data Frame with additinal data elements 
 #'          weekday , weekend , cum.sums of various variables
 #'
