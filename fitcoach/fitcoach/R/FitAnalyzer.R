@@ -16,7 +16,7 @@
 #' @importFrom R6 R6Class
 #' @importFrom dplyr arrange select group_by summarise_each
 #' @importFrom caret varImp
-#' @importFrom gbm gbm predict.gbm gbm.perf
+#' @importFrom gbm gbm predict.gbm gbm.perf relative.influence
 #' @export FitAnalyzer
 #' 
 #' @section Methods:
@@ -156,7 +156,7 @@ FitAnalyzer <- R6::R6Class(
                 )
             private$fit <- gbm.fit
             private$gbm.best.iter <-
-                gbm::gbm.perf(gbm.fit, method = "test")
+                gbm::gbm.perf(gbm.fit, method = "test", plot.it = FALSE)
             private$imp.vars <-
                 gbm::relative.influence(gbm.fit, n.trees = 500, scale = TRUE)
             private$imp.vars <- sort(private$imp.vars , decreasing = TRUE)
