@@ -96,7 +96,11 @@ ana <- FitAnalyzer$new ("calories")
 
 Step 2: Next we get the data.frame ready for analysis. Note this data.frame is cleaned and augmented with additional data elements not present in the json file. eg: we augment cumulative sum during the day ,weekday, weekend etc.
 
+<<<<<<< HEAD
 ```{r warning= FALSE}
+=======
+```{r}
+>>>>>>> c3a485894afe46b6fc8c64967d9c8a453eeaeeff
 
 intra <- ana$getAnalysisFrame(folder = masterPath, analysis.type = "intra.day")
 
