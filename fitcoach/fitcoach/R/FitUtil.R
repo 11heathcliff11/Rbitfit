@@ -95,6 +95,10 @@ createDependentVariableFrame <- function(master, goal) {
 }
 
 #' Augments the Master dataframe with additional information
+#' @param masterTsDataFrame The Master Time Series data Frame
+#' @return The Master Data Frame with additinal data elements 
+#'          weekday , weekend
+#' 
 
 augmentData <- function(masterTsDataFrame) {
     ## augment weekday information
@@ -126,7 +130,7 @@ markValidRows <- function(masterTsDataFrame) {
 }
 
 
-#' Create Intraday Frame
+#' Create the intraday Frame
 #' 
 #' @param folder The folder in which JSON files will be read.
 #' 
@@ -169,7 +173,7 @@ createIntraFrame <- function(folder) {
     }
     return(calorie.df)
 }
-
+#' loads the json files for intra-daya data and returns a data.frame
 #' @importFrom jsonlite fromJSON
 fetchIntraResourceData <- function (folder, resource, files) {
     indexes <- grep(paste('-', resource, '-', sep = ""), files)
@@ -188,6 +192,11 @@ fetchIntraResourceData <- function (folder, resource, files) {
 }
 
 
+#' Augments the intra day data.frame  with additional information
+#' @param masterTsDataFrame The Master Time Series data Frame
+#' @return The Master Data Frame with additinal data elements 
+#'          weekday , weekend , cum.sums of various variables
+#'
 augmentIntraData <- function(inFrame) {
     inFrame$date <- as.Date(inFrame$date)
     inFrame$dataset.type <- NULL
@@ -212,7 +221,7 @@ augmentIntraData <- function(inFrame) {
             labels = c("night", "morning", "day", "eve", "latenight")
         )
     inFrame$slot <- a
-    #mod<- transform(df,  cumsum.calorie = ave(intra.calorie, date, slot, FUN=cumsum))
+
     mod <- transform(inFrame, cumsum.calorie = ave(inFrame$intra.calorie, date, FUN = cumsum))
     mod <- transform(mod, cumsum.steps = ave(inFrame$intra.steps, date, FUN = cumsum))
     mod <- transform(mod, cumsum.level = ave(inFrame$intra.level, date, FUN = cumsum))
