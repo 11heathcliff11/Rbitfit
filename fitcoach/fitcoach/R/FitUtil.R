@@ -394,7 +394,7 @@ buildChart <- function(data, x.axis, y.axes) {
     data <- subset(data, select = c(x.axis, y.axes))
     data <- reshape2::melt(data, id.vars = x.axis)
     
-    # Build graph
+    # Build and plot graph
     graph <- 
         ggplot(data, aes(x = data[[x.axis]], y = data$value, color = data$variable)) +
         geom_line(na.rm = TRUE, alpha = 0.3) +
