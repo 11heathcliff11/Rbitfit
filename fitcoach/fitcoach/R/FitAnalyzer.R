@@ -27,6 +27,9 @@
 #' }
 #' 
 
+##
+## Begin niraj9@ code
+##
 
 FitAnalyzer <- R6::R6Class(
     "FitAnalyzer",
@@ -81,6 +84,15 @@ FitAnalyzer <- R6::R6Class(
           return (private$fit)
         },
         
+##
+## End niraj9@ code
+##
+        
+                
+##
+## Begin lassence@ code
+##
+        
         # Plot most important charts 
         showMostImportantCharts = function(tsDataFrame) {
             if (private$analysis.type == "intra.day") {
@@ -100,6 +112,15 @@ FitAnalyzer <- R6::R6Class(
             }
         },
         
+##
+## End lassence@ code
+##
+
+
+##
+## Begin niraj9@ code
+##
+
         # Predict goals
         predictGoal = function(x) {
             response <- NULL
@@ -163,5 +184,9 @@ FitAnalyzer <- R6::R6Class(
         }
     )
 )
+
+##
+## End niraj9@ code
+##
 
 

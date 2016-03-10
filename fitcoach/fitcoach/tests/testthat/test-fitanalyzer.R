@@ -46,9 +46,4 @@ test_that("FitAnalyzer test cases", {
     vars <- sort(vars, decreasing = TRUE)
     expect_equal(names(vars[1]), "steps")
 
-    # Test 7
-    #ana$showMostImportantCharts(intra)
-    # Charles- Can we put charts stuff out of test case. This creates a pdf file in folder.
-    # We can show the charts ussage in vignette
-
 })

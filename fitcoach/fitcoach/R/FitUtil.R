@@ -3,6 +3,11 @@
 # that are used by R6 Classes in the package.
 # ------------------------------------------------------------------------------
 
+##
+## Begin niraj9@ code
+##
+
+
 #'Returns a list of Fitbit Daily activities
 
 getDailyResourcePathList <- function() {
@@ -219,10 +224,14 @@ augmentIntraData <- function(inFrame) {
     return(inFrame)
 }
 
+##
+## End niraj9@ code
+##
 
-######
-###### Utility functions for DataLoader R6 Class
-######
+##
+## Begin lassence@ code
+##
+
 
 #' Get API scope
 #' 
@@ -331,16 +340,19 @@ makeAPIRequest <-
 
 writeToJSON <- function(content, path, type, activity, start.date) {
     
+    # Create folder if necessary
     if (!dir.exists(path)) { 
         dir.create(path)    
     }
     
+    # Define files names 
     if (type == 'day') {
         json.file <- paste("max", activity, sep = "-")
     } else if (type == 'intraday') {
         json.file <- paste("intra", activity, start.date, sep = "-")
     }
     
+    # Write files
     json.file <- paste(path, json.file, ".json", sep = "")
     write(content, json.file)
     
@@ -373,3 +385,8 @@ buildChart <- function(data, x.axis, y.axes) {
     plot(graph)
     
 }
+
+##
+## End lassence@ code
+##
+
