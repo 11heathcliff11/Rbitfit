@@ -1,5 +1,5 @@
 ---
-title: "fitcoach workflow example"
+title: "fitanalyzer workflow example"
 author: "Niraj Juneja , Charles De Lassence"
 date: "March 9, 2016"
 output: html_document
@@ -7,16 +7,25 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
 ```
 
-## R Markdown
+## Example 1 : Daily File Analysis
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+Examples below demonstrate usahe scenarios for FitAnalyzer
 
 ```{r cars}
-summary(cars)
+library(fitcoach)
+masterPath <- system.file ("extdata", 
+                           "daily-time-series", 
+                           package = "fitcoach")
+
+
+ana <- FitAnalyzer$new ("calories")
+timeseries.frame  <- ana$getAnalysisFrame (folder = masterPath, 
+                             analysis.type = "daily")
+
+
 ```
 
 ## Including Plots
