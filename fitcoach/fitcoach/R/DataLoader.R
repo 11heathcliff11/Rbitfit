@@ -40,34 +40,32 @@
 #' }
 
 
+##
+## Begin lassence@ code
+##
+
 DataLoader <- R6::R6Class(
     "DataLoader",
     
     public = list (
         
-        ###
         ### Public variables
-        ###
-        
+
         # API Token
         api.token = NA,
         # Request response
         response = NA,
         
-        ###
         ### METHOD initialize
         ### Standard R6 Initialize function
-        ###
-        
+
         initialize = function() {
             message("Object DataLoader initialized")
         },
         
-        ###
         ### METHOD connect
         ### Connects to the API with credentials
-        ###
-        
+
         connect = function(appname, key, secret) {
             if (file.exists('.httr-oauth')) {
                 if (difftime(Sys.time(), file.info('.httr-oauth')$mtime, units = "mins") < 60) {
@@ -86,11 +84,9 @@ DataLoader <- R6::R6Class(
             }
         },
         
-        ###
         ### METHOD request
         ### Build URL, send request and write response to JSON file
-        ###
-        
+
         request = function(type = "day",
                            activities = "",
                            start.date = Sys.Date(),
@@ -126,4 +122,8 @@ DataLoader <- R6::R6Class(
         }
     )
 )
+
+##
+## End lassence@ code
+##
 
