@@ -42,3 +42,25 @@ masterData <- ana$getAnalysisFrame(folder = masterPath , analysis.type = "daily"
 
 # Plot a chart
 ana$showCharts(data = masterData, activity = "steps", average = 7)
+
+
+### Final tests
+
+# Daily analysis
+
+masterPath <- system.file("extdata", "daily-time-series", package = "fitcoach")
+ana <- FitAnalyzer$new("calories")
+ts <- ana$getAnalysisFrame(folder = masterPath, analysis.type = "daily")
+vars <- ana$findImportantVariables(tsDataFrame = ts, seed = 12345)
+vars <- ana$findImportantVariables()
+ana$showMostImportantCharts(ts)
+
+# Intra-day analysis
+
+masterPath <- system.file("extdata", "intra-daily-timeseries", package = "fitcoach")
+ana <- FitAnalyzer$new("calories")
+intra <- ana$getAnalysisFrame(folder = masterPath, analysis.type = "intra.day")
+vars <- ana$findImportantVariables(intra)
+vars <- sort(vars, decreasing = TRUE)
+ana$showMostImportantCharts(intra)
+

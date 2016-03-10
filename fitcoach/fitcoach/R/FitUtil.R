@@ -135,19 +135,25 @@ markValidRows <- function(masterTsDataFrame) {
 #' @param folder The folder in which JSON files will be read.
 #' 
 #' @importFrom jsonlite fromJSON
+#' @importFrom plyr ldply
+#' @importFrom dplyr inner_join
+
 createIntraFrame <- function(folder) {
     files <- list.files(folder)
     indexes <- grep("intra-+", files)
     files <- files[indexes]
-    
-    #Calorie
+
+    # Calorie
+    # Are we supposed to keep this line ? Or was it just for testing ?
     indexes <- grep(paste('-calories-', sep = ""), files)
+    
     res.files <- files[indexes]
     res.files <- paste(folder, "/", res.files, sep = "")
     
     dfList <- lapply (res.files,
                       function(x) {
-                          d <- as.data.frame (jsonlite::fromJSON (x, simplifyDataFrame = TRUE, flatten = TRUE))
+                          d <- jsonlite::fromJSON(x, simplifyDataFrame = TRUE, flatten = TRUE)
+                          d <- suppressWarnings(as.data.frame(d))
                           d$sequence <- seq(1:nrow(d))
                           return(d)
                       })
@@ -169,7 +175,7 @@ createIntraFrame <- function(folder) {
     resources <- resources[-c(1)]
     for (i in 1:length(resources)) {
         resource.df <- fetchIntraResourceData(folder, resources[i], files)
-        calorie.df <- dplyr::inner_join(calorie.df, resource.df)
+        calorie.df <- suppressMessages(dplyr::inner_join(calorie.df, resource.df))
     }
     return(calorie.df)
 }
@@ -179,13 +185,17 @@ createIntraFrame <- function(folder) {
 #' @param  files the list of files to look into for fetch
 #' @return resource frame
 #' @importFrom jsonlite fromJSON
+#' @importFrom plyr ldply
+
 fetchIntraResourceData <- function (folder, resource, files) {
     indexes <- grep(paste('-', resource, '-', sep = ""), files)
     res.files <- files[indexes]
     res.files <- paste(folder, "/", res.files, sep = "")
     dfList <- lapply(res.files,
                      function(x) {
-                         as.data.frame (jsonlite::fromJSON (x, simplifyDataFrame = TRUE))
+                         suppressWarnings(as.data.frame(
+                             jsonlite::fromJSON (x, simplifyDataFrame = TRUE))
+                         )
                      })
     resource.df <- plyr::ldply(dfList, data.frame)
     resource.df <- resource.df[(-c(5, 6))]
