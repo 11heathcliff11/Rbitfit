@@ -14,7 +14,7 @@
 #' @keywords data
 #' 
 #' @importFrom R6 R6Class
-#' @importFrom dplyr arrange
+#' @importFrom dplyr arrange select group_by summarise_each
 #' @importFrom caret varImp
 #' @importFrom gbm gbm predict.gbm gbm.perf
 #' @export FitAnalyzer
@@ -83,10 +83,14 @@ FitAnalyzer <- R6::R6Class(
         # Plot most important charts 
         showMostImportantCharts = function(tsDataFrame) {
             if (private$analysis.type == "intra.day") {
+                tsDataFrame <- tsDataFrame %>% 
+                    select(matches("timeseq|intra.")) %>% 
+                    group_by(timeseq) %>% 
+                    summarise_each(funs(mean))
                 intra.vars <- names(sort(private$imp.vars, decreasing = TRUE))
-                intra.vars <- intra.vars[grep('intra.|cumsum.', intra.vars)]
+                intra.vars <- intra.vars[grep('intra.', intra.vars)]
                 buildChart(data = tsDataFrame, 
-                           x.axis = "date", 
+                           x.axis = "timeseq", 
                            y.axes = intra.vars[1:4])
             } else {
                 buildChart(data = tsDataFrame, 
