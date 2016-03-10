@@ -1,5 +1,5 @@
 ---
-title: "fitanalyzer workflow example"
+title: "Fitanalyzer workflow example"
 author: "Niraj Juneja , Charles De Lassence"
 date: "March 9, 2016"
 output: html_document
@@ -12,28 +12,129 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Example 1 : Daily File Analysis
 
-Examples below demonstrate usahe scenarios for FitAnalyzer
+Examples below demonstrate usage scenarios for FitAnalyzer
 
-```{r cars}
+Step 1: We first need to point to a folder that contains the Json files for "daily" file analysis. Refer These files are created by DataLoader.R
+
+We then create a new instance of Fitanalyzer passing in the folder and the goal that we want to optimize on. Goals can be the following a) calories b)steps c) distance d)floors 
+
+The example below uses *steps* as the goal
+
+
+```{r }
 library(fitcoach)
+library(ggplot2)
 masterPath <- system.file ("extdata", 
                            "daily-time-series", 
                            package = "fitcoach")
 
+ana <- FitAnalyzer$new ("steps")
 
-ana <- FitAnalyzer$new ("calories")
+```
+
+Step 2: Next we get the data.frame ready for analysis. Note this data.frame is cleaned and augmented with additional data elements not present in the json file. eg: we augment weekday, weekend and mark rows that are valid
+
+```{r}
+
 timeseries.frame  <- ana$getAnalysisFrame (folder = masterPath, 
                              analysis.type = "daily")
 
 
 ```
 
-## Including Plots
 
-You can also embed plots, for example:
+Step 3: next we find the most important variables that are enabling meeting the goals for the person. Note this call creates a glm model behind the scenes and ranks the variables based on the coefficients of the glm model. You can also get the glm fit object to do further analysis
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+
+```{r}
+
+vars <- ana$findImportantVariables(tsDataFrame = timeseries.frame, seed = 12345)
+vars
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Getting the fit object
+
+```{r}
+fit <- ana$getFit()
+summary(fit)
+
+
+```
+
+
+
+```{r }
+plot(fit)
+```
+
+Step 4: Next we can then plot the performance of the individual relative to the most important variables that are making a difference. 
+
+```{r}
+ana$showMostImportantCharts(tsDataFrame = timeseries.frame )
+```
+
+*** 
+
+## Example 2 : Intra-day File Analysis
+Examples below demonstrate usage scenarios for FitAnalyzer for **Intra day analysis**
+
+*Step 1*: We first need to point to a folder that contains the Json files for *intraday* file analysis. Refer These files are created by DataLoader.R
+
+We then create a new instance of Fitanalyzer passing in the folder and the goal that we want to optimize on. Goals can be the following a) calories b)steps c) distance d)floors 
+
+The example below uses *calories* as the goal
+
+```{r }
+library(fitcoach)
+masterPath <-
+        system.file("extdata", "intra-daily-timeseries", package = "fitcoach")
+
+ana <- FitAnalyzer$new ("calories")
+
+```
+
+Step 2: Next we get the data.frame ready for analysis. Note this data.frame is cleaned and augmented with additional data elements not present in the json file. eg: we augment cumulative sum during the day ,weekday, weekend etc.
+
+```{r}
+
+intra <- ana$getAnalysisFrame(folder = masterPath, analysis.type = "intra.day")
+
+```
+
+Step 3: next we find the most important variables that are enabling meeting the goals for the person. Note:this call creates a **gbm** model behind the scenes and ranks the variables based on *relative.influence* call to gbm model. You can also get the gbm fit object to do further analysis
+
+```{r}
+vars <- ana$findImportantVariables(intra)
+vars <- sort(vars, decreasing = TRUE)
+vars
+
+```
+Plot of important variables below
+
+```{r}
+
+vars.frame <- data.frame(variables = names(vars) , values = vars)
+vars.frame$lnvalue <- log(vars.frame$values)
+vars.frame <- vars.frame[1:7,]
+barplot(vars.frame$value , xlab = "variables" , ylab = "relative importance" ,names.arg = vars.frame$variables ,
+         cex.names = 0.65, cex.lab   = 0.65 ,ylim = c(0.0 ,0.1))
+
+```
+
+summary of GBM model fit below
+
+```{r}
+
+fit <- ana$getFit()
+summary(fit)
+
+```
+
+Step 4: Next we can then plot the performance of the individual relative to the most important variables that are making a difference. 
+
+```{r}
+#ana$showMostImportantCharts(tsDataFrame = intra )
+# pending
+
+```
