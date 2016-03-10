@@ -14,7 +14,7 @@ test_that("Fitutil test cases", {
     
     # Test 2
     y <- createGoalVariableVector(master, goal = "calories")
-    expect_gte(mean(y) , 2632)
+    expect_gte(mean(y), 2632)
     
     # Test 3
     x <- createDependentVariableFrame(master, goal = "calories")
@@ -22,7 +22,7 @@ test_that("Fitutil test cases", {
     
     # Test 4 - Distance Goal
     y <- createGoalVariableVector(master, goal = "distance")
-    expect_lte(mean(y) , 4.9)
+    expect_lte(mean(y), 4.9)
     
     # Test 5 - Distance X
     x <- createDependentVariableFrame(master, goal = "distance")
@@ -34,10 +34,10 @@ test_that("Fitutil test cases", {
      folder <-
          system.file("extdata", "intra-daily-timeseries", package = "fitcoach")
      intraMaster <- createIntraFrame(folder)
-     expect_equal(nrow(intraMaster) , 2016)
+     expect_equal(nrow(intraMaster), 2016)
 
      # Test 7
      intraMaster <- augmentIntraData(intraMaster)
-     expect_equal(ncol(intraMaster) ,24)
+     expect_equal(ncol(intraMaster),24)
      
 })
