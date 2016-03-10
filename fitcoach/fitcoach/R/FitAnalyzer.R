@@ -62,7 +62,7 @@ FitAnalyzer <- R6::R6Class(
         },
         
         # Find important variables
-        findImportantVariables = function(tsDataFrame , seed = 12345) {
+        findImportantVariables = function(tsDataFrame , seed = 12345 ) {
           set.seed(seed)
             if (!is.null(private$fit)){
                 return (private$imp.vars)
@@ -135,7 +135,7 @@ FitAnalyzer <- R6::R6Class(
             private$imp.vars <- imp
         },
         
-        createIntraFit = function(master) {
+        createIntraFit = function(master , cv.folds) {
             master$date <- NULL
             gbm.fit <-
                 gbm::gbm(
@@ -147,9 +147,8 @@ FitAnalyzer <- R6::R6Class(
                     interaction.depth = 5,
                     bag.fraction = .5,
                     train.fraction = .8,
-                    cv.folds = 3,
-                    verbose = FALSE
-                )
+                    verbose = FALSE 
+                  )
             private$fit <- gbm.fit
             private$gbm.best.iter <-
                 gbm::gbm.perf(gbm.fit, method = "test")

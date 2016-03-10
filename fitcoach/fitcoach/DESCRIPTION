@@ -17,7 +17,6 @@ Imports:
     jsonlite,
     plyr,
     R6,
-    gbm,
     reshape2
 LazyData: TRUE
 Suggests: testthat, knitr
