@@ -208,18 +208,13 @@ augmentIntraData <- function(inFrame) {
         )
     inFrame$slot <- a
     #mod<- transform(df,  cumsum.calorie = ave(intra.calorie, date, slot, FUN=cumsum))
-    mod <-
-        transform(inFrame, cumsum.calorie = ave(inFrame$intra.calorie, date, FUN = cumsum))
-    mod <-
-        transform(mod, cumsum.steps = ave(inFrame$intra.steps, date, FUN = cumsum))
-    mod <-
-        transform(mod, cumsum.level = ave(inFrame$intra.level, date, FUN = cumsum))
-    mod <-
-        transform(mod, cumsum.mets = ave(inFrame$intra.mets, date, FUN = cumsum))
-    mod <-
-        transform(mod, cumsum.distance = ave(inFrame$intra.distance, date, FUN = cumsum))
-    mod<- transform(mod, cumsum.floors = ave(intra.floors, date, FUN=cumsum))
-    mod<- transform(mod, cumsum.elevation = ave(intra.elevation, date, FUN=cumsum))
+    mod <- transform(inFrame, cumsum.calorie = ave(inFrame$intra.calorie, date, FUN = cumsum))
+    mod <- transform(mod, cumsum.steps = ave(inFrame$intra.steps, date, FUN = cumsum))
+    mod <- transform(mod, cumsum.level = ave(inFrame$intra.level, date, FUN = cumsum))
+    mod <- transform(mod, cumsum.mets = ave(inFrame$intra.mets, date, FUN = cumsum))
+    mod <- transform(mod, cumsum.distance = ave(inFrame$intra.distance, date, FUN = cumsum))
+    mod <- transform(mod, cumsum.floors = ave(inFrame$intra.floors, date, FUN = cumsum))
+    mod <- transform(mod, cumsum.elevation = ave(inFrame$intra.elevation, date, FUN = cumsum))
     inFrame <- mod
     return(inFrame)
 }
