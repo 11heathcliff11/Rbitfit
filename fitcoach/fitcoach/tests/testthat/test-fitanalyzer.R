@@ -15,12 +15,12 @@ test_that("FitAnalyzer test cases", {
     expect_equal(nrow(ts), 191)
     
     # Test 2
-    vars <- ana$findImportantVariables(tsDataFrame = ts , seed = 12345)
+    vars <- ana$findImportantVariables(tsDataFrame = ts, seed = 12345)
     expect_equal(vars$name[1], "minutesLightlyActive")
     
     # Test 3
     vars <- ana$findImportantVariables() # Fix this: This is showing a warning
-    expect_equal(names(vars[1]) , "Overall")
+    expect_equal(names(vars[1]), "Overall")
     
     #ana$showMostImportantCharts(ts)
     
@@ -43,7 +43,7 @@ test_that("FitAnalyzer test cases", {
 
     # Test 6
     vars <- ana$findImportantVariables(intra)
-    vars <- sort(vars , decreasing = TRUE)
+    vars <- sort(vars, decreasing = TRUE)
     expect_equal(names(vars[1]), "steps")
 
     # Test 7

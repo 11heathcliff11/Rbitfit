@@ -62,7 +62,7 @@ FitAnalyzer <- R6::R6Class(
         },
         
         # Find important variables
-        findImportantVariables = function(tsDataFrame , seed = 12345) {
+        findImportantVariables = function(tsDataFrame, seed = 12345) {
           set.seed(seed)
             if (!is.null(private$fit)){
                 return (private$imp.vars)
@@ -159,7 +159,7 @@ FitAnalyzer <- R6::R6Class(
                 gbm::gbm.perf(gbm.fit, method = "test", plot.it = FALSE)
             private$imp.vars <-
                 gbm::relative.influence(gbm.fit, n.trees = 500, scale = TRUE)
-            private$imp.vars <- sort(private$imp.vars , decreasing = TRUE)
+            private$imp.vars <- sort(private$imp.vars, decreasing = TRUE)
         }
     )
 )
