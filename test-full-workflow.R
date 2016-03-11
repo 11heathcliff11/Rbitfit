@@ -11,6 +11,8 @@ testObject$connect(appname = "cdlr",
                    secret = "3089e3d1ac5dde1aa00b54a0c8661f42"
 )
 
+testObject$connect(cache.file = "~/Downloads/.httr-oauth")
+
 # Get Daily data for all possible activities
 all.daily.activities <- getDailyResourcePathList()
     

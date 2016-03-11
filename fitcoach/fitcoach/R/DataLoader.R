@@ -56,37 +56,40 @@ DataLoader <- R6::R6Class(
         # Request response
         response = NA,
         
+        ### METHOD initialize
         ### Standard R6 Initialize function
 
         initialize = function() {
             message("Object DataLoader initialized")
         },
         
+        ### METHOD connect
         ### Connects to the API with credentials
 
-        connect = function(appname, key, secret) {
+        connect = function(appname, key, secret, cache.file) {
             
-            if (file.exists('.httr-oauth')) {
-                # If cache file exists and is less than 1 hour old, keep it
-                if (difftime(Sys.time(), file.info('.httr-oauth')$mtime, units = "mins") < 60) {
-                    message('Use existing Oauth file') # Debug only
-                    self$api.token <- readRDS('.httr-oauth')[[1]]
-                # If cache file exists but older than 1 hour, replace it
+            # If cache file provided, use it
+            if(!missing(cache.file)) {
+                self$api.token <- readRDS(cache.file)[[1]]
+
+            # Else, check if cache file exists    
+            } else {
+                if (file.exists('.httr-oauth')) {
+                    if (difftime(Sys.time(), file.info('.httr-oauth')$mtime, units = "mins") < 60) {
+                        self$api.token <- readRDS('.httr-oauth')[[1]]
+                    } else {
+                        # Known bug: autorefresh does not work in basic mode
+                        # https://github.com/hadley/httr/pull/320
+                        file.remove('.httr-oauth')
+                        self$api.token <- connectToAPI(appname, key, secret)
+                    }
                 } else {
-                    # Known bug: autorefresh does not work in basic mode
-                    # https://github.com/hadley/httr/pull/320
-                    message('Delete cache and create new Oauth file') # Debug only
-                    file.remove('.httr-oauth')
                     self$api.token <- connectToAPI(appname, key, secret)
                 }
-                
-            } else {
-                # If no cache file, create one
-                message('Create new Oauth file') # Debug only
-                self$api.token <- connectToAPI(appname, key, secret)
             }
         },
         
+        ### METHOD request
         ### Build URL, send request and write response to JSON file
 
         request = function(type = "day",

@@ -7,7 +7,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-
+library(fitcoach)
 ```
 
 ## Getting data from Fitbit API
@@ -21,25 +21,27 @@ Step 2: We initialize a new DataLoader object, and connect to the API with Oauth
 
 ```{r}
 mydata <- DataLoader$new()
- 
-mydata$connect(appname = "abcd",
-               key = "123ABC",
-               secret = "3089e3h1ac9dde0aa67b54ajc8691j44")
+mydata$connect(cache.file = "~/.httr-oauth")
 ```
 
 Step 3: We request the data and write it to JSON files using the `request` method. You need to specify the type of timeseries ('day' or 'intraday'), the list of activities [full list here](https://dev.fitbit.com/docs/activity/), the start and end dates, and the folder in which the JSON files will be written.
 
 ```{r}
+masterPath <- system.file ("extdata", 
+                           "daily-time-series", 
+                           package = "fitcoach")
+
 mydata$request(
     type = 'day', 
     activities = list("calories", "steps", "distance", "minutesVeryActive"), 
     start.date = "2016-01-01", 
     end.date = "2016-02-01", 
-    path = "~/fitbit-daily/"
+    path = masterPath
 )
 ```
 
 Once the JSON files have been created, they can be used for further analysis.
+
 
 ## Example 1 : Daily File Analysis
 
@@ -102,7 +104,7 @@ plot(fit)
 Step 4: Next we can then plot the performance of the individual relative to the most important variables that are making a difference. 
 
 ```{r}
-ana$showMostImportantCharts(tsDataFrame = timeseries.frame )
+ana$showMostImportantCharts(tsDataFrame = timeseries.frame)
 ```
 
 *** 
