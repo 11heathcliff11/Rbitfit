@@ -14,7 +14,8 @@
 #' @keywords data
 #' 
 #' @importFrom R6 R6Class
-#' @importFrom dplyr arrange select group_by summarise_each
+#' @importFrom dplyr arrange select group_by summarise_each funs
+#' @importFrom magrittr %>%
 #' @importFrom caret varImp
 #' @importFrom gbm gbm predict.gbm gbm.perf relative.influence
 #' @export FitAnalyzer
@@ -110,7 +111,7 @@ FitAnalyzer <- R6::R6Class(
                 buildChart(data = tsDataFrame,
                            x.axis = "timeseq",
                            y.axes = intra.vars[1:4])
-            
+                
             # Day time series plot
             } else {
                 buildChart(
@@ -120,7 +121,7 @@ FitAnalyzer <- R6::R6Class(
                 )
             }
         },
-
+        
 ##
 ## End lassence@ code
 ##

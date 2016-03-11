@@ -9,12 +9,13 @@ License: GPL-3
 Depends:
     R (>= 3.2.3)
 Imports:
-	caret,
+    caret,
     dplyr,
     gbm,
     ggplot2,
     httr,
     jsonlite,
+    magrittr,
     plyr,
     R6,
     reshape2
