@@ -95,23 +95,32 @@ FitAnalyzer <- R6::R6Class(
         
         # Plot most important charts 
         showMostImportantCharts = function(tsDataFrame) {
+            
+            # Intraday plot
             if (private$analysis.type == "intra.day") {
-                tsDataFrame <- tsDataFrame %>% 
-                    select(matches("timeseq|intra.")) %>% 
-                    group_by(timeseq) %>% 
+                # Select only intraday variables and 'timeseq' of the day
+                tsDataFrame <- tsDataFrame %>%
+                    select(matches("timeseq|intra.")) %>%
+                    group_by(timeseq) %>%
                     summarise_each(funs(mean))
+                # Get important variables 
                 intra.vars <- names(sort(private$imp.vars, decreasing = TRUE))
                 intra.vars <- intra.vars[grep('intra.', intra.vars)]
-                buildChart(data = tsDataFrame, 
-                           x.axis = "timeseq", 
+                # Plot chart for 4 most important variables
+                buildChart(data = tsDataFrame,
+                           x.axis = "timeseq",
                            y.axes = intra.vars[1:4])
+            
+            # Day time series plot
             } else {
-                buildChart(data = tsDataFrame, 
-                           x.axis = "date", 
-                           y.axes = unlist(private$imp.vars$name)[1:4])
+                buildChart(
+                    data = tsDataFrame,
+                    x.axis = "date",
+                    y.axes = unlist(private$imp.vars$name)[1:4]
+                )
             }
         },
-        
+
 ##
 ## End lassence@ code
 ##

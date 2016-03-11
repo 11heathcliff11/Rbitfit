@@ -56,21 +56,22 @@ DataLoader <- R6::R6Class(
         # Request response
         response = NA,
         
-        ### METHOD initialize
         ### Standard R6 Initialize function
 
         initialize = function() {
             message("Object DataLoader initialized")
         },
         
-        ### METHOD connect
         ### Connects to the API with credentials
 
         connect = function(appname, key, secret) {
+            
             if (file.exists('.httr-oauth')) {
+                # If cache file exists and is less than 1 hour old, keep it
                 if (difftime(Sys.time(), file.info('.httr-oauth')$mtime, units = "mins") < 60) {
                     message('Use existing Oauth file') # Debug only
                     self$api.token <- readRDS('.httr-oauth')[[1]]
+                # If cache file exists but older than 1 hour, replace it
                 } else {
                     # Known bug: autorefresh does not work in basic mode
                     # https://github.com/hadley/httr/pull/320
@@ -78,13 +79,14 @@ DataLoader <- R6::R6Class(
                     file.remove('.httr-oauth')
                     self$api.token <- connectToAPI(appname, key, secret)
                 }
+                
             } else {
+                # If no cache file, create one
                 message('Create new Oauth file') # Debug only
                 self$api.token <- connectToAPI(appname, key, secret)
             }
         },
         
-        ### METHOD request
         ### Build URL, send request and write response to JSON file
 
         request = function(type = "day",
