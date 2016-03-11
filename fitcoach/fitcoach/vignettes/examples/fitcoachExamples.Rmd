@@ -19,14 +19,14 @@ Step 1: You first need to make sure that you have [registered an app](https://de
 
 Step 2: We initialize a new DataLoader object, and connect to the API with Oauth2, using the credentials described above.
 
-```{r}
+```{r eval =FALSE}
 mydata <- DataLoader$new()
 mydata$connect(cache.file = "~/.httr-oauth")
 ```
 
 Step 3: We request the data and write it to JSON files using the `request` method. You need to specify the type of timeseries ('day' or 'intraday'), the list of activities [full list here](https://dev.fitbit.com/docs/activity/), the start and end dates, and the folder in which the JSON files will be written.
 
-```{r}
+```{r eval= FALSE}
 masterPath <- system.file ("extdata", 
                            "daily-time-series", 
                            package = "fitcoach")
