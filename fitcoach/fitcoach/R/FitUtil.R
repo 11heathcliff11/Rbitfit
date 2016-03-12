@@ -401,7 +401,7 @@ writeToJSON <- function(content, path, type, activity, start.date) {
 #' 
 #' @param data Dataframe
 #' @param x.axis Name of the X-axis data. Default is 'date'.
-#' @param y.axes Name of the Y-axes data, as a vector of characters
+#' @param y.axes Names of the Y-axes data, as a vector of characters
 #' @return A plot
 #' 
 #' @import ggplot2

@@ -116,7 +116,6 @@ We then create a new instance of Fitanalyzer passing in the folder and the goal 
 The example below uses *calories* as the goal
 
 ```{r }
-library(fitcoach)
 masterPath <-
     system.file("extdata", "intra-daily-timeseries", package = "fitcoach")
 ana <- FitAnalyzer$new("calories")
