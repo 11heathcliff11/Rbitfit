@@ -396,31 +396,79 @@ writeToJSON <- function(content, path, type, activity, start.date) {
     
 }
 
-#' Build Chart
+#' Build Day timeseries Chart
 #' 
 #' Plots charts that have been selected as most relevant.
 #' 
 #' @param data Dataframe
-#' @param x.axis Name of the X-axis data. Default is 'date'.
 #' @param y.axes Names of the Y-axes data, as a vector of characters
 #' @return A plot
 #' 
 #' @import ggplot2
 #' @importFrom reshape2 melt
 
-buildChart <- function(data, x.axis, y.axes) {
+buildChartDay <- function(data, y.axes, title) {
     
     # Keep only relevant columns and melt data
-    data <- subset(data, select = c(x.axis, y.axes))
-    data <- reshape2::melt(data, id.vars = x.axis)
+    data <- subset(data, select = c("date", y.axes))
+    data <- reshape2::melt(data, id.vars = "date")
     
     # Build and plot graph
     graph <- 
-        ggplot(data, aes(x = data[[x.axis]], y = data$value, color = data$variable)) +
+        ggplot(data, aes(x = data$date, y = data$value, color = data$variable)) +
         geom_line(na.rm = TRUE, alpha = 0.3) +
         geom_smooth(span = 0.1, se = FALSE) + 
         facet_grid(variable ~ ., scales = "free_y") +
-        labs(title = "", x = x.axis, y = "", color = "Activity")
+        labs(title = "Evolution of most relevant activities, by day", 
+             x = "Date", 
+             y = "", 
+             color = "Activity")
+    plot(graph)
+    
+}
+
+
+#' Build Intraday Chart
+#' 
+#' Plots intraday charts for the most relevant activities
+#' 
+#' @param data Dataframe
+#' @param y.axes Names of the Y-axes data, as a vector of characters
+#' @return A plot
+#' 
+#' @import ggplot2
+#' @importFrom dplyr select group_by summarise_each funs
+#' @importFrom reshape2 melt
+
+buildChartIntra <- function(data, y.axes) {
+    
+    # Select only intraday variables and 'timeseq' of the day
+    data <- data %>%
+        select(matches("timeseq|slot|intra.")) %>%
+        group_by(timeseq, slot) %>%
+        summarise_each(funs(mean))
+    
+    # Keep only relevant columns and melt data
+    data <- subset(data, select = c("timeseq", "slot", y.axes))
+    data <- reshape2::melt(data, id.vars = c("timeseq", "slot"))
+    data$datetime <- paste(sprintf("%02d", data$timeseq %/% 4), 
+                           ":",
+                           sprintf("%02d", data$timeseq %% 4 * 15), 
+                           sep = "")
+    
+    # Build and plot graph
+    graph <- 
+        ggplot(data, aes(x = data$timeseq, y = data$value, color = data$variable)) +
+        geom_line(na.rm = TRUE, alpha = 0.4) +
+        geom_smooth(span = 0.1, se = FALSE) + 
+        geom_area(aes(fill = data$slot, color = NULL), alpha = 0.1) +
+        facet_grid(variable ~ ., scales = "free_y") +
+        # scale_x_discrete(labels = data$datetime, breaks = 1:24 * 4) + 
+        labs(title = "Average level of most relevant activities, in a day", 
+             x = "Time of day", 
+             y = "", 
+             color = "Activity",
+             fill = "Period of day")
     plot(graph)
     
 }
