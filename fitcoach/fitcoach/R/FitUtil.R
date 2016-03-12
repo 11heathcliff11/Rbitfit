@@ -8,7 +8,9 @@
 ##
 
 
-#'Returns a list of Fitbit Daily activities
+#' Returns a list of Fitbit Daily activities
+#'
+#' @return A list
 
 getDailyResourcePathList <- function() {
   resourcePath <- list ("calories",
@@ -26,6 +28,8 @@ getDailyResourcePathList <- function() {
 }
 
 #' Returns a list of Fitbit Intraday activities
+#' 
+#' @return A list
 
 getIntradayResourcePathList <- function() {
   resourcePath <- list ("calories",
@@ -73,6 +77,7 @@ createTsMasterFrame <-
         return (masterdf)
     }
 
+
 #' Creates a vector of goal variables
 #' 
 #' @param master Master dataframe
@@ -81,6 +86,7 @@ createTsMasterFrame <-
 createGoalVariableVector <- function(master, goal) {
     y <- eval(parse(text = paste("master$", goal, sep = "")))
 }
+
 
 #' Creates a dataframe with only goal variables
 #' 
@@ -262,10 +268,10 @@ augmentIntraData <- function(inFrame) {
 ## End niraj9@ code
 ##
 
+
 ##
 ## Begin lassence@ code
 ##
-
 
 #' Get API scope
 #' 
@@ -288,6 +294,7 @@ getAPIScope <- function() {
     )
     return (APIScope)
 }
+
 
 #' Connects to Fibit API 
 #' 
@@ -319,6 +326,7 @@ connectToAPI <- function(appname, key, secret) {
         
     return (api.token)
 }
+
 
 #' Make API Request
 #' 
@@ -366,6 +374,7 @@ makeAPIRequest <-
         
     }
 
+
 #' Write to JSON
 #' 
 #' Writes API response content to JSON files, in a specific folder
@@ -395,6 +404,7 @@ writeToJSON <- function(content, path, type, activity, start.date) {
     write(content, json.file)
     
 }
+
 
 #' Build Day timeseries Chart
 #' 
