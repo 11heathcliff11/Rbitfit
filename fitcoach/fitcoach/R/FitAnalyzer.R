@@ -14,8 +14,7 @@
 #' @keywords data
 #' 
 #' @importFrom R6 R6Class
-#' @importFrom dplyr arrange select group_by summarise_each funs
-#' @importFrom magrittr %>%
+#' @importFrom dplyr arrange
 #' @importFrom caret varImp
 #' @importFrom gbm gbm predict.gbm gbm.perf relative.influence
 #' @export FitAnalyzer
@@ -103,26 +102,18 @@ FitAnalyzer <- R6::R6Class (
             
             # Intraday plot
             if (private$analysis.type == "intra.day") {
-                # Select only intraday variables and 'timeseq' of the day
-                tsDataFrame <- tsDataFrame %>%
-                    select(matches("timeseq|intra.")) %>%
-                    group_by(timeseq) %>%
-                    summarise_each(funs(mean))
                 # Get important variables 
                 intra.vars <- names(sort(private$imp.vars, decreasing = TRUE))
                 intra.vars <- intra.vars[grep('intra.', intra.vars)]
                 # Plot chart for 4 most important variables
-                buildChart(data = tsDataFrame,
-                           x.axis = "timeseq",
-                           y.axes = intra.vars[1:4])
+                buildChartIntra(data = tsDataFrame,
+                                y.axes = intra.vars[1:4])
                 
             # Day time series plot
             } else {
-                buildChart(
+                buildChartDay(
                     data = tsDataFrame,
-                    x.axis = "date",
-                    y.axes = unlist(private$imp.vars$name)[1:4]
-                )
+                    y.axes = unlist(private$imp.vars$name)[1:4])
             }
         },
         

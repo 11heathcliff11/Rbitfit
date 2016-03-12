@@ -8,7 +8,9 @@
 ##
 
 
-#'Returns a list of Fitbit Daily activities
+#' Returns a list of Fitbit Daily activities
+#'
+#' @return A list
 
 getDailyResourcePathList <- function() {
   resourcePath <- list ("calories",
@@ -26,6 +28,8 @@ getDailyResourcePathList <- function() {
 }
 
 #' Returns a list of Fitbit Intraday activities
+#' 
+#' @return A list
 
 getIntradayResourcePathList <- function() {
   resourcePath <- list ("calories",
@@ -73,6 +77,7 @@ createTsMasterFrame <-
         return (masterdf)
     }
 
+
 #' Creates a vector of goal variables
 #' 
 #' @param master Master dataframe
@@ -81,6 +86,7 @@ createTsMasterFrame <-
 createGoalVariableVector <- function(master, goal) {
     y <- eval(parse(text = paste("master$", goal, sep = "")))
 }
+
 
 #' Creates a dataframe with only goal variables
 #' 
@@ -262,10 +268,10 @@ augmentIntraData <- function(inFrame) {
 ## End niraj9@ code
 ##
 
+
 ##
 ## Begin lassence@ code
 ##
-
 
 #' Get API scope
 #' 
@@ -288,6 +294,7 @@ getAPIScope <- function() {
     )
     return (APIScope)
 }
+
 
 #' Connects to Fibit API 
 #' 
@@ -319,6 +326,7 @@ connectToAPI <- function(appname, key, secret) {
         
     return (api.token)
 }
+
 
 #' Make API Request
 #' 
@@ -366,6 +374,7 @@ makeAPIRequest <-
         
     }
 
+
 #' Write to JSON
 #' 
 #' Writes API response content to JSON files, in a specific folder
@@ -396,34 +405,95 @@ writeToJSON <- function(content, path, type, activity, start.date) {
     
 }
 
-#' Build Chart
+
+#' Build Day timeseries Chart
 #' 
 #' Plots charts that have been selected as most relevant.
 #' 
 #' @param data Dataframe
-#' @param x.axis Name of the X-axis data. Default is 'date'.
 #' @param y.axes Names of the Y-axes data, as a vector of characters
 #' @return A plot
 #' 
 #' @import ggplot2
 #' @importFrom reshape2 melt
 
-buildChart <- function(data, x.axis, y.axes) {
+buildChartDay <- function(data, y.axes) {
     
     # Keep only relevant columns and melt data
-    data <- subset(data, select = c(x.axis, y.axes))
-    data <- reshape2::melt(data, id.vars = x.axis)
+    data <- subset(data, select = c("date", y.axes))
+    data <- reshape2::melt(data, id.vars = "date")
     
     # Build and plot graph
     graph <- 
-        ggplot(data, aes(x = data[[x.axis]], y = data$value, color = data$variable)) +
+        ggplot(data, aes(x = data$date, y = data$value, color = data$variable)) +
         geom_line(na.rm = TRUE, alpha = 0.3) +
         geom_smooth(span = 0.1, se = FALSE) + 
         facet_grid(variable ~ ., scales = "free_y") +
-        labs(title = "", x = x.axis, y = "", color = "Activity")
+        scale_color_discrete(labels = properCase(gsub("([A-Z])", " \\1", y.axes))) +
+        labs(title = "Evolution of most relevant activities, by day", 
+             x = "Date", 
+             y = "", 
+             color = "Activity")
     plot(graph)
     
 }
+
+
+#' Build Intraday Chart
+#' 
+#' Plots intraday charts for the most relevant activities
+#' 
+#' @param data Dataframe
+#' @param y.axes Names of the Y-axes data, as a vector of characters
+#' @return A plot
+#' 
+#' @import ggplot2
+#' @importFrom dplyr group_by summarise_each funs
+#' @importFrom reshape2 melt
+
+buildChartIntra <- function(data, y.axes) {
+    
+    # Select only y-axes variables, 'timeseq' and 'slot'
+    data <- subset(data, select = c("timeseq", "slot", y.axes))
+    timeseq <- data$timeseq   # Fix to avoid note when checking package
+    data <- dplyr::group_by(data, timeseq, slot)
+    data <- dplyr::summarise_each(data, funs(mean))
+    
+    # Melt data
+    data <- reshape2::melt(data, id.vars = c("timeseq", "slot"))
+
+    # Build and plot graph
+    graph <- 
+        ggplot(data, aes(x = data$timeseq, y = data$value, color = data$variable)) +
+        geom_line(na.rm = TRUE, alpha = 0.4) +
+        geom_smooth(span = 0.1, se = FALSE) + 
+        geom_area(aes(fill = data$slot, color = NULL), alpha = 0.1) +
+        facet_grid(variable ~ ., scales = "free_y") +
+        scale_x_discrete(breaks = seq(1, 96, by = 8), 
+                         labels = paste(seq(0, 22, by = 2), ":00", sep = "")) +
+        scale_color_discrete(labels = properCase(substr(y.axes, 7, 100))) +
+        scale_fill_discrete(labels = properCase(unique(data$slot))) +
+        labs(title = "Average level of most relevant activities, in a day", 
+             x = "Time of day", 
+             y = "", 
+             color = "Activity",
+             fill = "Period of day")
+    plot(graph)
+    
+}
+
+#' Proper Case
+#' 
+#' Sets a string to proper case, i.e. upper case for the first letter of each word
+#' 
+#' @param x A string
+#' @return A string with proper case
+
+# Code inspired from http://stackoverflow.com/a/6365349
+properCase <- function(x) {
+    gsub("(^|[[:space:]])([[:alpha:]])", "\\1\\U\\2", x, perl=TRUE)
+}
+
 
 ##
 ## End lassence@ code
