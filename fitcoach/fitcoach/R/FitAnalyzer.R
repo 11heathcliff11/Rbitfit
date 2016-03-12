@@ -1,13 +1,13 @@
 #' R6 class for Analyzing Fitbit  Data
 #'
 #' FitAnalyzer is an R6 class for analyzing Fitbit data. It is an opinionated implementation of a particular workflow for analysis. 
-#' For people attempting to conduct their own analysis in a different fashion you should use the more generic functions implemented in #' FitUtil. \cr \cr
+#' For people attempting to conduct their own analysis in a different fashion you should use the more generic functions implemented in FitUtil. \cr \cr
 #' The workflow implemented for FitAnalyzer is the following: \cr
-#' 1.	Create the FitAnalyzer with the goal variable for analysis. Eg: Calories or steps or distance. The goal variable is your personal #' goal that you are trying to analyze better. \cr
+#' 1.	Create the FitAnalyzer with the goal variable for analysis. Eg: Calories or steps or distance. The goal variable is your personal goal that you are trying to analyze better. \cr
 #' 2.	Call \code{findImportantVariables} to understand the most important variables unique to you that enable meeting your goal. \cr
 #' 3.	Call \code{showMostImportantCharts} to get relevant charts that are unique to your data \cr
 #' 4.	Call \code{predictGoal} to get a prediction on performance of the goal \cr \cr
-#' You can conduct two types of analysis based on the type of dataset in consideration. \code{analysis.type} can be 'intra.day' analysis or it can be 'daily' . 
+#' You can conduct two types of analysis based on the type of dataset in consideration. \code{analysis.type} can be 'intra.day' analysis or it can be 'daily'. 
 #' 
 #' @docType class
 #' @format A \code{\link{R6Class}} generator object
@@ -22,9 +22,12 @@
 #' 
 #' @section Methods:
 #' \describe{
-#'   \item{\code{getAnalysisFrame(folder, analysis.type)}}{This method uses \code{folder} \code{analysis.type} as an argument to return a data.frame that is clean and augmented with additional features like weekend.}
-#'   \item{\code{showMostImportantCharts(tsDataFrame)}}{This method plots charts for the most relevant goals, with actual data and moving average using geom_smooth().
+#'   \item{\code{getAnalysisFrame(folder, analysis.type)}}{This method uses \code{analysis.type} as an argument to return a dataframe that is clean and augmented with additional features like weekend.}
+#'   \item{\code{findImportantVariables(tsDataFrame, seed = 12345)}}{Finds the most important variables that are enabling meeting the goals for the person, by creating a `glm` model and ranking the variables based on the coefficients of the model.}
+#'   \item{\code{getFit()}}{Returns the `glm` fit object.}
+#'   \item{\code{showMostImportantCharts(tsDataFrame)}}{Plots charts for the most relevant goals, with actual data and moving average using geom_smooth().
 #'   \cr \code{tsDataFrame}: a dataframe containing the fitibit activities.}
+#'   \item{\code{predictGoal(x)}}{xxxxxx}
 #' }
 #' 
 
@@ -32,17 +35,17 @@
 ## Begin niraj9@ code
 ##
 
-FitAnalyzer <- R6::R6Class(
+FitAnalyzer <- R6::R6Class (
     "FitAnalyzer",
     
-    public = list(
+    public = list (
         
-        initialize = function(goal = "calories") {
+        initialize = function (goal = "calories") {
             private$goal <- goal
         },
         
         # Get Analysis frame
-        getAnalysisFrame = function(folder = NA, analysis.type) {
+        getAnalysisFrame = function (folder = NA, analysis.type) {
             
             private$folder <- folder
             private$analysis.type <- analysis.type
@@ -67,22 +70,23 @@ FitAnalyzer <- R6::R6Class(
         
         # Find important variables
 
-        findImportantVariables = function(tsDataFrame, seed = 12345) {
+        findImportantVariables = function (tsDataFrame, seed = 12345) {
             set.seed(seed)
             if (!is.null(private$fit)){
                 return (private$imp.vars)
             }
 
-            ifelse (private$analysis.type == "intra.day",
-                   private$createIntraFit (tsDataFrame),
-                   private$createDailyFrameFit (tsDataFrame))
+            ifelse(private$analysis.type == "intra.day",
+                   private$createIntraFit(tsDataFrame),
+                   private$createDailyFrameFit(tsDataFrame)
+                   )
 
             return (private$imp.vars)
-          },
+        },
         
         # Get fit
-        getFit = function() {
-          return (private$fit)
+        getFit = function () {
+            return (private$fit)
         },
         
 ##
@@ -95,7 +99,7 @@ FitAnalyzer <- R6::R6Class(
 ##
         
         # Plot most important charts 
-        showMostImportantCharts = function(tsDataFrame) {
+        showMostImportantCharts = function (tsDataFrame) {
             
             # Intraday plot
             if (private$analysis.type == "intra.day") {
@@ -132,14 +136,14 @@ FitAnalyzer <- R6::R6Class(
 ##
 
         # Predict goals
-        predictGoal = function(x) {
+        predictGoal = function (x) {
             response <- NULL
             response <- 
                   ifelse (private$analysis.type == "intra.day",
                           gbm::predict.gbm(private$fit, newdata = x,
                                            n.trees = private$gbm.best.iter),
                           predict.glm(private$fit, 
-                                      newdata = as.data.frame (x), 
+                                      newdata = as.data.frame(x), 
                                       type = "response"))
 
             return (response)
@@ -148,7 +152,7 @@ FitAnalyzer <- R6::R6Class(
     ),
     
     # Private variables
-    private = list(
+    private = list (
         
         folder = NULL,
         goal = NULL,
@@ -157,7 +161,7 @@ FitAnalyzer <- R6::R6Class(
         fit = NULL,
         gbm.best.iter = NULL,
         
-        createDailyFrameFit = function(master) {
+        createDailyFrameFit = function (master) {
             y <-
                 createGoalVariableVector(master, goal = private$goal)
             x <-
@@ -171,7 +175,7 @@ FitAnalyzer <- R6::R6Class(
             private$imp.vars <- imp
         },
         
-        createIntraFit = function(master , cv.folds) {
+        createIntraFit = function (master, cv.folds) {
             master$date <- NULL
             gbm.fit <-
                 gbm::gbm(

@@ -2,7 +2,7 @@
 % Please edit documentation in R/FitUtil.R
 \name{markValidRows}
 \alias{markValidRows}
-\title{A function that incorporates rules for marking if the data entry in MasterTSFrame are valid or not}
+\title{Incorporates rules for marking if the data entry in MasterTSFrame are valid or not}
 \usage{
 markValidRows(masterTsDataFrame)
 }
@@ -13,6 +13,6 @@ markValidRows(masterTsDataFrame)
 The marked Master Data Frame. i.e column valid is added at the end of the data.frame
 }
 \description{
-A function that incorporates rules for marking if the data entry in MasterTSFrame are valid or not
+Incorporates rules for marking if the data entry in MasterTSFrame are valid or not
 }
 
