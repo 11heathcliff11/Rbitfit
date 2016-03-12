@@ -11,7 +11,7 @@ library(fitcoach)
 library(ggplot2)
 ```
 
-## Getting data from Fitbit API
+## Example 1 : Data Loader- Getting data from Fitbit API
 
 This part explains how to connect to the Fitbit API and get your data, using DataLoader. 
 
@@ -47,7 +47,7 @@ mydata$request(
 Once the JSON files have been created, they can be used for further analysis.
 
 
-## Example 1 : Daily File Analysis
+## Example 2 : Fit Analyzer - Daily File Analysis
 
 Examples below demonstrate usage scenarios for FitAnalyzer
 
@@ -106,7 +106,7 @@ ana$showMostImportantCharts(tsDataFrame = timeseries.frame)
 
 *** 
 
-## Example 2 : Intra-day File Analysis
+## Example 3 :FitAnalyzer - Intra-day File Analysis
 Examples below demonstrate usage scenarios for FitAnalyzer for **Intra day analysis**
 
 *Step 1*: We first need to point to a folder that contains the Json files for *intraday* file analysis. Refer These files are created by DataLoader.R
