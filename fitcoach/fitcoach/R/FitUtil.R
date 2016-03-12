@@ -453,8 +453,9 @@ buildChartDay <- function(data, y.axes) {
 
 buildChartIntra <- function(data, y.axes) {
     
-    # Select only intraday variables, 'timeseq' and 'slot'
+    # Select only y-axes variables, 'timeseq' and 'slot'
     data <- subset(data, select = c("timeseq", "slot", y.axes))
+    timeseq <- data$timeseq   # Fix to avoid note when checking package
     data <- dplyr::group_by(data, timeseq, slot)
     data <- dplyr::summarise_each(data, funs(mean))
     
