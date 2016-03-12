@@ -429,7 +429,7 @@ buildChartDay <- function(data, y.axes, title) {
         geom_line(na.rm = TRUE, alpha = 0.3) +
         geom_smooth(span = 0.1, se = FALSE) + 
         facet_grid(variable ~ ., scales = "free_y") +
-        scale_color_discrete(labels = gsub("([A-Z])", " \\1", y.axes)) +
+        scale_color_discrete(labels = properCase(gsub("([A-Z])", " \\1", y.axes))) +
         labs(title = "Evolution of most relevant activities, by day", 
              x = "Date", 
              y = "", 
@@ -474,8 +474,9 @@ buildChartIntra <- function(data, y.axes) {
         geom_smooth(span = 0.1, se = FALSE) + 
         geom_area(aes(fill = data$slot, color = NULL), alpha = 0.1) +
         facet_grid(variable ~ ., scales = "free_y") +
-        # scale_x_discrete(labels = data$datetime, breaks = 1:24 * 4) + 
-        scale_color_discrete(labels = substr(y.axes, 7, 1000)) +
+        scale_x_discrete(breaks = seq(1, 96, by = 8), labels = paste(seq(0, 22, by = 2), ":00", sep = "")) +
+        scale_color_discrete(labels = properCase(substr(y.axes, 7, 100))) +
+        scale_fill_discrete(labels = properCase(unique(data$slot))) +
         labs(title = "Average level of most relevant activities, in a day", 
              x = "Time of day", 
              y = "", 
@@ -484,6 +485,19 @@ buildChartIntra <- function(data, y.axes) {
     plot(graph)
     
 }
+
+#' Proper Case
+#' 
+#' Sets a string to proper case, i.e. upper case for the first letter of each word
+#' 
+#' @param x A string
+#' @return A string with proper case
+
+# Code inspired from http://stackoverflow.com/a/6365349
+properCase <- function(x) {
+    gsub("(^|[[:space:]])([[:alpha:]])", "\\1\\U\\2", x, perl=TRUE)
+}
+
 
 ##
 ## End lassence@ code
