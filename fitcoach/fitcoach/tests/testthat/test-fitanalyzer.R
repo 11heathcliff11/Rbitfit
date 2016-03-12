@@ -42,5 +42,10 @@ test_that("FitAnalyzer test cases", {
     vars <- ana$findImportantVariables(intra)
     vars <- sort(vars, decreasing = TRUE)
     expect_equal(names(vars[1]), "steps")
+    
+    # Test 7 - Predict goal for the day
+    rows.test <- intra[c(3), ]
+    res <- ana$predictGoal(rows.test)
+    expect_less_than(res , 2518)
 
 })

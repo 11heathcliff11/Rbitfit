@@ -86,6 +86,7 @@ createGoalVariableVector <- function(master, goal) {
 #' 
 #' @param master Master dataframe
 #' @param goal Goal variable
+#' @export 
 
 createDependentVariableFrame <- function(master, goal) {
     master$date <- NULL

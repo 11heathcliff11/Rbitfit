@@ -72,6 +72,7 @@ Step 2: Next we get the data.frame ready for analysis. Note this data.frame is c
 timeseries.frame <- 
     ana$getAnalysisFrame(folder = masterPath, 
                          analysis.type = "daily")
+head(timeseries.frame)
 ```
 
 
@@ -104,6 +105,18 @@ Step 4: Next we can then plot the performance of the individual relative to the 
 ana$showMostImportantCharts(tsDataFrame = timeseries.frame)
 ```
 
+
+Step 5: We can also get the prediction on goal performance using the call below
+
+```{r}
+rows.test <- timeseries.frame[sample(1:191 , 1), ]
+x <- createDependentVariableFrame(master = rows.test, goal = "steps")
+res <- ana$predictGoal(x)
+cat(paste("Prediction for the day" , "expected steps = ", round(res)))
+```
+
+
+
 *** 
 
 ## Example 3 :FitAnalyzer - Intra-day File Analysis
@@ -125,6 +138,7 @@ Step 2: Next we get the data.frame ready for analysis. Note this data.frame is c
 
 ```{r}
 intra <- ana$getAnalysisFrame(folder = masterPath, analysis.type = "intra.day")
+head(intra)
 ```
 
 Step 3: next we find the most important variables that are enabling meeting the goals for the person. Note:this call creates a **gbm** model behind the scenes and ranks the variables based on *relative.influence* call to gbm model. You can also get the gbm fit object to do further analysis
@@ -158,3 +172,12 @@ For the 4 most important variables, the average value for every 15 min of a day 
 ```{r}
 ana$showMostImportantCharts(tsDataFrame = intra)
 ```
+
+Step 5: We can also get the prediction on goal performance using the call below
+
+```{r}
+rows.test <- intra[sample(1:191 , 1), ] # take any random input for test
+res <- ana$predictGoal(rows.test)
+cat(paste("Prediction for the day" , "expected calories = ", round(res)))
+```
+
