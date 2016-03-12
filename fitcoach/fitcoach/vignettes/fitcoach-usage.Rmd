@@ -1,8 +1,12 @@
 ---
-title: "Fitanalyzer workflow example"
+title: "Fitcoach package workflow example"
 author: "Niraj Juneja, Charles de Lassence"
-date: "March 9, 2016"
-output: pdf_document
+date: "March 12, 2016"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
 ---
 
 ```{r setup, include = FALSE}
@@ -95,13 +99,12 @@ summary(fit)
 
 
 ```{r}
-par(mfrow=c(2,2))
 plot(fit)
 ```
 
 Step 4: Next we can then plot the performance of the individual relative to the most important variables that are making a difference. 
 
-```{r}
+```{r fig.width= 7}
 ana$showMostImportantCharts(tsDataFrame = timeseries.frame)
 ```
 
@@ -112,7 +115,7 @@ Step 5: We can also get the prediction on goal performance using the call below
 rows.test <- timeseries.frame[sample(1:191 , 1), ]
 x <- createDependentVariableFrame(master = rows.test, goal = "steps")
 res <- ana$predictGoal(x)
-cat(paste("Prediction for the day" , "expected steps = ", round(res)))
+cat(paste("Prediction for the day" , ": expected steps = ", round(res)))
 ```
 
 
@@ -169,7 +172,7 @@ summary(fit)
 Step 4: Next we can then plot the performance of the individual relative to the most important variables that are making a difference. 
 For the 4 most important variables, the average value for every 15 min of a day is plotted, along with the moving average (using `geom_smooth` from `ggplot2`), 
 
-```{r}
+```{r fig.width= 7}
 ana$showMostImportantCharts(tsDataFrame = intra)
 ```
 
@@ -178,6 +181,6 @@ Step 5: We can also get the prediction on goal performance using the call below
 ```{r}
 rows.test <- intra[sample(1:191 , 1), ] # take any random input for test
 res <- ana$predictGoal(rows.test)
-cat(paste("Prediction for the day" , "expected calories = ", round(res)))
+cat(paste("Prediction for the day" , " : expected calories = ", round(res)))
 ```
 

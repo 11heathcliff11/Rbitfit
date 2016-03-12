@@ -20,5 +20,5 @@ Imports:
     R6,
     reshape2
 LazyData: TRUE
-Suggests: testthat, knitr
+Suggests: testthat, knitr 
 RoxygenNote: 5.0.1
