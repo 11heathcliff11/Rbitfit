@@ -15,7 +15,6 @@ Imports:
     ggplot2,
     httr,
     jsonlite,
-    magrittr,
     plyr,
     R6,
     reshape2

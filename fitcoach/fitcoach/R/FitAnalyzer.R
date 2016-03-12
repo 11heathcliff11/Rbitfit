@@ -15,7 +15,6 @@
 #' 
 #' @importFrom R6 R6Class
 #' @importFrom dplyr arrange
-#' @importFrom magrittr %>%
 #' @importFrom caret varImp
 #' @importFrom gbm gbm predict.gbm gbm.perf relative.influence
 #' @export FitAnalyzer

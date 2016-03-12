@@ -417,7 +417,7 @@ writeToJSON <- function(content, path, type, activity, start.date) {
 #' @import ggplot2
 #' @importFrom reshape2 melt
 
-buildChartDay <- function(data, y.axes, title) {
+buildChartDay <- function(data, y.axes) {
     
     # Keep only relevant columns and melt data
     data <- subset(data, select = c("date", y.axes))
@@ -448,25 +448,19 @@ buildChartDay <- function(data, y.axes, title) {
 #' @return A plot
 #' 
 #' @import ggplot2
-#' @importFrom dplyr select group_by summarise_each funs
+#' @importFrom dplyr group_by summarise_each funs
 #' @importFrom reshape2 melt
 
 buildChartIntra <- function(data, y.axes) {
     
-    # Select only intraday variables and 'timeseq' of the day
-    data <- data %>%
-        select(matches("timeseq|slot|intra.")) %>%
-        group_by(timeseq, slot) %>%
-        summarise_each(funs(mean))
-    
-    # Keep only relevant columns and melt data
+    # Select only intraday variables, 'timeseq' and 'slot'
     data <- subset(data, select = c("timeseq", "slot", y.axes))
-    data <- reshape2::melt(data, id.vars = c("timeseq", "slot"))
-    data$datetime <- paste(sprintf("%02d", data$timeseq %/% 4), 
-                           ":",
-                           sprintf("%02d", data$timeseq %% 4 * 15), 
-                           sep = "")
+    data <- dplyr::group_by(data, timeseq, slot)
+    data <- dplyr::summarise_each(data, funs(mean))
     
+    # Melt data
+    data <- reshape2::melt(data, id.vars = c("timeseq", "slot"))
+
     # Build and plot graph
     graph <- 
         ggplot(data, aes(x = data$timeseq, y = data$value, color = data$variable)) +
@@ -474,7 +468,8 @@ buildChartIntra <- function(data, y.axes) {
         geom_smooth(span = 0.1, se = FALSE) + 
         geom_area(aes(fill = data$slot, color = NULL), alpha = 0.1) +
         facet_grid(variable ~ ., scales = "free_y") +
-        scale_x_discrete(breaks = seq(1, 96, by = 8), labels = paste(seq(0, 22, by = 2), ":00", sep = "")) +
+        scale_x_discrete(breaks = seq(1, 96, by = 8), 
+                         labels = paste(seq(0, 22, by = 2), ":00", sep = "")) +
         scale_color_discrete(labels = properCase(substr(y.axes, 7, 100))) +
         scale_fill_discrete(labels = properCase(unique(data$slot))) +
         labs(title = "Average level of most relevant activities, in a day", 
