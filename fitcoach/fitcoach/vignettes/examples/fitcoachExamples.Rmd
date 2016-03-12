@@ -5,9 +5,10 @@ date: "March 9, 2016"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(fitcoach)
+library(ggplot2)
 ```
 
 ## Getting data from Fitbit API
@@ -19,14 +20,17 @@ Step 1: You first need to make sure that you have [registered an app](https://de
 
 Step 2: We initialize a new DataLoader object, and connect to the API with Oauth2, using the credentials described above.
 
-```{r eval =FALSE}
+```{r eval = FALSE}
 mydata <- DataLoader$new()
-mydata$connect(cache.file = "~/.httr-oauth")
+mydata$connect(appname = "cdlr",
+               key = "227FWR",
+               secret = "3089e3d1ac5dde1aa00b54a0c8661f42"
+)
 ```
 
-Step 3: We request the data and write it to JSON files using the `request` method. You need to specify the type of timeseries ('day' or 'intraday'), the list of activities [full list here](https://dev.fitbit.com/docs/activity/), the start and end dates, and the folder in which the JSON files will be written.
+Step 3: We request the data and write it to JSON files using the `request` method. You need to specify the type of timeseries ('day' or 'intraday'), the list of activities ([full list here](https://dev.fitbit.com/docs/activity/)), the start and end dates, and the folder in which the JSON files will be written.
 
-```{r eval= FALSE}
+```{r eval = FALSE}
 masterPath <- system.file ("extdata", 
                            "daily-time-series", 
                            package = "fitcoach")
@@ -54,25 +58,20 @@ We then create a new instance of Fitanalyzer passing in the folder and the goal 
 The example below uses *steps* as the goal
 
 
-```{r }
-library(fitcoach)
-library(ggplot2)
-masterPath <- system.file ("extdata", 
-                           "daily-time-series", 
-                           package = "fitcoach")
+```{r}
+masterPath <- system.file("extdata", 
+                          "daily-time-series", 
+                          package = "fitcoach")
 
-ana <- FitAnalyzer$new ("steps")
+ana <- FitAnalyzer$new("steps")
 
 ```
 
 Step 2: Next we get the data.frame ready for analysis. Note this data.frame is cleaned and augmented with additional data elements not present in the json file. eg: we augment weekday, weekend and mark rows that are valid
 
 ```{r}
-
-timeseries.frame  <- ana$getAnalysisFrame (folder = masterPath, 
-                                           analysis.type = "daily")
-
-
+timeseries.frame <- ana$getAnalysisFrame(folder = masterPath, 
+                                         analysis.type = "daily")
 ```
 
 
@@ -80,10 +79,8 @@ Step 3: next we find the most important variables that are enabling meeting the 
 
 
 ```{r}
-
 vars <- ana$findImportantVariables(tsDataFrame = timeseries.frame, seed = 12345)
 vars
-
 ```
 
 Getting the fit object
@@ -91,8 +88,6 @@ Getting the fit object
 ```{r}
 fit <- ana$getFit()
 summary(fit)
-
-
 ```
 
 
@@ -121,9 +116,9 @@ The example below uses *calories* as the goal
 ```{r }
 library(fitcoach)
 masterPath <-
-        system.file("extdata", "intra-daily-timeseries", package = "fitcoach")
+    system.file("extdata", "intra-daily-timeseries", package = "fitcoach")
 
-ana <- FitAnalyzer$new ("calories")
+ana <- FitAnalyzer$new("calories")
 ```
 
 Step 2: Next we get the data.frame ready for analysis. Note this data.frame is cleaned and augmented with additional data elements not present in the json file. eg: we augment cumulative sum during the day,weekday, weekend etc.
@@ -147,7 +142,7 @@ vars.frame$lnvalue <- log(vars.frame$values)
 vars.frame <- vars.frame[1:7, ]
 barplot(vars.frame$value, xlab = "variables", ylab = "relative importance", 
         names.arg = vars.frame$variables,
-        cex.names = 0.65, cex.lab   = 0.65, ylim = c(0.0,0.1))
+        cex.names = 0.65, cex.lab = 0.65, ylim = c(0.0, 0.1))
 ```
 
 Summary of GBM model fit below

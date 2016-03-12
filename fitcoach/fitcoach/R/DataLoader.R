@@ -12,10 +12,11 @@
 #' 
 #' @section Methods:
 #' \describe{
-#'   \item{\code{connect(appname, key, secret)}}{This method connects to the Fitbit API and to your application. 
+#'   \item{\code{connect(appname, key, secret, cache.file)}}{This method connects to the Fitbit API and to your application. 
 #'   \cr \code{appname}: Name of the Fitbit App
 #'   \cr \code{key}: Fitbit API Client key
-#'   \cr \code{secret}: Fibit API Client secret}
+#'   \cr \code{secret}: Fibit API Client secret
+#'   \cr \code{cache.file}: Path to a cached token file, instead of providing credentials in the function call}
 #'   \item{\code{request(type = "day", activities = "", start.date = Sys.Date(), end.date = "", path = "./json/"))}}{This method builds the request URLs, sends the requests and writes response to JSON files, in the specified folder.
 #'   \cr \code{type}: Type of time series. Must be 'day' or 'intraday'.
 #'   \cr \code{activities}: A list of the Fitibit activities to be retrieved.
@@ -44,7 +45,7 @@
 ## Begin lassence@ code
 ##
 
-DataLoader <- R6::R6Class(
+DataLoader <- R6::R6Class (
     "DataLoader",
     
     public = list (
@@ -59,14 +60,14 @@ DataLoader <- R6::R6Class(
         ### METHOD initialize
         ### Standard R6 Initialize function
 
-        initialize = function() {
+        initialize = function () {
             message("Object DataLoader initialized")
         },
         
         ### METHOD connect
         ### Connects to the API with credentials
 
-        connect = function(appname, key, secret, cache.file) {
+        connect = function (appname, key, secret, cache.file) {
             
             # If cache file provided, use it
             if(!missing(cache.file)) {
@@ -92,7 +93,7 @@ DataLoader <- R6::R6Class(
         ### METHOD request
         ### Build URL, send request and write response to JSON file
 
-        request = function(type = "day",
+        request = function (type = "day",
                            activities = "",
                            start.date = Sys.Date(),
                            end.date = "",
