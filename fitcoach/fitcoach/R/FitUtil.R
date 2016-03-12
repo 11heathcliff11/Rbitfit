@@ -419,6 +419,7 @@ buildChartDay <- function(data, y.axes, title) {
         geom_line(na.rm = TRUE, alpha = 0.3) +
         geom_smooth(span = 0.1, se = FALSE) + 
         facet_grid(variable ~ ., scales = "free_y") +
+        scale_color_discrete(labels = gsub("([A-Z])", " \\1", y.axes)) +
         labs(title = "Evolution of most relevant activities, by day", 
              x = "Date", 
              y = "", 
@@ -464,6 +465,7 @@ buildChartIntra <- function(data, y.axes) {
         geom_area(aes(fill = data$slot, color = NULL), alpha = 0.1) +
         facet_grid(variable ~ ., scales = "free_y") +
         # scale_x_discrete(labels = data$datetime, breaks = 1:24 * 4) + 
+        scale_color_discrete(labels = substr(y.axes, 7, 1000)) +
         labs(title = "Average level of most relevant activities, in a day", 
              x = "Time of day", 
              y = "", 
