@@ -1,8 +1,12 @@
 ---
-title: "Summary"
-author: "Niraj Juneja , Charles De Lassence"
-date: "March 9, 2016"
-output: html_document
+title: "Project Summary"
+author: "Niraj Juneja, Charles de Lassence"
+date: "March 12, 2016"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
 ---
 
 ```{r setup, include=FALSE}
