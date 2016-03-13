@@ -7,7 +7,7 @@
 #' 2.	Call \code{findImportantVariables} to understand the most important variables unique to you that enable meeting your goal. \cr
 #' 3.	Call \code{showMostImportantCharts} to get relevant charts that are unique to your data \cr
 #' 4.	Call \code{predictGoal} to get a prediction on performance of the goal \cr \cr
-#' You can conduct two types of analysis based on the type of dataset in consideration. \code{analysis.type} can be 'intra.day' analysis or it can be 'daily'. 
+#' You can conduct two types of analysis based on the type of dataset in consideration. \code{analysis.type} can be 'intra.day' or 'daily' analysis. 
 #' 
 #' @docType class
 #' @format A \code{\link{R6Class}} generator object
@@ -21,12 +21,12 @@
 #' 
 #' @section Methods:
 #' \describe{
-#'   \item{\code{getAnalysisFrame(folder, analysis.type)}}{This method uses \code{analysis.type} as an argument to return a dataframe that is clean and augmented with additional features like weekend.}
+#'   \item{\code{getAnalysisFrame(folder, analysis.type)}}{This method uses \code{analysis.type} as an argument to return a data.frame that is clean and augmented with additional features like weekend.}
 #'   \item{\code{findImportantVariables(tsDataFrame, seed = 12345)}}{Finds the most important variables that are enabling meeting the goals for the person, by creating a `glm` model and ranking the variables based on the coefficients of the model.}
 #'   \item{\code{getFit()}}{Returns the `glm` fit object.}
-#'   \item{\code{showMostImportantCharts(tsDataFrame)}}{Plots charts for the most relevant goals, with actual data and moving average using geom_smooth().
-#'   \cr \code{tsDataFrame}: a dataframe containing the fitibit activities.}
-#'   \item{\code{predictGoal(x)}}{xxxxxx}
+#'   \item{\code{showMostImportantCharts(tsDataFrame)}}{Plots charts for the most relevant goals, with actual data and moving average using \code{geom_smooth()}.
+#'   \cr \code{tsDataFrame}: a data.frame containing the fitibit activities.}
+#'   \item{\code{predictGoal(x)}}{Gives a prediction on the goal performance, based on `glm` (daily) or `gbm` (intraday).}
 #' }
 #' 
 

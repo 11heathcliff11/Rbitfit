@@ -2,7 +2,7 @@
 % Please edit documentation in R/FitUtil.R
 \name{createTsMasterFrame}
 \alias{createTsMasterFrame}
-\title{Creates the Master Data Frame from Timeseries JSON files.}
+\title{Creates the Master data.frame from Timeseries JSON files.}
 \usage{
 createTsMasterFrame(tsFileFolder, resourcePath = getDailyResourcePathList())
 }
@@ -12,9 +12,9 @@ createTsMasterFrame(tsFileFolder, resourcePath = getDailyResourcePathList())
 \item{resourcePath}{the resource paths to look. Default will get getDailyResourcePathList()}
 }
 \value{
-The Master Data Frame
+The Master data.frame
 }
 \description{
-Creates the Master Data Frame from Timeseries JSON files.
+Creates the Master data.frame from Timeseries JSON files.
 }
 

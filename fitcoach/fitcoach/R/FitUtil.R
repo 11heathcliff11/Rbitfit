@@ -41,14 +41,15 @@ getIntradayResourcePathList <- function() {
 }
 
 
-#' Creates the Master Data Frame from Timeseries JSON files.
+#' Creates the Master data.frame from Timeseries JSON files.
 #'
 #' @param tsFileFolder Folder containing all time-series files. Naming convention for files is max-[resource].json
 #' @param resourcePath the resource paths to look. Default will get getDailyResourcePathList()
-#' @return The Master Data Frame
+#' @return The Master data.frame
 #'
 #' @importFrom jsonlite fromJSON
-#' @export 
+#' @export
+
 createTsMasterFrame <-
     function(tsFileFolder, resourcePath = getDailyResourcePathList()) {
         dflist <- lapply(resourcePath, function(x) {
@@ -65,7 +66,7 @@ createTsMasterFrame <-
         })
         masterdf <- as.data.frame(dflist[1])
 
-#Using For instead of lapply because masterdf is being updated at each increment
+       # Using For instead of lapply because masterdf is being updated at each increment
        for (i in 2:length(dflist)) {
            masterdf <-
                merge(masterdf, as.data.frame(dflist[i]), by = "date")
@@ -81,17 +82,18 @@ createTsMasterFrame <-
 
 #' Creates a vector of goal variables
 #' 
-#' @param master Master dataframe
+#' @param master Master data.frame
 #' @param goal Goal variable
 #' @export 
+
 createGoalVariableVector <- function(master, goal) {
     y <- eval(parse(text = paste("master$", goal, sep = "")))
 }
 
 
-#' Creates a dataframe with only goal variables
+#' Creates a data.frame with only goal variables
 #' 
-#' @param master Master dataframe
+#' @param master Master data.frame
 #' @param goal Goal variable
 #' @export 
 
@@ -110,14 +112,15 @@ createDependentVariableFrame <- function(master, goal) {
 }
 
 
-#' Augments the Master dataframe with additional information
+#' Augments the Master data.frame with additional information
 #' 
-#' @param masterTsDataFrame The Master Time Series data Frame
-#' @return The Master Data Frame with additinal data elements 
+#' @param masterTsDataFrame The Master Time Series data.frame
+#' @return The Master data.frame with additinal data elements 
 #'         weekday, weekend
 #' @export 
+
 augmentData <- function(masterTsDataFrame) {
-    # augment weekday information
+    # Augment weekday information
     masterTsDataFrame$weekday <-
         weekdays(as.Date(masterTsDataFrame$date))
     masterTsDataFrame$weekday <-
@@ -134,12 +137,13 @@ augmentData <- function(masterTsDataFrame) {
 
 #' Incorporates rules for marking if the data entry in MasterTSFrame are valid or not
 #'
-#' @param masterTsDataFrame The Master Time Series data Frame
-#' @return The marked Master Data Frame. i.e column valid is added at the end of the data.frame
+#' @param masterTsDataFrame The Master Time Series data.frame
+#' @return The marked Master data.frame. i.e column valid is added at the end of the data.frame
 #' 
 #' @importFrom dplyr inner_join
 #' @importFrom plyr ldply
 #' @export 
+
 markValidRows <- function(masterTsDataFrame) {
     masterTsDataFrame$valid <-
         (as.numeric(masterTsDataFrame$distance) != 0)
@@ -155,6 +159,7 @@ markValidRows <- function(masterTsDataFrame) {
 #' @importFrom plyr ldply
 #' @importFrom dplyr inner_join
 #' @export 
+
 createIntraFrame <- function(folder) {
     files <- list.files(folder)
     indexes <- grep("intra-+", files)
@@ -197,16 +202,17 @@ createIntraFrame <- function(folder) {
 }
 
 
-#' Loads the JSON files for intraday data and returns a dataframe
+#' Loads the JSON files for intraday data and returns a data.frame
 #' 
 #' @param folder the folder to source the files from
 #' @param  resource the type of resource(Eg: calories, steps, distance etc)
 #' @param  files the list of files to look into for fetch
-#' @return Resource dataframe
+#' @return Resource data.frame
 #' 
 #' @importFrom jsonlite fromJSON
 #' @importFrom plyr ldply
 #' @export 
+
 fetchIntraResourceData <- function (folder, resource, files) {
     indexes <- grep(paste('-', resource, '-', sep = ""), files)
     res.files <- files[indexes]
@@ -226,12 +232,13 @@ fetchIntraResourceData <- function (folder, resource, files) {
 }
 
 
-#' Augments the intra day data.frame  with additional information
-#' @param inFrame The Master Time Series data Frame
-#' @return The Master Data Frame with additinal data elements 
-#'          weekday, weekend, cum.sums of various variables
+#' Augments the intra day data.frame with additional information
+#' @param inFrame The Master Time Series data.frame
+#' @return The Master data.frame with additinal data elements 
+#'         weekday, weekend, cum.sums of various variables
 #'
 #' @export 
+
 augmentIntraData <- function(inFrame) {
     inFrame$date <- as.Date(inFrame$date)
     inFrame$dataset.type <- NULL
@@ -415,7 +422,7 @@ writeToJSON <- function(content, path, type, activity, start.date) {
 #' 
 #' Plots charts that have been selected as most relevant.
 #' 
-#' @param data Dataframe
+#' @param data data.frame
 #' @param y.axes Names of the Y-axes data, as a vector of characters
 #' @return A plot
 #' 
@@ -449,7 +456,7 @@ buildChartDay <- function(data, y.axes) {
 #' 
 #' Plots intraday charts for the most relevant activities
 #' 
-#' @param data Dataframe
+#' @param data data.frame
 #' @param y.axes Names of the Y-axes data, as a vector of characters
 #' @return A plot
 #' 
@@ -457,6 +464,7 @@ buildChartDay <- function(data, y.axes) {
 #' @importFrom dplyr group_by summarise_each funs
 #' @importFrom reshape2 melt
 #' @export
+
 buildChartIntra <- function(data, y.axes) {
     
     # Select only y-axes variables, 'timeseq' and 'slot'
@@ -505,4 +513,3 @@ properCase <- function(x) {
 ##
 ## End lassence@ code
 ##
-

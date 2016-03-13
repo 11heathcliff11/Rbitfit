@@ -7,10 +7,10 @@
 markValidRows(masterTsDataFrame)
 }
 \arguments{
-\item{masterTsDataFrame}{The Master Time Series data Frame}
+\item{masterTsDataFrame}{The Master Time Series data.frame}
 }
 \value{
-The marked Master Data Frame. i.e column valid is added at the end of the data.frame
+The marked Master data.frame. i.e column valid is added at the end of the data.frame
 }
 \description{
 Incorporates rules for marking if the data entry in MasterTSFrame are valid or not
