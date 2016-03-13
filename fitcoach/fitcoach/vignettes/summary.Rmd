@@ -13,22 +13,26 @@ vignette: >
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+## Fitcoach project summary
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+We are glad to submit the fitcoach package. As part of the project we have been able to accompalish the following
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+1. Connect R to fitbit API and expose an individual’s fitbit data as a Dataframe for further analysis.
+    + DataLoader.R does this. [Example 1 here](examples\fitcoach-usage.html)
+    + DataLoader enables getting both the *Daily time-series* data and *Intra-day time-series* data at 15 min breaks for the individual. 
+    + Note : intra-day data will require the user to create a new app on fitbit website and is only available for app owner. i.e User A cannot access Intra-day data from User B. This is a fitbit restriction
 
-```{r cars}
-summary(cars)
-```
+2. Created a [FitAnalyzer R6](..\R\FitAnalyzer.R) class that provides an __opinionated__ but focussed implementation for analyzing Fitbit Data. It is likely that this workflow might not work for all. In this situation, the user can directly use  fitbit functions provided in [FitUtil.R](..\R\FitUtil.R)  and create a customized analysis flow. 
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+3. In line with the project proposal we were able to build the following.
+  + Ability to set goals and find the most significant variables that are enabling meeting the goals. The [Example 2 and Example 3 here](examples\fitcoach-usage.html) demonstrates this flow. 
+  + Ability to call a function and provide recommendations for the rest of the day. The [Example 2 and 3](examples\fitcoach-usage.html) demonstrates this flow. This is implemented for both daily and intra-day scenarios.
+  + Provide advanced charts in ggplot2. The [Example 2 and Example 3 here](examples\fitcoach-usage.html) demonstrates the graphs.
+  
+4. Package Design Philosophy
+  + DataLoader.R is an R6 class because it encaptulates a unique oauth2.0 based flow for accessing fitbit api. The goal of this class is to orchestrate the fitbit connection flow and download __daily__ or __intraday__ json files into a folder so that the json files can be analyzed further.
+  + FitAnalyzer.R is an R6 class with a opinioned workflow for analysis. The class maintains state related to goal, analysis type among other things. It does not store the data.frame used for analysis to avoid memory issues. The user is expected to hold on to the data.frame
+  + FitUtil.R is a utility file that has functions for fitbit analysis. 
+  + We are using [GLM](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/glm.html) for daily file and [GBM](https://cran.r-project.org/web/packages/gbm/gbm.pdf) for intraday file analysis. intra-day file analysis has a lot more data points and hence GBM works well here.For daily file, we have 1 datapoint per day. Hence, we decided to use GLM because we do not expect a lot of data in this file.
+  
+__Please refer to the detailed [Example ](examples\fitcoach-usage.html) to understand the usage of the package__

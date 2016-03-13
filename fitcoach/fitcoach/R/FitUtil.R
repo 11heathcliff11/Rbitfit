@@ -48,7 +48,7 @@ getIntradayResourcePathList <- function() {
 #' @return The Master Data Frame
 #'
 #' @importFrom jsonlite fromJSON
-
+#' @export 
 createTsMasterFrame <-
     function(tsFileFolder, resourcePath = getDailyResourcePathList()) {
         dflist <- lapply(resourcePath, function(x) {
@@ -64,11 +64,12 @@ createTsMasterFrame <-
             return (df)
         })
         masterdf <- as.data.frame(dflist[1])
-        
-        for (i in 2:length(dflist)) {
-            masterdf <-
-                merge(masterdf, as.data.frame(dflist[i]), by = "date")
-        }
+
+#Using For instead of lapply because masterdf is being updated at each increment
+       for (i in 2:length(dflist)) {
+           masterdf <-
+               merge(masterdf, as.data.frame(dflist[i]), by = "date")
+       }
         
         masterdf$date <- as.Date(masterdf$date)
         lapply(2:ncol(masterdf), function(x) {
@@ -82,7 +83,7 @@ createTsMasterFrame <-
 #' 
 #' @param master Master dataframe
 #' @param goal Goal variable
-
+#' @export 
 createGoalVariableVector <- function(master, goal) {
     y <- eval(parse(text = paste("master$", goal, sep = "")))
 }
@@ -114,7 +115,7 @@ createDependentVariableFrame <- function(master, goal) {
 #' @param masterTsDataFrame The Master Time Series data Frame
 #' @return The Master Data Frame with additinal data elements 
 #'         weekday, weekend
-
+#' @export 
 augmentData <- function(masterTsDataFrame) {
     # augment weekday information
     masterTsDataFrame$weekday <-
@@ -138,7 +139,7 @@ augmentData <- function(masterTsDataFrame) {
 #' 
 #' @importFrom dplyr inner_join
 #' @importFrom plyr ldply
-
+#' @export 
 markValidRows <- function(masterTsDataFrame) {
     masterTsDataFrame$valid <-
         (as.numeric(masterTsDataFrame$distance) != 0)
@@ -153,7 +154,7 @@ markValidRows <- function(masterTsDataFrame) {
 #' @importFrom jsonlite fromJSON
 #' @importFrom plyr ldply
 #' @importFrom dplyr inner_join
-
+#' @export 
 createIntraFrame <- function(folder) {
     files <- list.files(folder)
     indexes <- grep("intra-+", files)
@@ -205,7 +206,7 @@ createIntraFrame <- function(folder) {
 #' 
 #' @importFrom jsonlite fromJSON
 #' @importFrom plyr ldply
-
+#' @export 
 fetchIntraResourceData <- function (folder, resource, files) {
     indexes <- grep(paste('-', resource, '-', sep = ""), files)
     res.files <- files[indexes]
@@ -230,6 +231,7 @@ fetchIntraResourceData <- function (folder, resource, files) {
 #' @return The Master Data Frame with additinal data elements 
 #'          weekday, weekend, cum.sums of various variables
 #'
+#' @export 
 augmentIntraData <- function(inFrame) {
     inFrame$date <- as.Date(inFrame$date)
     inFrame$dataset.type <- NULL
@@ -307,6 +309,7 @@ getAPIScope <- function() {
 #' @return A Fitbit API token, that will be cached
 #' 
 #' @importFrom httr oauth_endpoint oauth_app oauth2.0_token
+#' @export
 
 connectToAPI <- function(appname, key, secret) {
     fitbit.api <- httr::oauth_endpoint(
@@ -340,6 +343,7 @@ connectToAPI <- function(appname, key, secret) {
 #' @return The request response
 #' 
 #' @importFrom httr GET warn_for_status config
+#' @export
 
 makeAPIRequest <-
     function(type, activity,
@@ -384,6 +388,7 @@ makeAPIRequest <-
 #' @param type Type of time series. Must be 'day' or 'intraday'
 #' @param activity Type of activity. See below for details.
 #' @param start.date Start date
+#' @export
 
 writeToJSON <- function(content, path, type, activity, start.date) {
     
@@ -416,6 +421,7 @@ writeToJSON <- function(content, path, type, activity, start.date) {
 #' 
 #' @import ggplot2
 #' @importFrom reshape2 melt
+#' @export
 
 buildChartDay <- function(data, y.axes) {
     
@@ -450,7 +456,7 @@ buildChartDay <- function(data, y.axes) {
 #' @import ggplot2
 #' @importFrom dplyr group_by summarise_each funs
 #' @importFrom reshape2 melt
-
+#' @export
 buildChartIntra <- function(data, y.axes) {
     
     # Select only y-axes variables, 'timeseq' and 'slot'
@@ -488,6 +494,7 @@ buildChartIntra <- function(data, y.axes) {
 #' 
 #' @param x A string
 #' @return A string with proper case
+#' @export
 
 # Code inspired from http://stackoverflow.com/a/6365349
 properCase <- function(x) {

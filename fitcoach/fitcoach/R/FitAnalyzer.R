@@ -45,11 +45,10 @@ FitAnalyzer <- R6::R6Class (
         
         # Get Analysis frame
         getAnalysisFrame = function (folder = NA, analysis.type) {
-            
             private$folder <- folder
             private$analysis.type <- analysis.type
             master <- NULL
-            
+
             if (analysis.type == "intra.day") {
               master <-
                     createIntraFrame(folder)
@@ -168,18 +167,18 @@ FitAnalyzer <- R6::R6Class (
         
         createIntraFit = function (master, cv.folds) {
             master$date <- NULL
-            gbm.fit <-
-                gbm::gbm(
-                    formula = calories ~ .,
-                    data = master,
-                    distribution = "gaussian",
-                    n.trees = 500,
-                    shrinkage = .05,
-                    interaction.depth = 5,
-                    bag.fraction = .5,
-                    train.fraction = .8,
-                    verbose = FALSE 
-                  )
+            
+            gbm.txt <- paste("gbm::gbm(formula = " ,
+                             private$goal ,
+                             "~ .,data = master,
+                              distribution = 'gaussian',
+                              n.trees = 500,
+                              shrinkage = .05,
+                              interaction.depth = 5,
+                              bag.fraction = .5,
+                              train.fraction = .8,
+                              verbose = FALSE)", sep = "")
+            gbm.fit <- eval(parse(text = gbm.txt))
             private$fit <- gbm.fit
             private$gbm.best.iter <-
                 gbm::gbm.perf(gbm.fit, method = "test", plot.it = FALSE)
