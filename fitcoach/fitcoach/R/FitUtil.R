@@ -237,6 +237,7 @@ fetchIntraResourceData <- function (folder, resource, files) {
 #' @return The Master data.frame with additinal data elements 
 #'         weekday, weekend, cum.sums of various variables
 #'
+#' @importFrom stats ave
 #' @export 
 
 augmentIntraData <- function(inFrame) {
@@ -262,13 +263,13 @@ augmentIntraData <- function(inFrame) {
         )
     inFrame$slot <- a
 
-    mod <- transform(inFrame, cumsum.calorie = ave(inFrame$intra.calorie, date, FUN = cumsum))
-    mod <- transform(mod, cumsum.steps = ave(inFrame$intra.steps, date, FUN = cumsum))
-    mod <- transform(mod, cumsum.level = ave(inFrame$intra.level, date, FUN = cumsum))
-    mod <- transform(mod, cumsum.mets = ave(inFrame$intra.mets, date, FUN = cumsum))
-    mod <- transform(mod, cumsum.distance = ave(inFrame$intra.distance, date, FUN = cumsum))
-    mod <- transform(mod, cumsum.floors = ave(inFrame$intra.floors, date, FUN = cumsum))
-    mod <- transform(mod, cumsum.elevation = ave(inFrame$intra.elevation, date, FUN = cumsum))
+    mod <- transform(inFrame, cumsum.calorie = stats::ave(inFrame$intra.calorie, date, FUN = cumsum))
+    mod <- transform(mod, cumsum.steps = stats::ave(inFrame$intra.steps, date, FUN = cumsum))
+    mod <- transform(mod, cumsum.level = stats::ave(inFrame$intra.level, date, FUN = cumsum))
+    mod <- transform(mod, cumsum.mets = stats::ave(inFrame$intra.mets, date, FUN = cumsum))
+    mod <- transform(mod, cumsum.distance = stats::ave(inFrame$intra.distance, date, FUN = cumsum))
+    mod <- transform(mod, cumsum.floors = stats::ave(inFrame$intra.floors, date, FUN = cumsum))
+    mod <- transform(mod, cumsum.elevation = stats::ave(inFrame$intra.elevation, date, FUN = cumsum))
     inFrame <- mod
     return (inFrame)
 }
@@ -428,6 +429,7 @@ writeToJSON <- function(content, path, type, activity, start.date) {
 #' 
 #' @import ggplot2
 #' @importFrom reshape2 melt
+#' @importFrom graphics plot
 #' @export
 
 buildChartDay <- function(data, y.axes) {
@@ -463,6 +465,7 @@ buildChartDay <- function(data, y.axes) {
 #' @import ggplot2
 #' @importFrom dplyr group_by summarise_each funs
 #' @importFrom reshape2 melt
+#' @importFrom graphics plot
 #' @export
 
 buildChartIntra <- function(data, y.axes) {
@@ -470,6 +473,7 @@ buildChartIntra <- function(data, y.axes) {
     # Select only y-axes variables, 'timeseq' and 'slot'
     data <- subset(data, select = c("timeseq", "slot", y.axes))
     timeseq <- data$timeseq   # Fix to avoid note when checking package
+    slot <- data$slot   # Fix to avoid note when checking package
     data <- dplyr::group_by(data, timeseq, slot)
     data <- dplyr::summarise_each(data, funs(mean))
     
