@@ -1,7 +1,6 @@
 ---
 title: "Project Summary"
 author: "Niraj Juneja, Charles de Lassence"
-date: "March 12, 2016"
 output: rmarkdown::html_document
 vignette: >
   %\VignetteIndexEntry{Vignette Title}

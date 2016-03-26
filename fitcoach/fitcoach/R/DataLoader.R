@@ -1,6 +1,6 @@
 #' R6 class for Loading Fitbit data 
 #' 
-#' Description to do
+#' DataLoader is an R6 Class that connects to the Fitbit API with the  credentials, requests the data, and writes the response to JSON files, 
 #'
 #' @docType class
 #' @format A \code{\link{R6Class}} generator object
