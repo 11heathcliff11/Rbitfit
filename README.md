@@ -2,10 +2,7 @@
 title: "Project Summary"
 author: "Niraj Juneja, Charles de Lassence"
 output: rmarkdown::html_document
-vignette: >
-  %\VignetteIndexEntry{Vignette Title}
-  %\VignetteEngine{knitr::rmarkdown}
-  \usepackage[utf8]{inputenc}
+
 ---
 
 
