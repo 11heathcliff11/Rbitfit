@@ -17,7 +17,7 @@ We are glad to submit the fitcoach package. As part of the project we have been 
 
 2. Created [FitAnalyzer R6](..\R\FitAnalyzer.R) class that provides an __opinionated__ but focussed implementation for analyzing Fitbit Data. It is likely that this workflow might not work for all. In this situation, the user can directly use Fitbit functions provided in [FitUtil.R](..\R\FitUtil.R)  and create a customized analysis flow. 
 
-3. In line with the project proposal, we were able to build the following.
+3. We were able to build the following.
   + Ability to set goals and find the most significant variables that are enabling meeting the goals. The [Example 2 and Example 3 here](examples\fitcoach-usage.html) demonstrates this flow. 
   + Ability to call a function and provide recommendations for the rest of the day. The [Example 2 and 3](https://github.com/webscale/Rbitfit/blob/master/fitcoach/fitcoach/vignettes/examples/fitcoach-usage.pdf) demonstrate this flow. This is implemented for both daily and intra-day scenarios.
   + Provide advanced charts in ggplot2. The [Example 2 and Example 3 here](https://github.com/webscale/Rbitfit/blob/master/fitcoach/fitcoach/vignettes/examples/fitcoach-usage.pdf) demonstrate the graphs.
