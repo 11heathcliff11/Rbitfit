@@ -15,10 +15,10 @@ We are glad to submit the fitcoach package. As part of the project we have been 
     + DataLoader enables getting both the *Daily time-series* data and *Intra-day time-series* data at 15 min breaks for the individual. 
     + Note : intra-day data will require the user to create a new app on Fitbit website and is only available for app owner. i.e User A cannot access Intra-day data from User B. This is a Fitbit restriction
 
-2. Created [FitAnalyzer R6](..\R\FitAnalyzer.R) class that provides an __opinionated__ but focussed implementation for analyzing Fitbit Data. It is likely that this workflow might not work for all. In this situation, the user can directly use Fitbit functions provided in [FitUtil.R](..\R\FitUtil.R)  and create a customized analysis flow. 
+2. Created [FitAnalyzer R6](https://github.com/webscale/Rbitfit/blob/master/fitcoach/fitcoach/R/FitAnalyzer.R) class that provides an __opinionated__ but focussed implementation for analyzing Fitbit Data. It is likely that this workflow might not work for all. In this situation, the user can directly use Fitbit functions provided in [FitUtil.R](https://github.com/webscale/Rbitfit/blob/master/fitcoach/fitcoach/R/FitUtil.R)  and create a customized analysis flow. 
 
 3. We were able to build the following.
-  + Ability to set goals and find the most significant variables that are enabling meeting the goals. The [Example 2 and Example 3 here](examples\fitcoach-usage.html) demonstrates this flow. 
+  + Ability to set goals and find the most significant variables that are enabling meeting the goals. The [Example 2 and Example 3 here](https://github.com/webscale/Rbitfit/blob/master/fitcoach/fitcoach/vignettes/examples/fitcoach-usage.pdf) demonstrates this flow. 
   + Ability to call a function and provide recommendations for the rest of the day. The [Example 2 and 3](https://github.com/webscale/Rbitfit/blob/master/fitcoach/fitcoach/vignettes/examples/fitcoach-usage.pdf) demonstrate this flow. This is implemented for both daily and intra-day scenarios.
   + Provide advanced charts in ggplot2. The [Example 2 and Example 3 here](https://github.com/webscale/Rbitfit/blob/master/fitcoach/fitcoach/vignettes/examples/fitcoach-usage.pdf) demonstrate the graphs.
   
